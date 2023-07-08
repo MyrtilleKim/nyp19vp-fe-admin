@@ -1,0 +1,65 @@
+.input-group {
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  .form-control {
+    box-shadow: none;
+    border-color: #93a5be;
+    &:not(:first-child) {
+      border-left: 0;
+      padding-left: 2;
+    }
+    &:focus {
+      box-shadow: none;
+      border-color: #93a5be;
+    }
+  }
+  .input-button-group {
+    border-right: 0;
+    padding-right: 0;
+  }
+  .input-out-button-group {
+    border-top-right-radius: 0.5rem !important;
+    border-bottom-right-radius: 0.5rem !important;
+  }
+  .btn {
+    border-color: #93a5be;
+    border-left: 0;
+    color: #66799e;
+    border-top-right-radius: 0.5rem !important;
+    border-bottom-right-radius: 0.5rem !important;
+    &:hover {
+      border-color: #93a5be;
+      background: none;
+    }
+  }
+}
+.btn-login {
+  &:hover {
+    border: $login-green;
+    background-color: $login-green;
+  }
+  border: $main-orange;
+  background-color: $main-orange;
+}
+.card-link {
+  color: black;
+}
+.input-group-text {
+  color: $gray-700;
+  border-color: $gray-600;
+  font-size: $font-size-sm;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  border-right: 0;
+}
+.input-group-prepend {
+  margin-right: -2px;
+}
+.focused {
+  .input-group-text {
+    color: #66799e;
+    background-color: white;
+  }
+  .input-group-shadow {
+    box-shadow: 0.1rem 0.1rem 0 rgba(245, 248, 251, 0.5);
+  }
+}

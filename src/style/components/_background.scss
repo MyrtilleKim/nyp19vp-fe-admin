@@ -1,0 +1,21 @@
+main {
+    display: block;
+    margin: 0;
+    overflow: hidden;
+  }
+  button {
+    &:focus {
+      outline: 0;
+    }
+  }
+  .bg-soft {
+    background-color: #dee2e6;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    width: 100vw;
+    height: 100vh;
+    min-height: 100vh;
+    margin-top: 0px !important;
+  }
+  
