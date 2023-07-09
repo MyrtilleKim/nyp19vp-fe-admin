@@ -73,13 +73,15 @@ const HeaderContent = (props) => {
             <FontAwesomeIcon icon={faBell} className="bell-shake" />
           </span>
           {areNotificationsRead ? null : (
-            <Badge
-              pill
-              bg="danger"
-              className="position-absolute top-0 end--30 translate-middle"
-            >
-              99+
-            </Badge>
+            <h6 className="text-center">
+              <Badge
+                pill
+                bg="danger"
+                className="position-absolute top-0 start-20 p-1 ps-2 unread-notifications"
+              >
+                99+
+              </Badge>
+            </h6>
             // <span className="icon-badge rounded-circle unread-notifications" />
           )}
         </Dropdown.Toggle>

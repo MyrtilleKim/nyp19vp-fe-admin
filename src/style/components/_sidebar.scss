@@ -1,0 +1,33 @@
+.sidebar-item {
+  z-index: 1201;
+  &:hover {
+    background-color: $main-200;
+  }
+  &:active,
+  &:focus {
+    border-style: none solid none none;
+    border-width: 0.2rem;
+    border-color: $main;
+  }
+  .nav-link {
+    height: 3rem;
+    color: $black;
+    &:hover,
+    &:active,
+    &:focus {
+      color: $main;
+    }
+    .icon {
+      transition: $transition-base;
+    }
+  }
+}
+.sidebar-group {
+  z-index: 0;
+  .title {
+    color: $gray-600;
+    height: 3rem;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+  }
+}

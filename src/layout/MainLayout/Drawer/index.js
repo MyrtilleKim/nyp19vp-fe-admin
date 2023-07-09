@@ -6,10 +6,8 @@ import { useTheme } from "@mui/material/styles";
 import { Box, Drawer, useMediaQuery } from "@mui/material";
 
 // project import
-import DrawerHeader from "./DrawerHeader";
 import DrawerContent from "./Navigation";
 import MiniDrawerStyled from "./MiniDrawerStyled";
-// import { drawerWidth } from 'config';
 const drawerWidth = 260;
 
 // ==============================|| MAIN LAYOUT - DRAWER ||============================== //
@@ -24,7 +22,6 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
 
   // header content
   const drawerContent = useMemo(() => <DrawerContent />, []);
-  const drawerHeader = useMemo(() => <DrawerHeader open={open} />, [open]);
 
   return (
     <Box
@@ -34,7 +31,6 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
     >
       {!matchDownMD ? (
         <MiniDrawerStyled variant="permanent" open={open}>
-          {drawerHeader}
           {drawerContent}
         </MiniDrawerStyled>
       ) : (
@@ -55,7 +51,6 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
             },
           }}
         >
-          {open && drawerHeader}
           {open && drawerContent}
         </Drawer>
       )}

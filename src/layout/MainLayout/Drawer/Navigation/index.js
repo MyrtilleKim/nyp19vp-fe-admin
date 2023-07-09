@@ -1,27 +1,29 @@
-// material-ui
-import { Box, Typography } from "@mui/material";
+// bootstrap
+import { Nav, Container, Col, Row } from "react-bootstrap";
 
 // project import
 import NavGroup from "./NavGroup";
-import menuItem from "menu";
+import menuItems from "menu";
 
 // ==============================|| DRAWER CONTENT - NAVIGATION ||============================== //
 
 const Navigation = () => {
-  const navGroups = menuItem.items.map((item) => {
-    switch (item.type) {
-      case "group":
-        return <NavGroup key={item.id} item={item} />;
-      default:
-        return (
-          <Typography key={item.id} variant="h6" color="error" align="center">
-            Fix - Navigation Group
-          </Typography>
-        );
-    }
+  const navGroups = menuItems.items.map((item) => {
+    if (item.type === "group") return <NavGroup key={item.id} item={item} />;
   });
 
-  return <Box sx={{ pt: 2 }}>{navGroups}</Box>;
+  return (
+    <Nav className="flex-column">
+      <Container fluid>
+        <Row className="align-items-center pt-3">
+          <Col className="d-flex align-items-center justify-content-center">
+            <h3>Megoo</h3>
+          </Col>
+        </Row>
+      </Container>
+      {navGroups}
+    </Nav>
+  );
 };
 
 export default Navigation;

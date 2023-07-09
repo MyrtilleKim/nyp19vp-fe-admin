@@ -44,7 +44,7 @@ const MainLayout = () => {
   }, [drawerOpen]);
 
   return (
-    <Box sx={{ display: "flex", width: "100%" }}>
+    <Box sx={{ width: "100%" }}>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
       <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
       <Box

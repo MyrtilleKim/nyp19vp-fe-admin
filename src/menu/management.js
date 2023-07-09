@@ -1,8 +1,12 @@
 // assets
-import { faUser, faBoxes, faUsers } from "@fortawesome/free-solid-svg-icons";
+import {
+  faUserGroup,
+  faBoxes,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
 
 // icons
-const icons = { faUser, faBoxes, faUsers };
+const icons = { faUserGroup, faBoxes, faUsers };
 
 // ==============================|| MENU - MANAGEMENT ||============================== //
 
@@ -16,7 +20,7 @@ const management = {
       title: "User",
       type: "item",
       url: "/users",
-      icon: icons.faUser,
+      icon: icons.faUserGroup,
       target: true,
     },
     {
