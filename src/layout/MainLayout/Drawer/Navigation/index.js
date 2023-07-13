@@ -1,9 +1,13 @@
 // bootstrap
-import { Nav, Container, Col, Row } from "react-bootstrap";
+import { Nav, Container, Col, Row, Image } from "react-bootstrap";
 
 // project import
 import NavGroup from "./NavGroup";
+import ProfileWidget from "components/Widgets/ProfileWidget";
 import menuItems from "menu";
+
+// assets
+import logo from "assets/logo.png";
 
 // ==============================|| DRAWER CONTENT - NAVIGATION ||============================== //
 
@@ -13,15 +17,20 @@ const Navigation = () => {
   });
 
   return (
-    <Nav className="flex-column">
+    <Nav
+      className="flex-column"
+      defaultActiveKey="/"
+      onSelect={(selectedKey) => alert(`selected ${selectedKey}`)}
+    >
       <Container fluid>
-        <Row className="align-items-center pt-3">
-          <Col className="d-flex align-items-center justify-content-center">
-            <h3>Megoo</h3>
+        <Row className="d-flex align-items-center">
+          <Col className="d-flex align-items-center justify-content-center mt-3">
+            <Image src={logo} style={{ width: "60%", height: "auto" }} />
           </Col>
         </Row>
       </Container>
       {navGroups}
+      <ProfileWidget />
     </Nav>
   );
 };

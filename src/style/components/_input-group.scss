@@ -33,16 +33,8 @@
     }
   }
 }
-.btn-login {
-  &:hover {
-    border: $login-green;
-    background-color: $login-green;
-  }
-  border: $main;
-  background-color: $main;
-}
 .card-link {
-  color: black;
+  color: $black;
 }
 .input-group-text {
   color: $gray-700;

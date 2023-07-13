@@ -17,7 +17,6 @@ import {
   InputGroup,
   ProgressBar,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { strengthColor, strengthIndicator } from "utils/password-strength";
@@ -179,28 +178,26 @@ const ResetPassword = () => {
                           </Form.Control.Feedback>
                         </InputGroup>
                         {touched.password && (
-                          <Container>
-                            <Row className="justify-content-center">
-                              <Col
-                                className="align-items-center justify-content-center mt-2"
-                                sm={8}
-                              >
-                                <ProgressBar
-                                  now={level?.percentage}
-                                  variant={level?.color}
-                                  style={{ height: "8px" }}
-                                />
-                              </Col>
-                              <Col
-                                className="align-items-center justify-content-center"
-                                sm={4}
-                              >
-                                <small>
-                                  <b>{level?.label}</b>
-                                </small>
-                              </Col>
-                            </Row>
-                          </Container>
+                          <Row className="justify-content-center">
+                            <Col
+                              className="align-items-center justify-content-center mt-2"
+                              sm={8}
+                            >
+                              <ProgressBar
+                                now={level?.percentage}
+                                variant={level?.color}
+                                style={{ height: "8px" }}
+                              />
+                            </Col>
+                            <Col
+                              className="align-items-center justify-content-center"
+                              sm={4}
+                            >
+                              <small>
+                                <b>{level?.label}</b>
+                              </small>
+                            </Col>
+                          </Row>
                         )}
                       </Form.Group>
                       <Form.Group id="re_password" className="mb-4">

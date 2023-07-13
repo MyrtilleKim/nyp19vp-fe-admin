@@ -10,14 +10,14 @@ const icons = {
 
 const dashboard = {
   id: "group-dashboard",
-  title: "Overview",
+  title: "Tổng quan",
   type: "group",
   children: [
     {
       id: "dashboard",
       title: "Dashboard",
       type: "item",
-      url: "/dashboard",
+      url: "/",
       icon: icons.faChartPie,
       breadcrumbs: false,
     },

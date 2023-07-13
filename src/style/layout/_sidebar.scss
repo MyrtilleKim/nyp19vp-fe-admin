@@ -1,13 +1,18 @@
 .sidebar-item {
   z-index: 1201;
-  &:hover {
-    background-color: $main-200;
-  }
-  &:active,
+
+  &.active,
   &:focus {
     border-style: none solid none none;
-    border-width: 0.2rem;
-    border-color: $main;
+    border-width: 0.25rem;
+    border-color: $primary;
+    background-color: $primary-200;
+    .nav-link {
+      color: $primary;
+    }
+  }
+  &:hover {
+    background-color: $primary-200;
   }
   .nav-link {
     height: 3rem;
@@ -15,7 +20,7 @@
     &:hover,
     &:active,
     &:focus {
-      color: $main;
+      color: $primary;
     }
     .icon {
       transition: $transition-base;
@@ -23,8 +28,7 @@
   }
 }
 .sidebar-group {
-  z-index: 0;
-  .title {
+  &.title {
     color: $gray-600;
     height: 3rem;
     font-size: $font-size-sm;

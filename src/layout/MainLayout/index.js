@@ -3,13 +3,14 @@ import { Outlet } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 // material-ui
-import { Box, Toolbar, useMediaQuery, useTheme } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
+import { Box, useMediaQuery } from "@mui/material";
 
 // project import
 import Drawer from "./Drawer";
 import Header from "./Header";
-// import navigation from "menu";
-// import Breadcrumbs from "components/@extended/Breadcrumbs";
+// import navigation from 'menu-items';
+// import Breadcrumbs from 'components/@extended/Breadcrumbs';
 
 // types
 import { openDrawer } from "store/reducers/menu";
@@ -44,18 +45,19 @@ const MainLayout = () => {
   }, [drawerOpen]);
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <>
       <Header open={open} handleDrawerToggle={handleDrawerToggle} />
-      <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
-      <Box
-        component="main"
-        sx={{ width: "100%", flexGrow: 1, p: { xs: 2, sm: 3 } }}
-      >
-        <Toolbar />
-        {/* <Breadcrumbs navigation={navigation} title /> */}
-        <Outlet />
+      <Box sx={{ display: "flex", width: "100%" }}>
+        <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
+        <Box
+          component="main"
+          sx={{ width: "100%", flexGrow: 1, p: { xs: 2, sm: 3 } }}
+        >
+          {/* <Breadcrumbs navigation={navigation} title /> */}
+          <Outlet />
+        </Box>
       </Box>
-    </Box>
+    </>
   );
 };
 

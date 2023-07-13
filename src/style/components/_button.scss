@@ -1,0 +1,49 @@
+/*
+* = Buttons
+*/
+
+.btn {
+  transition: $transition-base-in-out;
+  &.btn-circle {
+    border-radius: $circle-radius;
+  }
+
+  &.btn-md {
+    padding: 0.65rem 1.25rem;
+  }
+
+  &.btn-xs {
+    padding: 0.175rem 0.45rem;
+    font-size: 0.7rem;
+  }
+  &.btn-primary {
+    color: $white;
+    &:hover,
+    &:focus {
+      color: $white;
+    }
+  }
+  &.btn-outline-primary {
+    &:hover {
+      color: $white;
+    }
+  }
+  &.btn-login {
+    transition: $transition-base-in-out;
+    &:active {
+      transform: scale(0.9);
+    }
+    &:hover,
+    &:focus {
+      border-color: $login-green;
+      background-color: $login-green !important;
+    }
+  }
+  &.btn-pressed {
+    box-shadow: 0 3px 1px $gray-500;
+    &:active {
+      transform: translateY(3px);
+      box-shadow: 0 0 1px $gray-500;
+    }
+  }
+}

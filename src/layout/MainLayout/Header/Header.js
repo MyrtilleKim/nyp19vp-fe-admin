@@ -63,7 +63,7 @@ const HeaderContent = (props) => {
   };
 
   return (
-    <Nav className="align-items-center">
+    <Nav className="align-items-center me-3">
       <Dropdown as={Nav.Item} onToggle={markNotificationsAsRead}>
         <Dropdown.Toggle
           as={Nav.Link}
@@ -76,10 +76,9 @@ const HeaderContent = (props) => {
             <h6 className="text-center">
               <Badge
                 pill
-                bg="danger"
-                className="position-absolute top-0 start-20 p-1 ps-2 unread-notifications"
+                className="position-absolute bg-primary top-0 start-40 p-1 unread-notifications"
               >
-                99+
+                <strong>99+</strong>
               </Badge>
             </h6>
             // <span className="icon-badge rounded-circle unread-notifications" />
@@ -113,7 +112,7 @@ const HeaderContent = (props) => {
               className="user-avatar md-avatar rounded-circle shadow"
             />
             <div className="media-body ms-2 text-dark align-items-center d-none d-lg-block">
-              <span className="mb-0 font-small fw-bold">Bonnie Green</span>
+              <span className="mb-0 font-small fw-bold">Night Owl</span>
             </div>
           </div>
         </Dropdown.Toggle>

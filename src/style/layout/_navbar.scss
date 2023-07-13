@@ -27,72 +27,76 @@
     transform: translateX(-80%);
   }
 }
-.navbar .navbar-nav {
-  .nav-link {
-    font-size: 1.2rem;
-    @include transitions(0.8s, $transition-base);
-  }
 
-  .nav-item {
-    .media:not(:last-child) {
-      margin-bottom: 1.5rem;
+.navbar {
+  background-color: white;
+  .navbar-nav {
+    .nav-link {
+      font-size: 1.2rem;
+      @include transitions(0.8s, $transition-base);
     }
-    &:focus,
-    .nav-link:focus {
-      outline: none !important;
-    }
-  }
 
-  .dropdown {
-    .dropdown-menu {
-      top: 100%;
-      span {
-        width: 30px;
+    .nav-item {
+      .media:not(:last-child) {
+        margin-bottom: 1.5rem;
+      }
+      &:focus,
+      .nav-link:focus {
+        outline: none !important;
       }
     }
 
-    .dropdown-item {
-      font-size: 0.875rem;
-    }
-  }
+    .dropdown {
+      .dropdown-menu {
+        top: 100%;
+        span {
+          width: 30px;
+        }
+      }
 
-  @include media-breakpoint-up(lg) {
-    .dropdown-menu {
-      .dropdown-toggle .nav-link-arrow {
-        @include transform(rotate(-90deg));
+      .dropdown-item {
+        font-size: 0.875rem;
       }
     }
 
-    .dropdown.show > .dropdown-toggle .nav-link-arrow {
-      @include transform(rotate(180deg));
-    }
+    @include media-breakpoint-up(lg) {
+      .dropdown-menu {
+        .dropdown-toggle .nav-link-arrow {
+          @include transform(rotate(-90deg));
+        }
+      }
 
-    .dropdown-toggle:hover .nav-link-arrow {
-      @include transform(rotate(0deg));
-    }
-  }
+      .dropdown.show > .dropdown-toggle .nav-link-arrow {
+        @include transform(rotate(180deg));
+      }
 
-  .dropdown-submenu {
-    position: relative;
-
-    .dropdown-menu {
-      top: 0;
-      left: calc(100% - 2px);
-      margin-left: 0.1rem;
-      margin-right: 0.1rem;
-      opacity: 0;
-      display: none;
-
-      &.show {
-        opacity: 1;
-        pointer-events: all;
-        display: block;
+      .dropdown-toggle:hover .nav-link-arrow {
+        @include transform(rotate(0deg));
       }
     }
-  }
 
-  .nav-link-arrow {
-    transition: $transition-transform;
+    .dropdown-submenu {
+      position: relative;
+
+      .dropdown-menu {
+        top: 0;
+        left: calc(100% - 2px);
+        margin-left: 0.1rem;
+        margin-right: 0.1rem;
+        opacity: 0;
+        display: none;
+
+        &.show {
+          opacity: 1;
+          pointer-events: all;
+          display: block;
+        }
+      }
+    }
+
+    .nav-link-arrow {
+      transition: $transition-transform;
+    }
   }
 }
 @include media-breakpoint-up(lg) {

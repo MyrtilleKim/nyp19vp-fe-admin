@@ -14,6 +14,20 @@ $gray-900: #4a5073;
 $dark: #262b40;
 $black: #2e3650;
 
+// fusv-disable
+$grays: (
+  "100": $gray-100,
+  "200": $gray-200,
+  "300": $gray-300,
+  "400": $gray-400,
+  "500": $gray-500,
+  "600": $gray-600,
+  "700": $gray-700,
+  "800": $gray-800,
+  "900": $gray-900,
+);
+// fusv-enable
+
 // Generic colors
 $blue: #0948b3;
 $indigo: #4c5680;
@@ -29,6 +43,25 @@ $teal: #1e90ff;
 $cyan: #63b1bd;
 $soft-indigo: #f5e8ff;
 $soft-green: #2ca58d;
+$login-green: #84bc72;
+
+// scss-docs-start colors-map
+$colors: (
+  "blue": $blue,
+  "indigo": $indigo,
+  "purple": $purple,
+  "pink": $pink,
+  "red": $red,
+  "orange": $orange,
+  "yellow": $yellow,
+  "green": $green,
+  "teal": $teal,
+  "cyan": $cyan,
+  "white": $white,
+  "gray": $gray-600,
+  "gray-dark": $gray-800,
+);
+// scss-docs-end colors-map
 
 $success: $green;
 $info: $blue;
@@ -41,18 +74,54 @@ $soft: $gray-200;
 $dark: $dark;
 
 // Color scheme
-$default: #262b40;
-$primary: #262b40;
-$secondary: #61dafb;
-$tertiary: #1b998b;
-$quaternary: #c96480;
-
-//main color
-$main: #f58f00;
-$login-green: #84bc72;
+$primary: #f58f00;
+$secondary: #4c5680;
+$tertiary: #ff8886;
+$quaternary: #006e5f;
+$quinary: $gray-600;
 
 // tint of main color
-$main-200: #fff6e9;
+$primary-200: #fff6e9;
+$primary-400: #fcddb3;
+
+// Theme colors
+$theme-colors: ();
+$theme-colors: map-merge(
+  (
+    "primary": $primary,
+    "secondary": $secondary,
+    "tertiary": $tertiary,
+    "quaternary": $quaternary,
+    "quinary": $quinary,
+    "light": $light,
+    "lighten": $lighten,
+    "success": $success,
+    "info": $info,
+    "warning": $warning,
+    "danger": $danger,
+    "white": $white,
+    "gray": $gray,
+    "indigo": $indigo,
+    "dark": $dark,
+    "soft": $soft,
+    "black": $black,
+    "blue": $blue,
+    "pink": $pink,
+    "cyan": $cyan,
+    "purple": $purple,
+    "soft-indigo": $soft-indigo,
+    "soft-green": $soft-green,
+    "gray-100": $gray-100,
+    "gray-200": $gray-200,
+    "gray-300": $gray-300,
+    "gray-400": $gray-400,
+    "gray-500": $gray-500,
+    "gray-600": $gray-600,
+    "gray-700": $gray-700,
+    "gray-800": $gray-800,
+  ),
+  $theme-colors
+);
 
 // Spacing
 $spacer: 1rem;
@@ -100,6 +169,13 @@ $spacers: (
 
 $drawerWidth: 260px;
 
+$position-values: (
+  0: 0,
+  40: 40%,
+  50: 50%,
+  100: 100%,
+);
+
 /* Avatars */
 $avatar-sm-y: 1.5rem;
 $avatar-sm-x: 1.5rem;
@@ -122,8 +198,8 @@ $user-avatar-width-lg: 3.5rem;
 $user-avatar-height-xl: 4.5rem;
 $user-avatar-width-xl: 4.5rem;
 
-$user-avatar-height-xxl: 10rem;
-$user-avatar-width-xxl: 10rem;
+$user-avatar-height-xxl: 8rem;
+$user-avatar-width-xxl: 8rem;
 
 /* stylelint-disable value-keyword-case */
 $font-family-sans-serif: "Nunito Sans", sans-serif;
@@ -236,6 +312,7 @@ $grid-breakpoints: (
 
 $transition-base: all 0.2s ease;
 $transition-transform: transform 0.2s ease;
+$transition-base-in-out: transform 0.2s ease-in-out;
 $transition-fade: opacity 0.15s linear;
 $transition-collapse: height 0.35s ease;
 $transition-tabs: all 0.2s;

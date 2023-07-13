@@ -12,12 +12,12 @@ const icons = { faUserGroup, faBoxes, faUsers };
 
 const management = {
   id: "group-management",
-  title: "Management",
+  title: "Quản lý",
   type: "group",
   children: [
     {
       id: "userMgmt",
-      title: "User",
+      title: "Người dùng",
       type: "item",
       url: "/users",
       icon: icons.faUserGroup,
@@ -25,7 +25,7 @@ const management = {
     },
     {
       id: "packageMgmt",
-      title: "Package",
+      title: "Gói dịch vụ",
       type: "item",
       url: "/packages",
       icon: icons.faBoxes,
@@ -33,7 +33,7 @@ const management = {
     },
     {
       id: "groupMgmt",
-      title: "Group",
+      title: "Nhóm",
       type: "item",
       url: "/groups",
       icon: icons.faUsers,

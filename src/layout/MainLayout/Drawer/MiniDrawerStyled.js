@@ -1,5 +1,5 @@
 // material-ui
-import { styled } from "@mui/material/styles";
+import { styled, alpha } from "@mui/material/styles";
 import Drawer from "@mui/material/Drawer";
 
 // project import
@@ -24,7 +24,7 @@ const closedMixin = (theme) => ({
   overflowX: "hidden",
   width: 0,
   borderRight: "none",
-  // boxShadow: theme.customShadows.z1,
+  boxShadow: `0px 2px 8px ${alpha(theme.palette.grey[900], 0.15)}`,
 });
 
 // ==============================|| DRAWER - MINI STYLED ||============================== //

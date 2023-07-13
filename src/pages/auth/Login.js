@@ -1,12 +1,11 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faAngleLeft,
-  faEnvelope,
-  faUnlockAlt,
-  faEye,
-  faEyeSlash,
-} from "@fortawesome/free-solid-svg-icons";
+import { Link } from "react-router-dom";
+
+// project
+import LoginRoutes from "routes/LoginRoutes";
+import MainRoutes from "routes/MainRoutes";
+
+// bootstrap
 import {
   Col,
   Row,
@@ -17,12 +16,21 @@ import {
   Container,
   InputGroup,
 } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import BgImage from "../../assets/login.jpg";
+
+// third-party
 import { Formik } from "formik";
 import * as Yup from "yup";
-import LoginRoutes from "routes/LoginRoutes";
-import MainRoutes from "routes/MainRoutes";
+
+// assets
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faAngleLeft,
+  faEnvelope,
+  faUnlockAlt,
+  faEye,
+  faEyeSlash,
+} from "@fortawesome/free-solid-svg-icons";
+import BgImage from "../../assets/login.jpg";
 
 const Login = () => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -172,13 +180,16 @@ const Login = () => {
                           </Card.Link>
                         </div>
                       </Form.Group>
-                      <Button
-                        disabled={isSubmitting}
-                        type="submit"
-                        className="w-100 btn btn-login"
-                      >
-                        Đăng nhập
-                      </Button>
+                      <div className="d-grid gap-auto">
+                        <Button
+                          variant="primary"
+                          disabled={isSubmitting}
+                          type="submit"
+                          className="btn btn-primary btn-login"
+                        >
+                          Đăng nhập
+                        </Button>
+                      </div>
                     </Form>
                   )}
                 </Formik>

@@ -6,7 +6,7 @@ import { useTheme } from "@mui/material/styles";
 import { Box, Drawer, useMediaQuery } from "@mui/material";
 
 // project import
-import DrawerContent from "./Navigation";
+import Navigation from "./Navigation";
 import MiniDrawerStyled from "./MiniDrawerStyled";
 const drawerWidth = 260;
 
@@ -21,7 +21,7 @@ const MainDrawer = ({ open, handleDrawerToggle, window }) => {
     window !== undefined ? () => window().document.body : undefined;
 
   // header content
-  const drawerContent = useMemo(() => <DrawerContent />, []);
+  const drawerContent = useMemo(() => <Navigation />, []);
 
   return (
     <Box

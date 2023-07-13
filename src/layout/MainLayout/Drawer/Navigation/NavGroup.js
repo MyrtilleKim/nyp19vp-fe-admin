@@ -1,9 +1,6 @@
 import PropTypes from "prop-types";
 import { useSelector } from "react-redux";
 
-// bootstrap
-import { Container } from "react-bootstrap";
-
 // project import
 import NavItem from "./NavItem";
 
@@ -21,7 +18,9 @@ const NavGroup = ({ item }) => {
   return (
     <>
       {item.title && drawerOpen && (
-        <div className="title align-items-center row ps-4">{item.title}</div>
+        <div className="sidebar-group title align-items-center row ps-4">
+          {item.title}
+        </div>
       )}
       {navItems}
     </>

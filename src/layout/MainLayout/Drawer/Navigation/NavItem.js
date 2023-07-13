@@ -19,6 +19,20 @@ const NavItem = ({ item }) => {
   const { pathname } = useLocation();
   const { drawerOpen, openItem } = useSelector((state) => state.menu);
 
+  let itemTarget = "_self";
+  if (item.target) {
+    itemTarget = "_blank";
+  }
+
+  let listItemProps = {
+    component: forwardRef((props, ref) => (
+      <Link ref={ref} {...props} to={item.url} target={itemTarget} />
+    )),
+  };
+  if (item?.external) {
+    listItemProps = { component: "a", href: item.url, target: itemTarget };
+  }
+
   const itemHandler = (id) => {
     dispatch(activeItem({ openItem: [id] }));
   };
@@ -35,14 +49,15 @@ const NavItem = ({ item }) => {
   }, [pathname]);
 
   const IconStyle = !drawerOpen ? { fontSize: "18px" } : null;
+  const navItemClassName = isSelected ? "sidebar-item active" : "sidebar-item";
 
   return (
-    <Nav.Item className="sidebar-item">
+    <Nav.Item className={navItemClassName}>
       <Nav.Link
+        {...listItemProps}
         disabled={item.disabled}
-        href={item.url}
         onClick={() => itemHandler(item.id)}
-        active={isSelected}
+        target={itemTarget}
         className="d-flex justify-content-center align-items-center"
       >
         <Container>
