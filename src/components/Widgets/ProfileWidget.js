@@ -15,7 +15,7 @@ const ProfileWidget = () => {
         <Card.Img
           src={Profile3}
           alt="Night Owl"
-          className="user-avatar large-avatar mx-auto mt-n6 mb-2"
+          className="mt-n6 mx-auto mb-2 user-avatar large-avatar rounded-circle"
         />
         <Card.Title>Night Owl</Card.Title>
         <Card.Subtitle className="fw-normal">Admin</Card.Subtitle>

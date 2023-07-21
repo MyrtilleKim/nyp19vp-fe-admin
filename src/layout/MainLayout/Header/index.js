@@ -18,8 +18,8 @@ const Header = ({ open, handleDrawerToggle }) => {
   const [isOpen, setIsOpen] = useState();
   const handleOpen = (check) => {
     !check
-      ? setIsOpen("ps-0 pe-2 pb-0 shadow-sm")
-      : setIsOpen("ps-0 pe-2 pb-0 shadow-sm open");
+      ? setIsOpen("ps-0 pe-2 py-0 shadow-sm")
+      : setIsOpen("ps-0 pe-2 py-0 shadow-sm open");
   };
 
   useEffect(() => {

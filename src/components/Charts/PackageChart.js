@@ -24,7 +24,7 @@ const pieChartOptions = {
   plotOptions: {
     pie: {
       donut: {
-        size: 50,
+        size: 60,
         labels: {
           show: true,
           total: {
@@ -40,7 +40,7 @@ const pieChartOptions = {
 
 const PackageChart = ({ slot }) => {
   const [options, setOptions] = useState(pieChartOptions);
-  const [height, setHeight] = useState("400px");
+  const [height, setHeight] = useState("350px");
 
   const theme = useTheme();
   const matchDownLg = useMediaQuery(theme.breakpoints.down("lg"));

@@ -1,0 +1,12 @@
+.form-control {
+  border-color: $gray-600;
+}
+.form-select {
+  border: solid 1px $gray-600;
+  width: fit-content;
+  // &.table-filter {
+  //   @include media-breakpoint-down(sm) {
+  //     display: none;
+  //   }
+  // }
+}

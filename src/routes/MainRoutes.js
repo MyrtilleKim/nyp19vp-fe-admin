@@ -1,20 +1,15 @@
-import { lazy } from "react";
+import React, { lazy } from "react";
 
 // project import
 import Loadable from "components/Loadable";
 import MainLayout from "layout/MainLayout";
-import React from "react";
 
 // render - dashboard
-const Dashboard = Loadable(lazy(() => import("../pages/dashboard")));
-// // render - sample page
-// const SamplePage = Loadable(lazy(() => import('pages/extra-pages/SamplePage')));
+const Dashboard = Loadable(lazy(() => import("pages/dashboard")));
 
-// // render - utilities
-// const Typography = Loadable(lazy(() => import('pages/components-overview/Typography')));
-// const Color = Loadable(lazy(() => import('pages/components-overview/Color')));
-// const Shadow = Loadable(lazy(() => import('pages/components-overview/Shadow')));
-// const AntIcons = Loadable(lazy(() => import('pages/components-overview/AntIcons')));
+// render - utilities
+const Users = Loadable(lazy(() => import("pages/management/user-mgmt")));
+const UserDetail = Loadable(lazy(() => import("pages/profile")));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -26,35 +21,11 @@ const MainRoutes = {
       path: "/",
       element: <Dashboard />,
     },
-    //   {
-    //     path: 'color',
-    //     element: <Color />
-    //   },
-    //   {
-    //     path: 'dashboard',
-    //     children: [
-    //       {
-    //         path: 'default',
-    //         element: <DashboardDefault />
-    //       }
-    //     ]
-    //   },
-    //   {
-    //     path: 'sample-page',
-    //     element: <SamplePage />
-    //   },
-    //   {
-    //     path: 'shadow',
-    //     element: <Shadow />
-    //   },
-    //   {
-    //     path: 'typography',
-    //     element: <Typography />
-    //   },
-    //   {
-    //     path: 'icons/ant',
-    //     element: <AntIcons />
-    //   }
+    {
+      path: "users",
+      element: <Users />,
+    },
+    { path: "users/:id", element: <UserDetail /> },
   ],
 };
 

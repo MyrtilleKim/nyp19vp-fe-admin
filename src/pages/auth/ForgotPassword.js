@@ -38,9 +38,9 @@ const ForgotPassword = () => {
                   }}
                   validationSchema={Yup.object().shape({
                     email: Yup.string()
-                      .email("Must be a valid email")
+                      .email("Email không hợp lệ")
                       .max(255)
-                      .required("Email is required"),
+                      .required("Bắt buộc"),
                   })}
                   onSubmit={async (
                     values,

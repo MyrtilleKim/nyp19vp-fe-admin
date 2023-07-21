@@ -19,8 +19,8 @@ const Navigation = () => {
   return (
     <Nav
       className="flex-column"
-      defaultActiveKey="/"
-      onSelect={(selectedKey) => alert(`selected ${selectedKey}`)}
+      activeKey="/"
+      // onSelect={(selectedKey) => alert(`selected ${selectedKey}`)}
     >
       <Container fluid>
         <Row className="d-flex align-items-center">

@@ -40,7 +40,6 @@ const RevenueChart = ({ slot }) => {
   const [height, setHeight] = useState("300px");
   useEffect(() => {
     setHeight(matchUpXl ? "600px" : "300px");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matchUpXl]);
   useEffect(() => {
     setOptions((prevState) => ({
@@ -102,7 +101,7 @@ const RevenueChart = ({ slot }) => {
         theme: "light",
       },
     }));
-  }, [ColorPalette, line, slot]);
+  }, [slot]);
 
   const [series, setSeries] = useState([
     {

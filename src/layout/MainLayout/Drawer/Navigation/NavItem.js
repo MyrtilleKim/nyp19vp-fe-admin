@@ -20,9 +20,9 @@ const NavItem = ({ item }) => {
   const { drawerOpen, openItem } = useSelector((state) => state.menu);
 
   let itemTarget = "_self";
-  if (item.target) {
-    itemTarget = "_blank";
-  }
+  // if (item.target) {
+  //   itemTarget = "_blank";
+  // }
 
   let listItemProps = {
     component: forwardRef((props, ref) => (
@@ -52,13 +52,15 @@ const NavItem = ({ item }) => {
   const navItemClassName = isSelected ? "sidebar-item active" : "sidebar-item";
 
   return (
-    <Nav.Item className={navItemClassName}>
+    <Nav.Item className={navItemClassName} href={item.url}>
       <Nav.Link
-        {...listItemProps}
         disabled={item.disabled}
         onClick={() => itemHandler(item.id)}
         target={itemTarget}
         className="d-flex justify-content-center align-items-center"
+        active={isSelected}
+        eventKey={item.url}
+        as={listItemProps.component}
       >
         <Container>
           <Row className="align-items-start">

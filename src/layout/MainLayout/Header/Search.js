@@ -7,15 +7,26 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
 // ==============================|| HEADER CONTENT - SEARCH ||============================== //
 
+const InputGroupTxtStyle = {
+  color: "#66799e",
+  borderColor: "#93a5be",
+  fontSize: "0.875rem",
+  borderRight: 0,
+};
+
 const Search = () => (
   <div className="d-flex align-items-center">
-    <Form className="navbar-search">
+    <Form>
       <Form.Group id="topbarSearch">
-        <InputGroup className="input-group-merge search-bar">
-          <InputGroup.Text>
+        <InputGroup className="my-auto">
+          <InputGroup.Text style={InputGroupTxtStyle}>
             <FontAwesomeIcon icon={faSearch} />
           </InputGroup.Text>
-          <Form.Control type="text" placeholder="Search" />
+          <Form.Control
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+          />
         </InputGroup>
       </Form.Group>
     </Form>

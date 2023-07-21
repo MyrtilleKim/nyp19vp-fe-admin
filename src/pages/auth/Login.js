@@ -15,6 +15,7 @@ import {
   FormCheck,
   Container,
   InputGroup,
+  Image,
 } from "react-bootstrap";
 
 // third-party
@@ -30,7 +31,8 @@ import {
   faEye,
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
-import BgImage from "../../assets/login.jpg";
+import BgImage from "assets/login.jpg";
+import logo from "assets/logo.png";
 
 const Login = () => {
   const [showPassword, setShowPassword] = React.useState(false);
@@ -58,18 +60,16 @@ const Login = () => {
                 className="bg-white shadow border rounded border-light p-4 pb-3 p-lg-5 pb-lg-4 w-100"
                 style={{ maxWidth: 500 }}
               >
-                <div className="text-center text-md-center mb-4 mt-md-0">
-                  <h3 className="mb-0">MEGOO</h3>
+                <div className="text-center text-md-center mb-0 mt-md-0">
+                  <Image src={logo} style={{ width: "60%", height: "auto" }} />
                 </div>
                 <Formik
                   validationSchema={Yup.object().shape({
                     email: Yup.string()
-                      .email("Must be a valid email")
+                      .email("Email không hợp lệ")
                       .max(255)
-                      .required("Email is required"),
-                    password: Yup.string()
-                      .max(255)
-                      .required("Password is required"),
+                      .required("Bắt buộc"),
+                    password: Yup.string().max(255).required("Bắt buộc"),
                   })}
                   initialValues={{
                     email: "admin@gmail.com",

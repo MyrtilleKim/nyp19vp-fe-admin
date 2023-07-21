@@ -3,9 +3,15 @@
 */
 
 .btn {
-  transition: $transition-base-in-out;
+  transition: $transition-transform;
+  &.btn-table-options {
+    border-style: none;
+    background-color: inherit;
+    font-size: larger;
+    color: $black;
+  }
   &.btn-circle {
-    border-radius: $circle-radius;
+    border-radius: 50%;
   }
 
   &.btn-md {
@@ -17,26 +23,48 @@
     font-size: 0.7rem;
   }
   &.btn-primary {
-    color: $white;
-    &:hover,
-    &:focus {
-      color: $white;
-    }
+    @include button-variant(
+      $primary,
+      $primary,
+      $white,
+      lighten($primary, 5%),
+      lighten($primary, 5%),
+      $white,
+      $primary,
+      $primary,
+      $white,
+      darken($primary, 5%),
+      darken($primary, 5%),
+      $white
+    );
   }
   &.btn-outline-primary {
-    &:hover {
-      color: $white;
-    }
+    @include button-outline-variant(
+      $primary,
+      $white,
+      $primary,
+      $primary,
+      $white
+    );
   }
   &.btn-login {
-    transition: $transition-base-in-out;
+    @include button-variant(
+      $primary,
+      $primary,
+      $white,
+      $soft-green,
+      $soft-green,
+      $white,
+      $soft-green,
+      $soft-green,
+      $white,
+      darken($primary, 5%),
+      darken($primary, 5%),
+      $white
+    );
+    transition: $transition-transform;
     &:active {
       transform: scale(0.9);
-    }
-    &:hover,
-    &:focus {
-      border-color: $login-green;
-      background-color: $login-green !important;
     }
   }
   &.btn-pressed {

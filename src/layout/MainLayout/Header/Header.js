@@ -69,19 +69,19 @@ const HeaderContent = (props) => {
           as={Nav.Link}
           className="text-dark icon-notifications me-lg-3"
         >
-          <span className="icon icon-sm">
-            <FontAwesomeIcon icon={faBell} className="bell-shake" />
+          <span className="icon icon-sm mt-2">
+            <FontAwesomeIcon icon={faBell} shake={!areNotificationsRead} />
           </span>
           {areNotificationsRead ? null : (
             <h6 className="text-center">
               <Badge
+                bg="primary"
                 pill
-                className="position-absolute bg-primary top-0 start-40 p-1 unread-notifications"
+                className="position-absolute top-10 start-40 p-1 unread-notifications"
               >
                 <strong>99+</strong>
               </Badge>
             </h6>
-            // <span className="icon-badge rounded-circle unread-notifications" />
           )}
         </Dropdown.Toggle>
         <Dropdown.Menu className="dashboard-dropdown notifications-dropdown shadow rounded-3 dropdown-menu-lg  mt-2 py-0 ">

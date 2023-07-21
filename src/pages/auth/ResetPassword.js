@@ -85,15 +85,11 @@ const ResetPassword = () => {
                   }}
                   validationSchema={Yup.object().shape({
                     email: Yup.string()
-                      .email("Must be a valid email")
+                      .email("Email không hợp lệ")
                       .max(255)
-                      .required("Email is required"),
-                    password: Yup.string()
-                      .max(255)
-                      .required("Password is required"),
-                    re_password: Yup.string()
-                      .max(255)
-                      .required("Re-password is required"),
+                      .required("Bắt buộc"),
+                    password: Yup.string().max(255).required("Bắt buộc"),
+                    re_password: Yup.string().max(255).required("Bắt buộc"),
                   })}
                   onSubmit={async (
                     values,

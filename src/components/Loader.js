@@ -1,26 +1,18 @@
 import React from "react";
 
-// material-ui
-import { LinearProgress, styled } from "@mui/material";
-
-// loader style
-const LoaderWrapper = styled("div")(({ theme }) => ({
-  position: "fixed",
-  top: 0,
-  left: 0,
-  zIndex: 2001,
-  width: "100%",
-  "& > * + *": {
-    marginTop: theme.spacing(2),
-  },
-}));
+// bootstrap
+import { Spinner } from "react-bootstrap";
 
 // ==============================|| Loader ||============================== //
 
 const Loader = () => (
-  <LoaderWrapper>
-    <LinearProgress color="primary" />
-  </LoaderWrapper>
+  <div className="position-relative" style={{ zIndex: 2001 }}>
+    <Spinner
+      className="position-absolute top-50 start-50 translate-middle"
+      animation="border"
+      variant="primary"
+    />
+  </div>
 );
 
 export default Loader;
