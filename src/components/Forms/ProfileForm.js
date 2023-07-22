@@ -1,164 +1,273 @@
-import React, { forwardRef, useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import _ from "lodash";
 
-import moment from "moment-timezone";
-import Datetime from "react-datetime";
+// third party
+import * as Yup from "yup";
+import { Formik } from "formik";
+import { HttpStatusCode } from "axios";
 
 // bootstrap
-import {
-  Col,
-  Row,
-  Card,
-  Form,
-  Button,
-  InputGroup,
-  Image,
-} from "react-bootstrap";
+import { Col, Row, Card, Form, Button } from "react-bootstrap";
 
 // assets
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarAlt, faCameraAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEnvelope,
+  faAddressCard,
+  faPhoneAlt,
+} from "@fortawesome/free-solid-svg-icons";
 
-const ProfileForm = forwardRef((props, ref) => {
+import { SampleGroupForm, DateGroupForm } from "./GroupForm";
+import AvatarForm from "./AvatarForm";
+import Alerts from "components/Alerts";
+import Modals from "components/Modal";
+import { updateInfoUser } from "store/requests/user";
+import { createAxios } from "http/createInstance";
+import { loginSuccess } from "store/reducers/auth";
+
+const ProfileForm = (props) => {
   const { userInfo } = props;
-  const [birthday, setBirthday] = useState("");
-  const [avatar, setAvatar] = useState(userInfo.avatar);
-  const inputRef = useRef(null);
-
-  const handleClick = () => {
-    inputRef.current.click();
+  const dispatch = useDispatch();
+  const { currentUser } = useSelector((state) => state?.auth.login);
+  let axiosJWT = createAxios(currentUser, dispatch, loginSuccess);
+  const [showAlert, setShowAlert] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [content, setContent] = useState("");
+  const [title, setTitle] = useState("");
+  const [classes, setClasses] = useState({
+    alertVariant: "danger",
+    alertClass: "fixed-top mx-auto",
+  });
+  const [values, setValues] = useState(null);
+  const [initValues, setInitValues] = useState({
+    name: userInfo.name,
+    dob: userInfo.dob,
+    phone: userInfo.phone,
+    email: userInfo.email,
+    submit: null,
+  });
+  useEffect(() => {
+    setInitValues({
+      name: userInfo.name,
+      dob: userInfo.dob,
+      phone: userInfo.phone,
+      email: userInfo.email,
+      submit: null,
+    });
+  }, [userInfo]);
+  const handleAlert = (title, content, variant) => {
+    setTitle(title);
+    setContent(content);
+    setClasses({
+      alertVariant: variant,
+      alertClass: "fixed-top mx-auto",
+    });
   };
-  const handleFileChange = (event) => {
-    const fileObj = event.target.files && event.target.files[0];
-    if (!fileObj) {
-      return;
+  const handleConfirm = async () => {
+    setShowModal(false);
+    let formData = { name: values.name };
+    if (values.phone) formData.phone = values.phone;
+    if (values.dob) formData.dob = values.dob;
+    console.log(formData, values.dob);
+    const res = await updateInfoUser(
+      userInfo._id,
+      currentUser?.accessToken,
+      formData,
+      dispatch,
+      axiosJWT
+    );
+    if (res.statusCode === HttpStatusCode.Ok) {
+      setContent("Cập nhật thông tin cá nhân thành công");
+      setTitle("Thành công");
+      setClasses({
+        alertVariant: "success",
+        alertClass: "fixed-top mx-auto",
+      });
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 1000);
+    } else {
+      setContent(res.message);
+      setTitle("Lỗi");
+      setShowAlert(true);
+      setTimeout(() => {
+        setShowAlert(false);
+      }, 1000);
     }
-
-    console.log("fileObj is", fileObj);
-
-    setAvatar(URL.createObjectURL(event.target.files[0]));
-
-    // 👇️ reset file input
-    event.target.value = null;
-
-    // 👇️ is now empty
-    console.log(event.target.files);
   };
+  const handleClose = () => {
+    setShowAlert(false);
+    setShowModal(false);
+  };
+  const phoneRegExp = /(\+84|84|0)+([3|5|7|8|9])+([0-9]{8})\b/;
   return (
-    <Card ref={ref} border="light" className="bg-white shadow-sm mb-4">
-      <Card.Body>
-        <h5 className="mb-4">
-          <b>Thông tin cá nhân</b>
-        </h5>
-        <Row className="justify-content-center align-items-start">
-          <Col xs={12} sm={5} md={4}>
-            <div
-              style={{ height: "auto", width: "200px" }}
-              className="position-relative mx-auto"
-            >
-              <Image
-                src={avatar}
-                className="user-avatar profile-avatar mx-auto"
-                thumbnail
-              />
-              <input
-                type="file"
-                style={{ display: "none" }}
-                ref={inputRef}
-                onChange={handleFileChange}
-              />
-              <Button
-                className="position-absolute bottom-10 end-10 rounded-circle text-center"
-                onClick={handleClick}
-                variant="light"
-                style={{
-                  height: "30px",
-                  width: "30px",
-                  padding: "0 1px 0 1px",
+    <>
+      <Modals
+        title="Xác nhận"
+        show={showModal}
+        handleClose={handleClose}
+        handleConfirm={handleConfirm}
+      >
+        <h6>{content}</h6>
+      </Modals>
+      <Alerts
+        show={showAlert}
+        handleClose={handleClose}
+        title={title}
+        classes={classes}
+      >
+        {content}
+      </Alerts>
+
+      <Row className="justify-content-center align-items-start">
+        <Col xs={12} xl={4}>
+          <AvatarForm
+            user={userInfo}
+            handleAlert={handleAlert}
+            currentUser={currentUser}
+            dispatch={dispatch}
+            axiosJWT={axiosJWT}
+          />
+        </Col>
+        <Col xs={12} xl={8}>
+          <Card border="light" className="bg-white shadow-sm mb-4">
+            <Card.Body>
+              <h5 className="mb-4">
+                <b>Thông tin cá nhân</b>
+              </h5>
+              <Formik
+                validationSchema={Yup.object().shape({
+                  name: Yup.string().max(255).required("Bắt buộc"),
+                  phone: Yup.string().matches(
+                    phoneRegExp,
+                    "Số điện thoại không hợp lệ"
+                  ),
+                })}
+                initialValues={initValues}
+                enableReinitialize
+                onSubmit={async (
+                  values,
+                  { setErrors, setStatus, setSubmitting }
+                ) => {
+                  try {
+                    setStatus({ success: false });
+                    setSubmitting(false);
+                    if (!_.isEqual(values, initValues)) {
+                      setValues(values);
+                      setContent("Bạn muốn cập nhật thông tin?");
+                      setShowModal(true);
+                    } else {
+                      setContent("Không có gì thay đổi");
+                      setTitle("Thông báo");
+                      setClasses({
+                        alertVariant: "info",
+                        alertClass: "fixed-top mx-auto",
+                      });
+                      setShowAlert(true);
+                      setTimeout(() => {
+                        handleClose();
+                      }, 1000);
+                    }
+                  } catch (err) {
+                    setStatus({ success: false });
+                    setErrors({ submit: err.message });
+                    setSubmitting(false);
+                  }
                 }}
               >
-                <FontAwesomeIcon icon={faCameraAlt} />
-              </Button>
-            </div>
-          </Col>
-          <Col xs={12} sm={7} md={8}>
-            <Form>
-              <Row>
-                <Col md={6} className="mb-3">
-                  <Form.Group id="name">
-                    <Form.Label>Họ & Tên</Form.Label>
-                    <Form.Control
-                      required
-                      type="text"
-                      placeholder="Nhập Họ & Tên"
-                      defaultValue={userInfo.name}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6} className="mb-3">
-                  <Form.Group id="birthday">
-                    <Form.Label>Ngày sinh</Form.Label>
-                    <Datetime
-                      timeFormat={false}
-                      onChange={setBirthday}
-                      renderInput={(props, openCalendar) => (
-                        <InputGroup>
-                          <InputGroup.Text>
-                            <FontAwesomeIcon icon={faCalendarAlt} />
-                          </InputGroup.Text>
-                          <Form.Control
-                            type="text"
-                            value={
-                              birthday
-                                ? moment(birthday).format("DD/MM/YYYY")
-                                : ""
-                            }
-                            defaultValue={userInfo.dob}
-                            placeholder="dd/mm/yyyy"
-                            onFocus={openCalendar}
-                            onChange={() => {}}
-                          />
-                        </InputGroup>
-                      )}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-              <Row>
-                <Col md={6} className="mb-3">
-                  <Form.Group id="emal">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      required
-                      type="email"
-                      placeholder="name@company.com"
-                      defaultValue={userInfo.email}
-                      readOnly
-                    />
-                  </Form.Group>
-                </Col>
-                <Col md={6} className="mb-3">
-                  <Form.Group id="phone">
-                    <Form.Label>Số điện thoại</Form.Label>
-                    <Form.Control
-                      type="phone"
-                      placeholder="0000 000 000"
-                      defaultValue={userInfo.phone}
-                    />
-                  </Form.Group>
-                </Col>
-              </Row>
-
-              <div className="mt-3">
-                <Button variant="primary" type="submit">
-                  Xác nhận
-                </Button>
-              </div>
-            </Form>
-          </Col>
-        </Row>
-      </Card.Body>
-    </Card>
+                {({
+                  errors,
+                  handleBlur,
+                  handleChange,
+                  handleSubmit,
+                  isSubmitting,
+                  touched,
+                  values,
+                }) => (
+                  <Form noValidate onSubmit={handleSubmit}>
+                    <Row>
+                      <Col md={6} className="mb-3">
+                        <SampleGroupForm
+                          title="Họ & Tên"
+                          icon={faAddressCard}
+                          name="name"
+                          type="text"
+                          placeholder="Nhập Họ & Tên"
+                          classes={{ formControl: "input-out-button-group" }}
+                          required={true}
+                          handleBlur={handleBlur}
+                          handleChange={handleChange}
+                          touched={touched}
+                          errors={errors}
+                          values={values}
+                        />
+                      </Col>
+                      <Col md={6} className="mb-3">
+                        <DateGroupForm
+                          title="Ngày sinh"
+                          name="birthday"
+                          handleBlur={handleBlur}
+                          handleChange={handleChange}
+                          touched={touched}
+                          errors={errors}
+                          values={values}
+                        />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={6} className="mb-3">
+                        <SampleGroupForm
+                          title="Email"
+                          icon={faEnvelope}
+                          name="email"
+                          type="email"
+                          classes={{ formControl: "input-out-button-group" }}
+                          placeholder="Nhập Email"
+                          required={true}
+                          readOnly={true}
+                          handleBlur={handleBlur}
+                          handleChange={handleChange}
+                          touched={touched}
+                          errors={errors}
+                          values={values}
+                        />
+                      </Col>
+                      <Col md={6} className="mb-3">
+                        <SampleGroupForm
+                          title="Số điện thoại"
+                          icon={faPhoneAlt}
+                          name="phone"
+                          type="text"
+                          required={false}
+                          classes={{ formControl: "input-out-button-group" }}
+                          placeholder="Nhập số điện thoại"
+                          handleBlur={handleBlur}
+                          handleChange={handleChange}
+                          touched={touched}
+                          errors={errors}
+                          values={values}
+                        />
+                      </Col>
+                    </Row>
+                    <div className="mt-3 text-end">
+                      <Button
+                        variant="primary"
+                        disabled={isSubmitting}
+                        type="submit"
+                      >
+                        Xác nhận
+                      </Button>
+                    </div>
+                  </Form>
+                )}
+              </Formik>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </>
   );
-});
+};
 
 export default ProfileForm;

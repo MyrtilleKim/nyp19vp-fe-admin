@@ -3,15 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 // bootstrap
-import {
-  Image,
-  Badge,
-  Dropdown,
-  ListGroup,
-  Button,
-  Form,
-  InputGroup,
-} from "react-bootstrap";
+import { Image, Badge, Dropdown, ListGroup, Button } from "react-bootstrap";
 
 // assets
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,39 +12,29 @@ import {
   faLock,
   faTrash,
   faPlus,
-  faEye,
-  faEyeSlash,
-  faEnvelope,
-  faUnlockAlt,
   faAddressCard,
-  faCalendarAlt,
+  faEnvelope,
   faPhoneAlt,
 } from "@fortawesome/free-solid-svg-icons";
 
 // data
-import { getInformationUser } from "store/reducers/userReq";
+import { getAllUsers } from "store/requests/user";
 
 // project import
 import Modals from "components/Modal";
 import SampleTable from "./SampleTable";
+import ModalForm from "components/Forms/ModalForm";
 
-// third-party
-import { Formik } from "formik";
+// third party
 import * as Yup from "yup";
-import moment from "moment-timezone";
-import Datetime from "react-datetime";
 
 const UserTable = () => {
   const [delAction, setDelAction] = useState(false);
   const [lockAction, setLockAction] = useState(false);
   const [addAction, setAddAction] = useState(false);
   const [selected, setSelected] = useState();
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [birthday, setBirthday] = useState("");
-  const phoneRegExp = /(84|0[3|5|7|8|9])+([0-9]{8})\b/;
+  const phoneRegExp = /(\+84|84|0)+([3|5|7|8|9])+([0-9]{8})\b/;
 
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
-  const handleMouseDownPassword = (event) => event.preventDefault();
   const handleClose = () => {
     setDelAction(false);
     setLockAction(false);
@@ -70,14 +52,78 @@ const UserTable = () => {
 
   let navigate = useNavigate();
   function onRowClick(data) {
-    console.log(`You clicked on the row ${data.username} ${data.score}`);
     navigate(`/users/${data._id}`);
   }
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.user);
   useEffect(() => {
-    getInformationUser(dispatch);
+    getAllUsers(dispatch);
   }, [dispatch]);
+
+  const schema = Yup.object().shape({
+    name: Yup.string().max(255).required("Bắt buộc"),
+    email: Yup.string()
+      .email("Email không hợp lệ")
+      .max(255)
+      .required("Bắt buộc"),
+    phone: Yup.string().matches(phoneRegExp, "Số điện thoại không hợp lệ"),
+    password: Yup.string().max(255).required("Bắt buộc"),
+  });
+
+  const initValues = {
+    name: "",
+    dob: "",
+    phone: "",
+    email: "",
+    password: "",
+    submit: null,
+  };
+
+  // icons
+  const icons = {
+    faAddressCard,
+    faEnvelope,
+    faPhoneAlt,
+  };
+
+  const addForm = [
+    {
+      title: "Họ & Tên",
+      icon: icons.faAddressCard,
+      name: "name",
+      type: "text",
+      placeholder: "Nhập họ và tên",
+      classes: { formGroup: "mb-4", formControl: "input-out-button-group" },
+      required: true,
+    },
+    {
+      title: "Email",
+      icon: icons.faEnvelope,
+      name: "email",
+      type: "email",
+      placeholder: "Nhập email",
+      classes: { formGroup: "mb-4", formControl: "input-out-button-group" },
+      required: true,
+    },
+    { title: "Ngày sinh", name: "birthday", classes: { formGroup: "mb-4" } },
+    {
+      title: "Số điện thoại",
+      icon: icons.faPhoneAlt,
+      name: "phone",
+      type: "text",
+      placeholder: "Nhập số điện thoại",
+      classes: { formGroup: "mb-4", formControl: "input-out-button-group" },
+    },
+    {
+      title: "Mật khẩu",
+      name: "password",
+      classes: {
+        formGroup: "mb-4",
+        formControl: "input-button-group",
+      },
+      checkStrength: true,
+    },
+  ];
 
   const HEADER = [
     {
@@ -191,189 +237,20 @@ const UserTable = () => {
           </h6>
         )}
       </Modals>
-      <Modals title="Thêm tài khoản" show={addAction} handleClose={handleClose}>
-        <Formik
-          validationSchema={Yup.object().shape({
-            name: Yup.string().max(255).required("Bắt buộc"),
-            email: Yup.string()
-              .email("Email không hợp lệ")
-              .max(255)
-              .required("Bắt buộc"),
-            phone: Yup.string().matches(
-              phoneRegExp,
-              "Số điện thoại không hợp lệ"
-            ),
-            password: Yup.string().max(255).required("Bắt buộc"),
-          })}
-          initialValues={{
-            name: "Night Owl",
-            dob: "",
-            phone: "0986452575",
-            email: "admin@gmail.com",
-            password: " password",
-            submit: null,
-          }}
-          onSubmit={async (values, { setErrors, setStatus, setSubmitting }) => {
-            try {
-              setStatus({ success: false });
-              setSubmitting(false);
-            } catch (err) {
-              setStatus({ success: false });
-              setErrors({ submit: err.message });
-              setSubmitting(false);
-            }
-          }}
-        >
-          {({
-            errors,
-            handleBlur,
-            handleChange,
-            handleSubmit,
-            isSubmitting,
-            touched,
-            values,
-          }) => (
-            <Form noValidate className="mb-3" onSubmit={handleSubmit}>
-              <Form.Group id="name" className="mb-4">
-                <Form.Label>Họ & Tên</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text>
-                    <FontAwesomeIcon icon={faAddressCard} />
-                  </InputGroup.Text>
-                  <Form.Control
-                    className="input-out-button-group"
-                    required
-                    type="string"
-                    value={values.name}
-                    placeholder="Enter name"
-                    name="name"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    isInvalid={!!(touched.name && errors.name)}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.name}
-                  </Form.Control.Feedback>
-                </InputGroup>
-              </Form.Group>
-              <Form.Group id="email" className="mb-4">
-                <Form.Label>Email</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text>
-                    <FontAwesomeIcon icon={faEnvelope} />
-                  </InputGroup.Text>
-                  <Form.Control
-                    className="input-out-button-group"
-                    required
-                    type="email"
-                    value={values.email}
-                    placeholder="megoo@example.com"
-                    name="email"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    isInvalid={!!(touched.email && errors.email)}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.email}
-                  </Form.Control.Feedback>
-                </InputGroup>
-              </Form.Group>
-              <Form.Group id="birthday" className="mb-4">
-                <Form.Label>Ngày sinh</Form.Label>
-                <Datetime
-                  timeFormat={false}
-                  onChange={setBirthday}
-                  renderInput={(props, openCalendar) => (
-                    <InputGroup>
-                      <InputGroup.Text>
-                        <FontAwesomeIcon icon={faCalendarAlt} />
-                      </InputGroup.Text>
-                      <Form.Control
-                        type="text"
-                        value={
-                          birthday ? moment(birthday).format("DD/MM/YYYY") : ""
-                        }
-                        defaultValue={userInfo.dob}
-                        placeholder="dd/mm/yyyy"
-                        onFocus={openCalendar}
-                        onChange={() => {}}
-                      />
-                    </InputGroup>
-                  )}
-                />
-              </Form.Group>
-              <Form.Group id="phone-number" className="mb-4">
-                <Form.Label>Số điện thoại</Form.Label>
-                <InputGroup>
-                  <InputGroup.Text>
-                    <FontAwesomeIcon icon={faPhoneAlt} />
-                  </InputGroup.Text>
-                  <Form.Control
-                    className="input-out-button-group"
-                    type="string"
-                    value={values.string}
-                    placeholder="0000 000 000"
-                    name="phone"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    isInvalid={!!(touched.phone && errors.phone)}
-                  />
-                  <Form.Control.Feedback type="invalid">
-                    {errors.phone}
-                  </Form.Control.Feedback>
-                </InputGroup>
-              </Form.Group>
-              <Form.Group>
-                <Form.Group id="password" className="mb-4">
-                  <Form.Label>Mật khẩu</Form.Label>
-                  <InputGroup>
-                    <InputGroup.Text>
-                      <FontAwesomeIcon icon={faUnlockAlt} />
-                    </InputGroup.Text>
-                    <Form.Control
-                      className="input-button-group"
-                      required
-                      type={showPassword ? "text" : "password"}
-                      value={values.password}
-                      placeholder="Password"
-                      name="password"
-                      onBlur={handleBlur}
-                      onChange={handleChange}
-                      isInvalid={!!(touched.password && errors.password)}
-                    />
-                    <Button
-                      variant="outline-secondary"
-                      id="button-addon2"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                    >
-                      {showPassword ? (
-                        <FontAwesomeIcon icon={faEye} />
-                      ) : (
-                        <FontAwesomeIcon icon={faEyeSlash} />
-                      )}
-                    </Button>
-                    <Form.Control.Feedback type="invalid">
-                      {errors.password}
-                    </Form.Control.Feedback>
-                  </InputGroup>
-                </Form.Group>
-              </Form.Group>
-              {/* <div className="d-grid gap-auto">
-                <Button
-                  variant="primary"
-                  disabled={isSubmitting}
-                  type="submit"
-                  className="btn btn-primary btn-login"
-                >
-                  Đăng nhập
-                </Button>
-              </div> */}
-            </Form>
-          )}
-        </Formik>
-      </Modals>
-      <SampleTable header={HEADER} body={userInfo} onRowClick={onRowClick}>
+      <ModalForm
+        title="Thêm tài khoản"
+        show={addAction}
+        handleClose={handleClose}
+        schema={schema}
+        initValues={initValues}
+        forms={addForm}
+      ></ModalForm>
+      <SampleTable
+        title="Tài khoản"
+        header={HEADER}
+        body={userInfo}
+        onRowClick={onRowClick}
+      >
         <Button
           variant="primary"
           className="fw-bolder ms-3"

@@ -434,6 +434,7 @@ $spacers: (
   4: $spacer * 1.5,
   5: $spacer * 3,
   6: $spacer * 5,
+  7: $spacer * 7,
 ) !default;
 // scss-docs-end spacer-variables-maps
 
@@ -1835,8 +1836,8 @@ $user-avatar-width-xl: 4.5rem;
 $user-avatar-height-xxl: 8rem;
 $user-avatar-width-xxl: 8rem;
 
-$user-avatar-height-xxxl: 13rem;
-$user-avatar-width-xxxl: 13rem;
+$user-avatar-height-xxxl: 10rem;
+$user-avatar-width-xxxl: 10rem;
 
 /* Icon */
 $icon-box-padding: 1rem;

@@ -1,9 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 // project
 import LoginRoutes from "routes/LoginRoutes";
 import MainRoutes from "routes/MainRoutes";
+import { loginUser } from "store/requests/auth";
+import { PasswordGroupForm, SampleGroupForm } from "components/Forms/GroupForm";
 
 // bootstrap
 import {
@@ -14,7 +17,6 @@ import {
   Button,
   FormCheck,
   Container,
-  InputGroup,
   Image,
 } from "react-bootstrap";
 
@@ -24,30 +26,37 @@ import * as Yup from "yup";
 
 // assets
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faAngleLeft,
-  faEnvelope,
-  faUnlockAlt,
-  faEye,
-  faEyeSlash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faAngleLeft, faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import BgImage from "assets/login.jpg";
 import logo from "assets/logo.png";
+import Alerts from "components/Alerts";
 
 const Login = () => {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [showAlert, setShowAlert] = useState(false);
+  const [content, setContent] = useState("");
+  const [title, setTitle] = useState("");
+  const [classes, setClasses] = useState({
+    alertVariant: "danger",
+    alertClass: "fixed-top mx-auto",
+  });
+
+  const handleClose = () => setShowAlert(false);
   return (
     <main>
       <section
         className="d-flex align-items-center bg-soft py-5 pt-lg-6 pb-lg-5"
         style={{ backgroundImage: `url(${BgImage})` }}
       >
+        <Alerts
+          show={showAlert}
+          handleClose={handleClose}
+          title={title}
+          classes={classes}
+        >
+          {content}
+        </Alerts>
         <Container>
           <Row className="align-items-start">
             <Col
@@ -73,7 +82,7 @@ const Login = () => {
                   })}
                   initialValues={{
                     email: "admin@gmail.com",
-                    password: " password",
+                    password: "password",
                     submit: null,
                   }}
                   onSubmit={async (
@@ -83,6 +92,34 @@ const Login = () => {
                     try {
                       setStatus({ success: false });
                       setSubmitting(false);
+                      const formData = {
+                        username: values.email,
+                        password: values.password,
+                      };
+                      const res = await loginUser(formData, dispatch);
+                      console.log("res", res);
+                      if (!res.data) {
+                        setContent(res?.response.data.message);
+                        setTitle(res?.response.statusText);
+                        setShowAlert(true);
+                      } else {
+                        if (res?.data.auth.role === "admin") {
+                          setContent("Đăng nhập thành công");
+                          setTitle("Thành công");
+                          setClasses({
+                            alertVariant: "success",
+                            alertClass: "fixed-top mx-auto",
+                          });
+                          setShowAlert(true);
+                          setTimeout(() => {
+                            navigate("/");
+                          }, 1500);
+                        } else {
+                          setContent("Tài khoản không tồn tại");
+                          setTitle("Lỗi");
+                          setShowAlert(true);
+                        }
+                      }
                     } catch (err) {
                       setStatus({ success: false });
                       setErrors({ submit: err.message });
@@ -100,65 +137,37 @@ const Login = () => {
                     values,
                   }) => (
                     <Form noValidate className="mb-3" onSubmit={handleSubmit}>
-                      <Form.Group id="email" className="mb-4">
-                        <Form.Label>Email</Form.Label>
-                        <InputGroup>
-                          <InputGroup.Text>
-                            <FontAwesomeIcon icon={faEnvelope} />
-                          </InputGroup.Text>
-                          <Form.Control
-                            className="input-out-button-group"
-                            required
-                            type="email"
-                            value={values.email}
-                            placeholder="megoo@example.com"
-                            name="email"
-                            onBlur={handleBlur}
-                            onChange={handleChange}
-                            isInvalid={!!(touched.email && errors.email)}
-                          />
-                          <Form.Control.Feedback type="invalid">
-                            {errors.email}
-                          </Form.Control.Feedback>
-                        </InputGroup>
-                      </Form.Group>
+                      <SampleGroupForm
+                        title="Email"
+                        classes={{
+                          formGroup: "mb-4",
+                          formControl: "input-out-button-group",
+                        }}
+                        name="email"
+                        type="text"
+                        icon={faEnvelope}
+                        values={values}
+                        touched={touched}
+                        errors={errors}
+                        handleBlur={handleBlur}
+                        handleChange={handleChange}
+                        placeholder="megoo@example.com"
+                        required={true}
+                      />
+                      <PasswordGroupForm
+                        title="Mật khẩu"
+                        name="password"
+                        classes={{
+                          formGroup: "mb-4",
+                          formControl: "input-button-group",
+                        }}
+                        values={values}
+                        touched={touched}
+                        errors={errors}
+                        handleBlur={handleBlur}
+                        handleChange={handleChange}
+                      />
                       <Form.Group>
-                        <Form.Group id="password" className="mb-4">
-                          <Form.Label>Mật khẩu</Form.Label>
-                          <InputGroup>
-                            <InputGroup.Text>
-                              <FontAwesomeIcon icon={faUnlockAlt} />
-                            </InputGroup.Text>
-                            <Form.Control
-                              className="input-button-group"
-                              required
-                              type={showPassword ? "text" : "password"}
-                              value={values.password}
-                              placeholder="Password"
-                              name="password"
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              isInvalid={
-                                !!(touched.password && errors.password)
-                              }
-                            />
-                            <Button
-                              variant="outline-secondary"
-                              id="button-addon2"
-                              onClick={handleClickShowPassword}
-                              onMouseDown={handleMouseDownPassword}
-                            >
-                              {showPassword ? (
-                                <FontAwesomeIcon icon={faEye} />
-                              ) : (
-                                <FontAwesomeIcon icon={faEyeSlash} />
-                              )}
-                            </Button>
-                            <Form.Control.Feedback type="invalid">
-                              {errors.password}
-                            </Form.Control.Feedback>
-                          </InputGroup>
-                        </Form.Group>
                         <div className="d-flex justify-content-between align-items-center mb-4">
                           <Form.Check type="checkbox">
                             <FormCheck.Input
@@ -185,7 +194,7 @@ const Login = () => {
                           variant="primary"
                           disabled={isSubmitting}
                           type="submit"
-                          className="btn btn-primary btn-login"
+                          className="btn-login"
                         >
                           Đăng nhập
                         </Button>

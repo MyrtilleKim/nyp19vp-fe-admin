@@ -7,13 +7,13 @@ import { Col, Row } from "react-bootstrap";
 
 // project import
 import ProfileForm from "components/Forms/ProfileForm";
-import { getInformationUser } from "store/reducers/userReq";
+import { getAllUsers } from "store/requests/user";
 
 const Profile = () => {
   const dispatch = useDispatch();
   const { userInfo } = useSelector((state) => state.user);
   useEffect(() => {
-    getInformationUser(dispatch);
+    getAllUsers(dispatch);
   }, [dispatch]);
   const { id } = useParams();
   return (
@@ -23,7 +23,10 @@ const Profile = () => {
           {userInfo
             .filter((user) => user._id === id)
             .map((filteredUser) => (
-              <ProfileForm userInfo={filteredUser} />
+              <ProfileForm
+                key={`profile-form-${filteredUser.id}`}
+                userInfo={filteredUser}
+              />
             ))}
         </Col>
       </Row>

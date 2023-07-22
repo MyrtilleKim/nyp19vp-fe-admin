@@ -1,18 +1,11 @@
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
-import {
-  Col,
-  Row,
-  Form,
-  Card,
-  Button,
-  Container,
-  InputGroup,
-} from "react-bootstrap";
+import { Col, Row, Form, Card, Button, Container } from "react-bootstrap";
 import LoginRoutes from "routes/LoginRoutes";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { SampleGroupForm } from "components/Forms/GroupForm";
 
 const ForgotPassword = () => {
   return (
@@ -67,28 +60,23 @@ const ForgotPassword = () => {
                   }) => (
                     <Form noValidate onSubmit={handleSubmit}>
                       <div className="mb-4">
-                        <Form.Group id="email" className="mb-4">
-                          <Form.Label></Form.Label>
-                          <InputGroup>
-                            <InputGroup.Text>
-                              <FontAwesomeIcon icon={faEnvelope} />
-                            </InputGroup.Text>
-                            <Form.Control
-                              className="input-out-button-group"
-                              required
-                              type="email"
-                              value={values.email}
-                              placeholder="megoo@example.com"
-                              name="email"
-                              onBlur={handleBlur}
-                              onChange={handleChange}
-                              isInvalid={!!(touched.email && errors.email)}
-                            />
-                            <Form.Control.Feedback type="invalid">
-                              {errors.email}
-                            </Form.Control.Feedback>
-                          </InputGroup>
-                        </Form.Group>
+                        <SampleGroupForm
+                          title="Email"
+                          classes={{
+                            formGroup: "mb-4",
+                            formControl: "input-out-button-group",
+                          }}
+                          name="email"
+                          type="text"
+                          icon={faEnvelope}
+                          values={values}
+                          touched={touched}
+                          errors={errors}
+                          handleBlur={handleBlur}
+                          handleChange={handleChange}
+                          placeholder="megoo@example.com"
+                          required={true}
+                        />
                       </div>
                       <Button
                         disabled={isSubmitting}

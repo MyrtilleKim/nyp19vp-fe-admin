@@ -1,4 +1,8 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+
+// assets
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
@@ -7,6 +11,8 @@ import {
   faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 import { faUserCircle } from "@fortawesome/free-regular-svg-icons";
+
+// bootstrap
 import {
   Row,
   Col,
@@ -17,10 +23,34 @@ import {
   Badge,
 } from "react-bootstrap";
 
+// project import
 import NOTIFICATIONS_DATA from "data/notifications";
-import Profile3 from "assets/team/profile-picture-3.jpg";
+import { loginSuccess } from "store/reducers/auth";
+import { logoutUser } from "store/requests/auth";
+import { createAxios } from "http/createInstance";
+
+// third party
+import jwtDecode from "jwt-decode";
 
 const HeaderContent = (props) => {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  let { currentUser } = useSelector((state) => state?.auth.login);
+  let axiosJWT = createAxios(currentUser, dispatch, loginSuccess);
+  let day = new Date();
+
+  if (currentUser !== null) {
+    const decodedToken = jwtDecode(currentUser?.accessToken);
+    if (decodedToken.exp < day.getTime() / 1000) {
+      dispatch(loginSuccess(null));
+    }
+  }
+
+  const handleLogout = async () => {
+    console.log("logout", currentUser?.accessToken, axiosJWT);
+    await logoutUser(currentUser?.accessToken, dispatch, navigate, axiosJWT);
+  };
+
   const [notifications, setNotifications] = useState(NOTIFICATIONS_DATA);
   const areNotificationsRead = notifications.reduce(
     (acc, notif) => acc && notif.read,
@@ -108,28 +138,35 @@ const HeaderContent = (props) => {
         <Dropdown.Toggle as={Nav.Link} className="pt-1 px-0">
           <div className="media d-flex align-items-center">
             <Image
-              src={Profile3}
+              src={currentUser?.data.userInfo?.avatar}
               className="user-avatar md-avatar rounded-circle shadow"
             />
             <div className="media-body ms-2 text-dark align-items-center d-none d-lg-block">
-              <span className="mb-0 font-small fw-bold">Night Owl</span>
+              <span className="mb-0 font-small fw-bold">
+                {currentUser?.data.userInfo?.name}
+              </span>
             </div>
           </div>
         </Dropdown.Toggle>
         <Dropdown.Menu className="user-dropdown dropdown-menu-end mt-2 shadow">
-          <Dropdown.Item className="fw-bold">
-            <FontAwesomeIcon icon={faUserCircle} className="me-2" /> My Profile
+          <Dropdown.Item
+            className="fw-bold"
+            as={Link}
+            to={`/users/${currentUser?.data.userInfo?._id}`}
+          >
+            <FontAwesomeIcon icon={faUserCircle} className="me-2" /> Trang cá
+            nhân
           </Dropdown.Item>
           <Dropdown.Item className="fw-bold">
-            <FontAwesomeIcon icon={faCog} className="me-2" /> Settings
+            <FontAwesomeIcon icon={faCog} className="me-2" /> Cài đặt
           </Dropdown.Item>
           <Dropdown.Item className="fw-bold">
-            <FontAwesomeIcon icon={faUserShield} className="me-2" /> Support
+            <FontAwesomeIcon icon={faUserShield} className="me-2" /> Hỗ trợ
           </Dropdown.Item>
 
           <Dropdown.Divider />
 
-          <Dropdown.Item className="fw-bold">
+          <Dropdown.Item className="fw-bold" onClick={handleLogout}>
             <FontAwesomeIcon icon={faSignOutAlt} className="text-danger me-2" />{" "}
             Logout
           </Dropdown.Item>

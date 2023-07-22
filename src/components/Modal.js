@@ -1,10 +1,14 @@
-import { forwardRef } from "react";
 import PropTypes from "prop-types";
 import { Button, Modal } from "react-bootstrap";
 
-// export interface ModalClasses {}
-
-const Modals = forwardRef(({ title, children, show, handleClose, classes }) => {
+const Modals = ({
+  title,
+  children,
+  show,
+  handleClose,
+  classes,
+  handleConfirm,
+}) => {
   return (
     <Modal show={show} onHide={handleClose} scrollable>
       <Modal.Header closeButton>
@@ -15,13 +19,13 @@ const Modals = forwardRef(({ title, children, show, handleClose, classes }) => {
         <Button variant="secondary" onClick={handleClose}>
           Đóng
         </Button>
-        <Button variant="primary" onClick={handleClose} className="">
+        <Button variant="primary" onClick={handleConfirm}>
           Xác nhận
         </Button>
       </Modal.Footer>
     </Modal>
   );
-});
+};
 
 Modals.propTypes = {
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),

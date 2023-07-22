@@ -9,18 +9,21 @@ import "App.css";
 
 // third-party
 import { Provider as ReduxProvider } from "react-redux";
-import { store } from "./store";
+import { PersistGate } from "redux-persist/integration/react";
+import { store, persistor } from "./store";
 
 // ==============================|| MAIN - REACT DOM RENDER  ||============================== //
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <ReduxProvider store={store}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </ReduxProvider>
+    <PersistGate loading={null} persistor={persistor}>
+      <ReduxProvider store={store}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ReduxProvider>
+    </PersistGate>
   </React.StrictMode>
 );
 

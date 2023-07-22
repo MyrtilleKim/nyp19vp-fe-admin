@@ -3,7 +3,6 @@ import { Nav, Container, Col, Row, Image } from "react-bootstrap";
 
 // project import
 import NavGroup from "./NavGroup";
-import ProfileWidget from "components/Widgets/ProfileWidget";
 import menuItems from "menu";
 
 // assets
@@ -30,7 +29,6 @@ const Navigation = () => {
         </Row>
       </Container>
       {navGroups}
-      <ProfileWidget />
     </Nav>
   );
 };
