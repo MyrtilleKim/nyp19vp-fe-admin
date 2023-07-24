@@ -8,7 +8,8 @@ import MainLayout from "layout/MainLayout";
 const Dashboard = Loadable(lazy(() => import("pages/dashboard")));
 
 // render - utilities
-const Users = Loadable(lazy(() => import("pages/management/user-mgmt")));
+const Users = Loadable(lazy(() => import("pages/management/user")));
+const Packages = Loadable(lazy(() => import("pages/management/package")));
 const UserDetail = Loadable(lazy(() => import("pages/profile")));
 
 // ==============================|| MAIN ROUTING ||============================== //
@@ -26,6 +27,10 @@ const MainRoutes = {
       element: <Users />,
     },
     { path: "users/:id", element: <UserDetail /> },
+    {
+      path: "packages",
+      element: <Packages />,
+    },
   ],
 };
 

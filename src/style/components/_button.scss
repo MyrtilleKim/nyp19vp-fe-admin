@@ -6,9 +6,16 @@
   transition: $transition-transform;
   &.btn-table-options {
     border-style: none;
-    background-color: inherit;
+    background-color: initial;
     font-size: larger;
     color: $black;
+    &:hover {
+      background-color: initial;
+    }
+    &:active,
+    &:focus {
+      color: $dark;
+    }
   }
   &.btn-circle {
     border-radius: 50%;

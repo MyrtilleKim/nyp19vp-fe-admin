@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 
 // bootstrap
@@ -17,31 +17,23 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faAngleLeft, faAngleRight } from "@fortawesome/free-solid-svg-icons";
 
-const SampleTable = ({ title, header, body, onRowClick, children }) => {
-  const [curBody, setCurBody] = useState(body);
-
-  function handleSelect(event) {
-    const selected = event.target.value;
-
-    if (selected === "all") {
-      setCurBody(body);
-    } else {
-      const filtered = body.filter(
-        (elem) => elem.role.toLowerCase() === selected
-      );
-      setCurBody(filtered);
-    }
-  }
-  useEffect(() => {
-    setCurBody(body);
-  }, [body]);
+// ==============================|| Sample Datatable ||============================== //
+const SampleTable = ({
+  title,
+  header,
+  body,
+  onRowClick,
+  children,
+  filter,
+  handleFilter,
+}) => {
   return (
     <>
       <h4 className="mb-2">
         <b>{title}</b>
       </h4>
       <DatatableWrapper
-        body={curBody ? curBody : body}
+        body={body}
         headers={header}
         paginationProps={{
           initialState: { page: 1 },
@@ -73,15 +65,18 @@ const SampleTable = ({ title, header, body, onRowClick, children }) => {
                 clearButton: "btn-light",
               }}
             />
-            <Form.Select
-              aria-label="Default select example"
-              onChange={handleSelect}
-              className="table-filter ms-3 d-none"
-            >
-              <option value="all">Tất cả</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
-            </Form.Select>
+            {filter && (
+              <Form.Select
+                aria-label="Default select example"
+                onChange={handleFilter}
+                className="table-filter ms-3"
+              >
+                <option value="all">Tất cả</option>
+                {filter.map((i) => {
+                  return <option value={i.value}>{i.title}</option>;
+                })}
+              </Form.Select>
+            )}
           </Col>
           <Col
             xs={12}
@@ -92,9 +87,6 @@ const SampleTable = ({ title, header, body, onRowClick, children }) => {
               alwaysShowPagination
               classes={{ formText: "d-none", formGroup: "text-end" }}
             />
-            {/* <Button variant="primary" className="fw-bolder ms-3 d-none">
-          <FontAwesomeIcon icon={faPlus} /> Thêm tài khoản
-        </Button> */}
             {children}
           </Col>
         </Row>
@@ -103,9 +95,9 @@ const SampleTable = ({ title, header, body, onRowClick, children }) => {
             hover
             responsive
             borderless
-            className="mx-auto mt-2 overflow-hidden text-start align-middle datatable "
+            className="mx-auto mt-3 overflow-hidden text-start align-middle datatable"
           >
-            <TableHeader classes={{ thead: "rounded" }} />
+            <TableHeader classes={{ thead: "thead-light" }} />
             <TableBody onRowClick={onRowClick} />
           </Table>
           <Row className="mx-2 mb-4 p-2">
@@ -121,7 +113,7 @@ const SampleTable = ({ title, header, body, onRowClick, children }) => {
               xs={12}
               sm={6}
               lg={8}
-              className="d-flex flex-col justify-content-end align-items-end "
+              className="d-flex flex-col justify-content-end align-items-end"
             >
               <Pagination
                 alwaysShowPagination
@@ -147,6 +139,8 @@ SampleTable.prototype = {
   body: PropTypes.array,
   onRowClick: PropTypes.func,
   children: PropTypes.node,
+  filter: PropTypes.array,
+  handleFilter: PropTypes.func,
 };
 
 export default SampleTable;

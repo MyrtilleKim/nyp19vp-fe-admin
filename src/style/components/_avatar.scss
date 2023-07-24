@@ -21,6 +21,16 @@
   }
 }
 
+.payment-logo {
+  height: 2rem;
+  width: auto;
+  max-height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  object-fit: fit;
+}
+
 .user-avatar {
   height: $user-avatar-height;
   width: $user-avatar-width;

@@ -7,39 +7,39 @@ import { Col, Row } from "react-bootstrap";
 
 // project import
 import ProfileForm from "components/Forms/ProfileForm";
-import { getAllUsers } from "store/requests/user";
+import TransTable from "components/Tables/TransTable";
+import { getAllUsers, getAllTrans } from "store/requests/user";
 
 const Profile = () => {
   const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.user);
+  const { userInfo, trans } = useSelector((state) => state.user);
   useEffect(() => {
     getAllUsers(dispatch);
+    getAllTrans(dispatch);
   }, [dispatch]);
   const { id } = useParams();
   return (
     <>
       <Row className="justify-content-md-center mt-0">
-        <Col xs={12} className="mb-4 d-sm-block">
-          {userInfo
-            .filter((user) => user._id === id)
-            .map((filteredUser) => (
-              <ProfileForm
-                key={`profile-form-${filteredUser.id}`}
-                userInfo={filteredUser}
-              />
-            ))}
+        <Col xs={12} className="d-sm-block">
+          <ProfileForm
+            userInfo={userInfo.filter((user) => user._id === id).at(0)}
+          />
         </Col>
       </Row>
       <Row className="justify-content-md-center mt-0">
-        <Col xs={12} lg={7} className="mb-4 d-sm-block">
-          haha
+        <Col xs={12} lg={12} className="mb-4 d-sm-block">
+          <TransTable
+            trans={trans.filter((txn) => txn.user === id)}
+            userInfo={userInfo.filter((user) => user._id === id).at(0)}
+          />
         </Col>
         <Col xs={12} lg={5} className="mb-4 d-sm-block">
           hihi
-          {userInfo.map((user) => (
+          {trans.map((user) => (
             <div key={user._id}>
-              <p>{user.username}</p>
-              <p>{user.userInfoId}</p>
+              <p>{user.user}</p>
+              <p>{user.wallet}</p>
             </div>
           ))}
         </Col>

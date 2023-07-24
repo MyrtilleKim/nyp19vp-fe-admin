@@ -7,10 +7,11 @@ const Modals = ({
   show,
   handleClose,
   classes,
+  size,
   handleConfirm,
 }) => {
   return (
-    <Modal show={show} onHide={handleClose} scrollable>
+    <Modal show={show} onHide={handleClose} scrollable size={size ? size : ""}>
       <Modal.Header closeButton>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
@@ -31,6 +32,7 @@ Modals.propTypes = {
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.node]),
   show: PropTypes.bool,
   children: PropTypes.node,
+  size: PropTypes.string,
   handleClose: PropTypes.func,
 };
 

@@ -1,5 +1,5 @@
 import apiClient from "http/http-common";
-import { getInitUser } from "../reducers/user";
+import { getInitUser, getInitTrans } from "../reducers/user";
 
 export const getAllUsers = async (dispatch) => {
   try {
@@ -8,26 +8,32 @@ export const getAllUsers = async (dispatch) => {
     for (let item of res.data.data) {
       item.userInfo["role"] = item.role.roleName;
       item.userInfo["status"] = item.status;
-      item.userInfo.updatedAt = new Date(
-        item.userInfo.updatedAt
-      ).toLocaleDateString("vi-VN", {
-        weekday: "long",
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
-      item.userInfo.createdAt = new Date(
-        item.userInfo.createdAt
-      ).toLocaleDateString("vi-VN", {
-        weekday: "long",
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
+      item.userInfo.updatedAt = formatDate(item.userInfo.updatedAt);
+      item.userInfo.createdAt = formatDate(item.userInfo.createdAt);
       dataUser.push(item.userInfo);
     }
-    console.log(dataUser);
     dispatch(getInitUser(dataUser));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const getAllTrans = async (dispatch) => {
+  try {
+    const res = await apiClient.get("/txn");
+    let dataTrans = [];
+    for (let item of res.data.data) {
+      item["amount_vnd"] = formatCurrency(item.amount);
+      item.item = item.item.map((i) => {
+        i["price_vnd"] = formatCurrency(i.price);
+        return i;
+      });
+      item["wallet"] = item.method.name;
+      item.updatedAt = formatDate(item.updatedAt);
+      item.createdAt = formatDatetime(item.createdAt);
+      dataTrans.push(item);
+    }
+    dispatch(getInitTrans(dataTrans));
   } catch (error) {
     console.error(error);
   }
@@ -91,3 +97,28 @@ export const updateInfoUser = async (
     return error.response.data;
   }
 };
+export function formatDate(dateISO) {
+  return new Date(dateISO).toLocaleDateString("vi-VN", {
+    weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+export function formatDatetime(dateISO) {
+  return new Date(dateISO).toLocaleDateString("vi-VN", {
+    weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+export function formatCurrency(total) {
+  const VND = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  });
+  return VND.format(total);
+}

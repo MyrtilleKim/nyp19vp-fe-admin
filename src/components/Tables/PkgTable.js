@@ -3,38 +3,37 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 // bootstrap
-import { Image, Badge, Dropdown, ListGroup, Button } from "react-bootstrap";
+import { Dropdown, ListGroup, Button } from "react-bootstrap";
 
 // assets
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEllipsisVertical,
-  faLock,
   faTrash,
   faPlus,
   faAddressCard,
   faEnvelope,
   faPhoneAlt,
+  faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 
 // data
-import { getAllUsers } from "store/requests/user";
+import { getAllPackages } from "store/requests/package";
 
 // project import
 import Modals from "components/Modal";
-import SampleTable from "./SampleTable";
+import SampleTable from "./Datatable/SampleTable";
 import ModalForm from "components/Forms/ModalForm";
 
 // third party
 import * as Yup from "yup";
 
-const UserTable = () => {
+const PackageTable = () => {
   const [delAction, setDelAction] = useState(false);
   const [lockAction, setLockAction] = useState(false);
   const [addAction, setAddAction] = useState(false);
   const [selected, setSelected] = useState();
-  const phoneRegExp = /(\+84|84|0)+([3|5|7|8|9])+([0-9]{8})\b/;
 
   const handleClose = () => {
     setDelAction(false);
@@ -56,38 +55,15 @@ const UserTable = () => {
     navigate(`/users/${data._id}`);
   }
   const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.user);
-  const [curBody, setCurBody] = useState(userInfo);
+  const { packages } = useSelector((state) => state.packages);
+  const [curBody, setCurBody] = useState(packages);
   useEffect(() => {
-    getAllUsers(dispatch);
-    setCurBody(userInfo);
-  }, [dispatch, userInfo]);
-
-  function handleSelect(event) {
-    const selected = event.target.value;
-
-    if (selected === "all") {
-      setCurBody(userInfo);
-    } else {
-      const filtered = userInfo.filter(
-        (elem) => elem.role.toLowerCase() === selected
-      );
-      setCurBody(filtered);
-    }
-  }
-  const filter = [
-    { title: "Admin", value: "admin" },
-    { title: "User", value: "user" },
-  ];
+    getAllPackages(dispatch);
+    setCurBody(packages);
+  }, [dispatch, packages]);
 
   const schema = Yup.object().shape({
     name: Yup.string().max(255).required("Bắt buộc"),
-    email: Yup.string()
-      .email("Email không hợp lệ")
-      .max(255)
-      .required("Bắt buộc"),
-    phone: Yup.string().matches(phoneRegExp, "Số điện thoại không hợp lệ"),
-    password: Yup.string().max(255).required("Bắt buộc"),
   });
 
   const initValues = {
@@ -160,46 +136,32 @@ const UserTable = () => {
       prop: "_id",
     },
     {
-      prop: "avatar",
-      cell: (row) => (
-        <Image
-          src={row.avatar}
-          className="user-avatar xs-avatar shadow "
-          roundedCircle
-          alt={row._id}
-        />
-      ),
-      cellProps: {
-        style: { width: "1.5rem" },
-      },
-    },
-    {
       isFilterable: true,
       isSortable: true,
       prop: "name",
-      title: "Họ & Tên",
+      title: "Gói dịch vụ",
     },
     {
-      isFilterable: true,
+      isFilterable: false,
       isSortable: true,
-      prop: "email",
-      title: "Email",
+      prop: "duration",
+      title: "Thời hạn",
+      cell: (row) => <span>{row.duration} tháng</span>,
     },
     {
-      prop: "role",
-      title: "Quyền",
-      cell: (row) => (
-        <Badge
-          pill
-          bg={row.role === "admin" ? "primary" : "quaternary"}
-          style={{ width: "3.5rem" }}
-          className="tag"
-        >
-          {row.role === "admin" ? "Admin" : "User"}
-        </Badge>
-      ),
+      isFilterable: false,
+      isSortable: true,
+      prop: "noOfMember",
+      title: "Thành viên",
     },
     {
+      isFilterable: false,
+      isSortable: true,
+      prop: "price_vnd",
+      title: "Đơn giá",
+    },
+    {
+      isFilterable: false,
       isSortable: true,
       prop: "updatedAt",
       title: "Cập nhật",
@@ -228,13 +190,13 @@ const UserTable = () => {
                 className="text-start text-dark py-3"
                 onClick={(e) => handleDelAction(row)}
               >
-                <FontAwesomeIcon icon={faTrash} /> Xóa tài khoản
+                <FontAwesomeIcon icon={faPen} /> Chỉnh sửa gói
               </Dropdown.Item>
               <Dropdown.Item
                 className="text-start text-dark py-3"
                 onClick={(e) => handleLockAction(row)}
               >
-                <FontAwesomeIcon icon={faLock} /> Khóa tài khoản
+                <FontAwesomeIcon icon={faTrash} /> Xóa gói
               </Dropdown.Item>
             </ListGroup>
           </Dropdown.Menu>
@@ -268,23 +230,21 @@ const UserTable = () => {
         forms={addForm}
       ></ModalForm>
       <SampleTable
-        title="Tài khoản"
+        title="Gói dịch vụ"
         header={HEADER}
         body={curBody}
         onRowClick={onRowClick}
-        filter={filter}
-        handleFilter={handleSelect}
       >
         <Button
           variant="primary"
           className="fw-bolder ms-3"
           onClick={handleAddAction}
         >
-          <FontAwesomeIcon icon={faPlus} /> Thêm tài khoản
+          <FontAwesomeIcon icon={faPlus} /> Thêm gói
         </Button>
       </SampleTable>
     </>
   );
 };
-export default UserTable;
+export default PackageTable;
 // Then, use it in a component.

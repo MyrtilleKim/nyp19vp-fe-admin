@@ -8,7 +8,7 @@ import { Formik } from "formik";
 import { HttpStatusCode } from "axios";
 
 // bootstrap
-import { Col, Row, Card, Form, Button } from "react-bootstrap";
+import { Col, Row, Card, Form, Button, Container } from "react-bootstrap";
 
 // assets
 import {
@@ -119,153 +119,154 @@ const ProfileForm = (props) => {
       >
         {content}
       </Alerts>
-
-      <Row className="justify-content-center align-items-start">
-        <Col xs={12} xl={4}>
-          <AvatarForm
-            user={userInfo}
-            handleAlert={handleAlert}
-            currentUser={currentUser}
-            dispatch={dispatch}
-            axiosJWT={axiosJWT}
-          />
-        </Col>
-        <Col xs={12} xl={8}>
-          <Card border="light" className="bg-white shadow-sm mb-4">
-            <Card.Body>
-              <h5 className="mb-4">
-                <b>Thông tin cá nhân</b>
-              </h5>
-              <Formik
-                validationSchema={Yup.object().shape({
-                  name: Yup.string().max(255).required("Bắt buộc"),
-                  phone: Yup.string().matches(
-                    phoneRegExp,
-                    "Số điện thoại không hợp lệ"
-                  ),
-                })}
-                initialValues={initValues}
-                enableReinitialize
-                onSubmit={async (
-                  values,
-                  { setErrors, setStatus, setSubmitting }
-                ) => {
-                  try {
-                    setStatus({ success: false });
-                    setSubmitting(false);
-                    if (!_.isEqual(values, initValues)) {
-                      setValues(values);
-                      setContent("Bạn muốn cập nhật thông tin?");
-                      setShowModal(true);
-                    } else {
-                      setContent("Không có gì thay đổi");
-                      setTitle("Thông báo");
-                      setClasses({
-                        alertVariant: "info",
-                        alertClass: "fixed-top mx-auto",
-                      });
-                      setShowAlert(true);
-                      setTimeout(() => {
-                        handleClose();
-                      }, 1000);
+      <Container>
+        <Row className="justify-content-center align-items-start">
+          <Col xs={12} xl={4}>
+            <AvatarForm
+              user={userInfo}
+              handleAlert={handleAlert}
+              currentUser={currentUser}
+              dispatch={dispatch}
+              axiosJWT={axiosJWT}
+            />
+          </Col>
+          <Col xs={12} xl={8}>
+            <Card border="light" className="bg-white shadow-sm mb-4">
+              <Card.Body>
+                <h5 className="mb-4">
+                  <b>Thông tin cá nhân</b>
+                </h5>
+                <Formik
+                  validationSchema={Yup.object().shape({
+                    name: Yup.string().max(255).required("Bắt buộc"),
+                    phone: Yup.string().matches(
+                      phoneRegExp,
+                      "Số điện thoại không hợp lệ"
+                    ),
+                  })}
+                  initialValues={initValues}
+                  enableReinitialize
+                  onSubmit={async (
+                    values,
+                    { setErrors, setStatus, setSubmitting }
+                  ) => {
+                    try {
+                      setStatus({ success: false });
+                      setSubmitting(false);
+                      if (!_.isEqual(values, initValues)) {
+                        setValues(values);
+                        setContent("Bạn muốn cập nhật thông tin?");
+                        setShowModal(true);
+                      } else {
+                        setContent("Không có gì thay đổi");
+                        setTitle("Thông báo");
+                        setClasses({
+                          alertVariant: "info",
+                          alertClass: "fixed-top mx-auto",
+                        });
+                        setShowAlert(true);
+                        setTimeout(() => {
+                          handleClose();
+                        }, 1000);
+                      }
+                    } catch (err) {
+                      setStatus({ success: false });
+                      setErrors({ submit: err.message });
+                      setSubmitting(false);
                     }
-                  } catch (err) {
-                    setStatus({ success: false });
-                    setErrors({ submit: err.message });
-                    setSubmitting(false);
-                  }
-                }}
-              >
-                {({
-                  errors,
-                  handleBlur,
-                  handleChange,
-                  handleSubmit,
-                  isSubmitting,
-                  touched,
-                  values,
-                }) => (
-                  <Form noValidate onSubmit={handleSubmit}>
-                    <Row>
-                      <Col md={6} className="mb-3">
-                        <SampleGroupForm
-                          title="Họ & Tên"
-                          icon={faAddressCard}
-                          name="name"
-                          type="text"
-                          placeholder="Nhập Họ & Tên"
-                          classes={{ formControl: "input-out-button-group" }}
-                          required={true}
-                          handleBlur={handleBlur}
-                          handleChange={handleChange}
-                          touched={touched}
-                          errors={errors}
-                          values={values}
-                        />
-                      </Col>
-                      <Col md={6} className="mb-3">
-                        <DateGroupForm
-                          title="Ngày sinh"
-                          name="birthday"
-                          handleBlur={handleBlur}
-                          handleChange={handleChange}
-                          touched={touched}
-                          errors={errors}
-                          values={values}
-                        />
-                      </Col>
-                    </Row>
-                    <Row>
-                      <Col md={6} className="mb-3">
-                        <SampleGroupForm
-                          title="Email"
-                          icon={faEnvelope}
-                          name="email"
-                          type="email"
-                          classes={{ formControl: "input-out-button-group" }}
-                          placeholder="Nhập Email"
-                          required={true}
-                          readOnly={true}
-                          handleBlur={handleBlur}
-                          handleChange={handleChange}
-                          touched={touched}
-                          errors={errors}
-                          values={values}
-                        />
-                      </Col>
-                      <Col md={6} className="mb-3">
-                        <SampleGroupForm
-                          title="Số điện thoại"
-                          icon={faPhoneAlt}
-                          name="phone"
-                          type="text"
-                          required={false}
-                          classes={{ formControl: "input-out-button-group" }}
-                          placeholder="Nhập số điện thoại"
-                          handleBlur={handleBlur}
-                          handleChange={handleChange}
-                          touched={touched}
-                          errors={errors}
-                          values={values}
-                        />
-                      </Col>
-                    </Row>
-                    <div className="mt-3 text-end">
-                      <Button
-                        variant="primary"
-                        disabled={isSubmitting}
-                        type="submit"
-                      >
-                        Xác nhận
-                      </Button>
-                    </div>
-                  </Form>
-                )}
-              </Formik>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+                  }}
+                >
+                  {({
+                    errors,
+                    handleBlur,
+                    handleChange,
+                    handleSubmit,
+                    isSubmitting,
+                    touched,
+                    values,
+                  }) => (
+                    <Form noValidate onSubmit={handleSubmit}>
+                      <Row>
+                        <Col md={6} className="mb-3">
+                          <SampleGroupForm
+                            title="Họ & Tên"
+                            icon={faAddressCard}
+                            name="name"
+                            type="text"
+                            placeholder="Nhập Họ & Tên"
+                            classes={{ formControl: "input-out-button-group" }}
+                            required={true}
+                            handleBlur={handleBlur}
+                            handleChange={handleChange}
+                            touched={touched}
+                            errors={errors}
+                            values={values}
+                          />
+                        </Col>
+                        <Col md={6} className="mb-3">
+                          <DateGroupForm
+                            title="Ngày sinh"
+                            name="birthday"
+                            handleBlur={handleBlur}
+                            handleChange={handleChange}
+                            touched={touched}
+                            errors={errors}
+                            values={values}
+                          />
+                        </Col>
+                      </Row>
+                      <Row>
+                        <Col md={6} className="mb-3">
+                          <SampleGroupForm
+                            title="Email"
+                            icon={faEnvelope}
+                            name="email"
+                            type="email"
+                            classes={{ formControl: "input-out-button-group" }}
+                            placeholder="Nhập Email"
+                            required={true}
+                            readOnly={true}
+                            handleBlur={handleBlur}
+                            handleChange={handleChange}
+                            touched={touched}
+                            errors={errors}
+                            values={values}
+                          />
+                        </Col>
+                        <Col md={6} className="mb-3">
+                          <SampleGroupForm
+                            title="Số điện thoại"
+                            icon={faPhoneAlt}
+                            name="phone"
+                            type="text"
+                            required={false}
+                            classes={{ formControl: "input-out-button-group" }}
+                            placeholder="Nhập số điện thoại"
+                            handleBlur={handleBlur}
+                            handleChange={handleChange}
+                            touched={touched}
+                            errors={errors}
+                            values={values}
+                          />
+                        </Col>
+                      </Row>
+                      <div className="mt-3 text-end">
+                        <Button
+                          variant="primary"
+                          disabled={isSubmitting}
+                          type="submit"
+                        >
+                          Xác nhận
+                        </Button>
+                      </div>
+                    </Form>
+                  )}
+                </Formik>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      </Container>
     </>
   );
 };

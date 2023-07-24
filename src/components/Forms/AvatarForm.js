@@ -56,7 +56,11 @@ const AvatarForm = ({ user, handleAlert, currentUser, dispatch, axiosJWT }) => {
     console.log(event.target.files);
   };
   return (
-    <Card border="light" className="bg-white shadow-sm mb-4 text-center">
+    <Card
+      border="light"
+      className="bg-white shadow-sm mb-4 text-center"
+      style={{ height: "100%" }}
+    >
       <div
         style={{ backgroundImage: `url(${ProfileCover})` }}
         className="profile-cover rounded-top"
