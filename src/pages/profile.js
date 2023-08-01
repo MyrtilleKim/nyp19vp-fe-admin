@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 // bootstrap
-import { Col, Row } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 
 // project import
 import ProfileForm from "components/Forms/ProfileForm";
@@ -29,19 +29,12 @@ const Profile = () => {
       </Row>
       <Row className="justify-content-md-center mt-0">
         <Col xs={12} lg={12} className="mb-4 d-sm-block">
-          <TransTable
-            trans={trans.filter((txn) => txn.user === id)}
-            userInfo={userInfo.filter((user) => user._id === id).at(0)}
-          />
-        </Col>
-        <Col xs={12} lg={5} className="mb-4 d-sm-block">
-          hihi
-          {trans.map((user) => (
-            <div key={user._id}>
-              <p>{user.user}</p>
-              <p>{user.wallet}</p>
-            </div>
-          ))}
+          <Container>
+            <TransTable
+              trans={trans.filter((txn) => txn.user === id)}
+              userInfo={userInfo.filter((user) => user._id === id).at(0)}
+            />
+          </Container>
         </Col>
       </Row>
     </>

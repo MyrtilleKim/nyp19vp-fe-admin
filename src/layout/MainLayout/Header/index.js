@@ -36,7 +36,7 @@ const Header = ({ open, handleDrawerToggle }) => {
     transition: "all .2s ease",
   };
   return (
-    <Navbar sticky="top" variant="dark" expanded className={isOpen}>
+    <Navbar fixed="top" variant="dark" expanded className={isOpen}>
       <Container fluid className="px-0">
         <div className="d-flex justify-content-between w-100">
           <div className="d-flex align-items-center">

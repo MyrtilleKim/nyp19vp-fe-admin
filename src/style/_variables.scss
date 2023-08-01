@@ -308,7 +308,7 @@ $quinary: $gray-600 !default;
 $success: $green !default;
 $info: $cyan !default;
 $warning: $yellow !default;
-$danger: $red !default;
+$danger: #d3003f !default;
 $light: $gray-100 !default;
 $dark: #262b40 !default;
 // scss-docs-end theme-color-variables
@@ -600,6 +600,7 @@ $caret-spacing: $caret-width * 0.85 !default;
 // scss-docs-end caret-variables
 
 $transition-base: all 0.2s ease-in-out !default;
+$transition-layout: all 0.2 ease-out;
 $transition-fade: opacity 0.15s linear !default;
 $transition-transform: transform 0.2s ease;
 // scss-docs-start collapse-transition
@@ -1173,7 +1174,7 @@ $form-validation-states: (
 // of components dependent on the z-axis and are designed to all work together.
 
 // scss-docs-start zindex-stack
-$zindex-dropdown: 1000 !default;
+$zindex-dropdown: 1050 !default;
 $zindex-sticky: 1020 !default;
 $zindex-fixed: 1030 !default;
 $zindex-offcanvas-backdrop: 1040 !default;
@@ -1824,8 +1825,8 @@ $avatar-lg-x: 3rem;
 $user-avatar-height: 2.5rem;
 $user-avatar-width: 2.5rem;
 
-$user-avatar-height-xs: 1.5rem;
-$user-avatar-width-xs: 1.5rem;
+$user-avatar-height-xs: 1.7rem;
+$user-avatar-width-xs: 1.7rem;
 
 $user-avatar-height-lg: 3.5rem;
 $user-avatar-width-lg: 3.5rem;

@@ -40,6 +40,18 @@
       background: none;
     }
   }
+  .label-checkbox {
+    margin-left: -1px;
+    border: 1px solid $gray-600;
+    border-left: 0;
+    border-top-right-radius: 0.5rem !important;
+    border-bottom-right-radius: 0.5rem !important;
+    color: $dark;
+    background-color: $gray-200;
+  }
+  .form-check-input {
+    border: 1px solid $gray-600 !important;
+  }
 }
 .card-link {
   color: $black;

@@ -13,7 +13,11 @@ const Alerts = ({ title, children, show, handleClose, classes }) => {
   const theme = useTheme();
   const matchDownXs = useMediaQuery(theme.breakpoints.down("sm"));
   useEffect(() => {
-    setWidth(matchDownXs ? { width: "100%" } : { width: "450px" });
+    setWidth(
+      matchDownXs
+        ? { width: "100%", zIndex: 1060 }
+        : { width: "450px", zIndex: 1060 }
+    );
   }, [matchDownXs]);
   return (
     <Alert

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 
 // bootstrap
@@ -23,14 +23,30 @@ const MiniTable = ({
   onRowClick,
   children,
   filter,
-  handleFilter,
+  filterKey,
 }) => {
+  const [curBody, setCurBody] = useState(body);
+  function handleSelect(event) {
+    const selected = event.target.value;
+
+    if (selected === "all") {
+      setCurBody(body);
+    } else {
+      const filtered = body.filter(
+        (elem) => elem[filterKey].toLowerCase() === selected.toLowerCase()
+      );
+      setCurBody(filtered);
+    }
+  }
+  useEffect(() => {
+    setCurBody(body);
+  }, [body]);
   return (
     <>
       <Card border="light" className="bg-white shadow-sm mb-2">
         <Card.Body>
           <DatatableWrapper
-            body={body}
+            body={curBody ? curBody : body}
             headers={header}
             paginationProps={{
               initialState: { page: 1 },
@@ -69,12 +85,19 @@ const MiniTable = ({
                 {filter && (
                   <Form.Select
                     aria-label="Default select example"
-                    onChange={handleFilter}
+                    onChange={handleSelect}
                     className="table-filter me-3"
                   >
                     <option value="all">Tất cả</option>
                     {filter.map((i) => {
-                      return <option value={i.value}>{i.title}</option>;
+                      return (
+                        <option
+                          key={`mini-form-select-${i.id}`}
+                          value={i.value}
+                        >
+                          {i.title}
+                        </option>
+                      );
                     })}
                   </Form.Select>
                 )}
@@ -94,7 +117,7 @@ const MiniTable = ({
               borderless
               className="mx-auto mt-2 overflow-hidden text-start align-middle datatable "
             >
-              <TableHeader classes={{ thead: "rounded thead-light" }} />
+              <TableHeader classes={{ thead: "thead-light" }} />
               <TableBody onRowClick={onRowClick} />
             </Table>
             <Row className="mx-2 mb-2 p-2">
@@ -138,7 +161,7 @@ MiniTable.prototype = {
   onRowClick: PropTypes.func,
   children: PropTypes.node,
   filter: PropTypes.array,
-  handleFilter: PropTypes.func,
+  filterKey: PropTypes.string,
 };
 
 export default MiniTable;

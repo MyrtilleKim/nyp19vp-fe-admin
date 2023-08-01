@@ -9,12 +9,15 @@
     background-color: initial;
     font-size: larger;
     color: $black;
+    margin-right: 1rem;
+    padding: 0.3rem 0 0.3rem;
     &:hover {
       background-color: initial;
+      color: $primary;
     }
     &:active,
     &:focus {
-      color: $dark;
+      color: $primary;
     }
   }
   &.btn-circle {

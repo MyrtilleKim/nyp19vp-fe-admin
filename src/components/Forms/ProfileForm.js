@@ -8,13 +8,24 @@ import { Formik } from "formik";
 import { HttpStatusCode } from "axios";
 
 // bootstrap
-import { Col, Row, Card, Form, Button, Container } from "react-bootstrap";
+import {
+  Col,
+  Row,
+  Card,
+  Form,
+  Button,
+  Container,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 
 // assets
 import {
   faEnvelope,
   faAddressCard,
   faPhoneAlt,
+  faBan,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 
 import { SampleGroupForm, DateGroupForm } from "./GroupForm";
@@ -24,12 +35,14 @@ import Modals from "components/Modal";
 import { updateInfoUser } from "store/requests/user";
 import { createAxios } from "http/createInstance";
 import { loginSuccess } from "store/reducers/auth";
+import { restoreUser, removeUser } from "store/requests/user";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const ProfileForm = (props) => {
-  const { userInfo } = props;
+const ProfileForm = ({ userInfo }) => {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state?.auth.login);
   let axiosJWT = createAxios(currentUser, dispatch, loginSuccess);
+  const [action, setAction] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [content, setContent] = useState("");
@@ -65,42 +78,73 @@ const ProfileForm = (props) => {
   };
   const handleConfirm = async () => {
     setShowModal(false);
-    let formData = { name: values.name };
-    if (values.phone) formData.phone = values.phone;
-    if (values.dob) formData.dob = values.dob;
-    console.log(formData, values.dob);
-    const res = await updateInfoUser(
-      userInfo._id,
-      currentUser?.accessToken,
-      formData,
-      dispatch,
-      axiosJWT
-    );
-    if (res.statusCode === HttpStatusCode.Ok) {
-      setContent("Cập nhật thông tin cá nhân thành công");
-      setTitle("Thành công");
-      setClasses({
-        alertVariant: "success",
-        alertClass: "fixed-top mx-auto",
-      });
-      setShowAlert(true);
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 1000);
-    } else {
-      setContent(res.message);
-      setTitle("Lỗi");
-      setShowAlert(true);
-      setTimeout(() => {
-        setShowAlert(false);
-      }, 1000);
+    let res;
+    let error = false;
+    if (action === "remove") {
+      res = await removeUser(
+        userInfo._id,
+        currentUser?.accessToken,
+        dispatch,
+        axiosJWT
+      );
+      if (res.statusCode === HttpStatusCode.Ok) {
+        handleAlert("Thành công", "Xóa tài khoản thành công", "success");
+      } else error = true;
+    } else if (action === "restore") {
+      res = await restoreUser(
+        userInfo._id,
+        currentUser?.accessToken,
+        dispatch,
+        axiosJWT
+      );
+      if (res.statusCode === HttpStatusCode.Ok) {
+        handleAlert("Thành công", "Khôi phục tài khoản thành công", "success");
+      } else error = true;
+    } else if (action === "update") {
+      let formData = { name: values.name };
+      if (values.phone) formData.phone = values.phone;
+      if (values.dob) formData.dob = values.dob;
+      console.log(formData, values.dob);
+      const res = await updateInfoUser(
+        userInfo._id,
+        currentUser?.accessToken,
+        formData,
+        dispatch,
+        axiosJWT
+      );
+      if (res.statusCode === HttpStatusCode.Ok) {
+        handleAlert(
+          "Thành công",
+          "Cập nhật thông tin cá nhân thành công",
+          "success"
+        );
+      } else error = true;
     }
+    if (error) {
+      handleAlert("Thất bại", res.message, "danger");
+      error = false;
+    }
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 1000);
   };
   const handleClose = () => {
     setShowAlert(false);
     setShowModal(false);
   };
-  const phoneRegExp = /(\+84|84|0)+([3|5|7|8|9])+([0-9]{8})\b/;
+  const phoneRegExp = /(\+84|84|0)+([3|5|7|8|9]{1})+([0-9]{8})\b/;
+  const renderTooltip = (props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      Tài khoản đã xóa vào {userInfo.deletedAt}
+    </Tooltip>
+  );
+  const handleClick = async (action) => {
+    setAction(action);
+    if (action === "remove") setContent("Bạn muốn xóa tài khoản?");
+    else setContent("Bạn muốn khôi phục tài khoản?");
+    setShowModal(true);
+  };
   return (
     <>
       <Modals
@@ -120,8 +164,8 @@ const ProfileForm = (props) => {
         {content}
       </Alerts>
       <Container>
-        <Row className="justify-content-center align-items-start">
-          <Col xs={12} xl={4}>
+        <Row className="justify-content-center align-items-start align-items-stretch">
+          <Col xs={12} xl={4} className="mb-4 d-table-cell">
             <AvatarForm
               user={userInfo}
               handleAlert={handleAlert}
@@ -130,12 +174,34 @@ const ProfileForm = (props) => {
               axiosJWT={axiosJWT}
             />
           </Col>
-          <Col xs={12} xl={8}>
-            <Card border="light" className="bg-white shadow-sm mb-4">
+          <Col xs={12} xl={8} className="mb-4 d-table-cell">
+            <Card border="light" className="bg-white shadow-sm h-100">
               <Card.Body>
-                <h5 className="mb-4">
-                  <b>Thông tin cá nhân</b>
-                </h5>
+                <div className="d-flex flex-row justify-content-between">
+                  <h5 className="mb-4">
+                    <b>Thông tin cá nhân</b>
+                  </h5>
+                  {userInfo.deleted && (
+                    <h3 className="text-danger">
+                      <OverlayTrigger
+                        placement="left"
+                        delay={{ show: 250, hide: 400 }}
+                        overlay={renderTooltip}
+                      >
+                        <FontAwesomeIcon icon={faBan} />
+                      </OverlayTrigger>
+                    </h3>
+                  )}
+                  {!userInfo.deleted && (
+                    <Button
+                      variant="light"
+                      className="icon icon-shape icon-sm rounded-circle"
+                      onClick={(e) => handleClick("remove")}
+                    >
+                      <FontAwesomeIcon icon={faTrash} />
+                    </Button>
+                  )}
+                </div>
                 <Formik
                   validationSchema={Yup.object().shape({
                     name: Yup.string().max(255).required("Bắt buộc"),
@@ -156,14 +222,14 @@ const ProfileForm = (props) => {
                       if (!_.isEqual(values, initValues)) {
                         setValues(values);
                         setContent("Bạn muốn cập nhật thông tin?");
+                        setAction("update");
                         setShowModal(true);
                       } else {
-                        setContent("Không có gì thay đổi");
-                        setTitle("Thông báo");
-                        setClasses({
-                          alertVariant: "info",
-                          alertClass: "fixed-top mx-auto",
-                        });
+                        handleAlert(
+                          "Thông báo",
+                          "Không có gì thay đổi",
+                          "primary"
+                        );
                         setShowAlert(true);
                         setTimeout(() => {
                           handleClose();
@@ -196,6 +262,7 @@ const ProfileForm = (props) => {
                             placeholder="Nhập Họ & Tên"
                             classes={{ formControl: "input-out-button-group" }}
                             required={true}
+                            disabled={userInfo.deleted}
                             handleBlur={handleBlur}
                             handleChange={handleChange}
                             touched={touched}
@@ -207,8 +274,10 @@ const ProfileForm = (props) => {
                           <DateGroupForm
                             title="Ngày sinh"
                             name="birthday"
+                            disabled={userInfo.deleted}
                             handleBlur={handleBlur}
                             handleChange={handleChange}
+                            classes={{ formControl: "input-out-button-group" }}
                             touched={touched}
                             errors={errors}
                             values={values}
@@ -226,6 +295,7 @@ const ProfileForm = (props) => {
                             placeholder="Nhập Email"
                             required={true}
                             readOnly={true}
+                            disabled={userInfo.deleted}
                             handleBlur={handleBlur}
                             handleChange={handleChange}
                             touched={touched}
@@ -240,6 +310,7 @@ const ProfileForm = (props) => {
                             name="phone"
                             type="text"
                             required={false}
+                            disabled={userInfo.deleted}
                             classes={{ formControl: "input-out-button-group" }}
                             placeholder="Nhập số điện thoại"
                             handleBlur={handleBlur}
@@ -250,15 +321,27 @@ const ProfileForm = (props) => {
                           />
                         </Col>
                       </Row>
-                      <div className="mt-3 text-end">
-                        <Button
-                          variant="primary"
-                          disabled={isSubmitting}
-                          type="submit"
-                        >
-                          Xác nhận
-                        </Button>
-                      </div>
+                      {!userInfo.deleted && (
+                        <div className="mt-3 text-end">
+                          <Button
+                            variant="primary"
+                            disabled={isSubmitting}
+                            type="submit"
+                          >
+                            Xác nhận
+                          </Button>
+                        </div>
+                      )}
+                      {userInfo.deleted && (
+                        <div className="mt-3 text-end">
+                          <Button
+                            variant="quaternary"
+                            onClick={(e) => handleClick("restore")}
+                          >
+                            Khôi phục
+                          </Button>
+                        </div>
+                      )}
                     </Form>
                   )}
                 </Formik>

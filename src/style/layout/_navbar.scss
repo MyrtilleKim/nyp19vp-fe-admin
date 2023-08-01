@@ -101,7 +101,7 @@
 }
 @include media-breakpoint-up(lg) {
   .navbar {
-    transition: $transition-base;
+    transition: $transition-layout;
     &.open {
       margin-left: $drawerWidth;
       width: calc(100% - $drawerWidth);

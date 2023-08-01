@@ -3,7 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 // bootstrap
-import { Image, Badge, Dropdown, ListGroup, Button } from "react-bootstrap";
+import {
+  Image,
+  Badge,
+  Dropdown,
+  ListGroup,
+  Button,
+  Container,
+} from "react-bootstrap";
 
 // assets
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,6 +18,7 @@ import {
   faEllipsisVertical,
   faLock,
   faTrash,
+  faTrashArrowUp,
   faPlus,
   faAddressCard,
   faEnvelope,
@@ -25,61 +33,108 @@ import { getAllUsers } from "store/requests/user";
 import Modals from "components/Modal";
 import SampleTable from "./SampleTable";
 import ModalForm from "components/Forms/ModalForm";
+import { removeUser, restoreUser } from "store/requests/user";
+import { createAxios } from "http/createInstance";
+import { loginSuccess } from "store/reducers/auth";
+import Alerts from "components/Alerts";
 
 // third party
 import * as Yup from "yup";
+import { HttpStatusCode } from "axios";
 
 const UserTable = () => {
-  const [delAction, setDelAction] = useState(false);
-  const [lockAction, setLockAction] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { currentUser } = useSelector((state) => state?.auth.login);
+  const { userInfo } = useSelector((state) => state.user);
+  const [showModal, setShowModal] = useState(false);
+  const [action, setAction] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [content, setContent] = useState("");
+  const [title, setTitle] = useState("");
+  const [classes, setClasses] = useState({
+    alertVariant: "danger",
+    alertClass: "fixed-top mx-auto",
+  });
   const [addAction, setAddAction] = useState(false);
   const [selected, setSelected] = useState();
   const phoneRegExp = /(\+84|84|0)+([3|5|7|8|9])+([0-9]{8})\b/;
+  let axiosJWT = createAxios(currentUser, dispatch, loginSuccess);
 
-  const handleClose = () => {
-    setDelAction(false);
-    setLockAction(false);
-    setAddAction(false);
-  };
-  const handleDelAction = (row) => {
-    setSelected(row);
-    setDelAction(true);
-  };
-  const handleLockAction = (row) => {
-    setSelected(row);
-    setLockAction(true);
-  };
-  const handleAddAction = () => setAddAction(true);
-
-  let navigate = useNavigate();
   function onRowClick(data) {
     navigate(`/users/${data._id}`);
   }
-  const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.user);
-  const [curBody, setCurBody] = useState(userInfo);
   useEffect(() => {
     getAllUsers(dispatch);
-    setCurBody(userInfo);
-  }, [dispatch, userInfo]);
-
-  function handleSelect(event) {
-    const selected = event.target.value;
-
-    if (selected === "all") {
-      setCurBody(userInfo);
-    } else {
-      const filtered = userInfo.filter(
-        (elem) => elem.role.toLowerCase() === selected
-      );
-      setCurBody(filtered);
+  }, [dispatch]);
+  const handleClose = () => {
+    setShowModal(false);
+    setAddAction(false);
+  };
+  const handleAlert = (title, content, variant) => {
+    setTitle(title);
+    setContent(content);
+    setClasses({
+      alertVariant: variant,
+      alertClass: "fixed-top mx-auto",
+    });
+  };
+  const handleAction = (row, action) => {
+    if (typeof action === "object") {
+      const valuesArray = Object.values(action);
+      action = valuesArray.join("").trim();
     }
-  }
+    setAction(action);
+    setSelected(row);
+    if (action === "remove") {
+      setContent(`Bạn có chắc chắn muốn xóa tài khoản này?`);
+    } else if (action === "restore") {
+      setContent(`Bạn có chắc chắn muốn khôi phục tài khoản này?`);
+    } else {
+      setContent(`Bạn có chắc chắn muốn khóa tài khoản này?`);
+    }
+    setShowModal(true);
+  };
+
+  const handleConfirm = async () => {
+    setShowModal(false);
+    let res;
+    let error = false;
+    if (action === "remove") {
+      res = await removeUser(
+        selected._id,
+        currentUser?.accessToken,
+        dispatch,
+        axiosJWT
+      );
+      if (res.statusCode === HttpStatusCode.Ok) {
+        handleAlert("Thành công", "Xóa tài khoản thành công", "success");
+      } else error = true;
+    } else if (action === "restore") {
+      res = await restoreUser(
+        selected._id,
+        currentUser?.accessToken,
+        dispatch,
+        axiosJWT
+      );
+      if (res.statusCode === HttpStatusCode.Ok) {
+        handleAlert("Thành công", "Khôi phục tài khoản thành công", "success");
+      } else error = true;
+    }
+    if (error) {
+      handleAlert("Thất bại", res.message, "danger");
+      error = false;
+    }
+    setShowAlert(true);
+    setTimeout(() => {
+      setShowAlert(false);
+    }, 1000);
+  };
+  const handleAddAction = () => setAddAction(true);
   const filter = [
     { title: "Admin", value: "admin" },
     { title: "User", value: "user" },
   ];
-
   const schema = Yup.object().shape({
     name: Yup.string().max(255).required("Bắt buộc"),
     email: Yup.string()
@@ -115,6 +170,7 @@ const UserTable = () => {
       placeholder: "Nhập họ và tên",
       classes: { formGroup: "mb-4", formControl: "input-out-button-group" },
       required: true,
+      _Type: "simple",
     },
     {
       title: "Email",
@@ -124,8 +180,14 @@ const UserTable = () => {
       placeholder: "Nhập email",
       classes: { formGroup: "mb-4", formControl: "input-out-button-group" },
       required: true,
+      _Type: "simple",
     },
-    { title: "Ngày sinh", name: "birthday", classes: { formGroup: "mb-4" } },
+    {
+      title: "Ngày sinh",
+      name: "birthday",
+      classes: { formGroup: "mb-4", formControl: "input-out-button-group" },
+      _Type: "date",
+    },
     {
       title: "Số điện thoại",
       icon: icons.faPhoneAlt,
@@ -133,6 +195,7 @@ const UserTable = () => {
       type: "text",
       placeholder: "Nhập số điện thoại",
       classes: { formGroup: "mb-4", formControl: "input-out-button-group" },
+      _Type: "simple",
     },
     {
       title: "Mật khẩu",
@@ -142,6 +205,7 @@ const UserTable = () => {
         formControl: "input-button-group",
       },
       checkStrength: true,
+      _Type: "password",
     },
   ];
 
@@ -157,6 +221,7 @@ const UserTable = () => {
       prop: "checkbox",
     },
     {
+      isFilterable: true,
       prop: "_id",
     },
     {
@@ -164,7 +229,7 @@ const UserTable = () => {
       cell: (row) => (
         <Image
           src={row.avatar}
-          className="user-avatar xs-avatar shadow "
+          className="user-avatar shadow "
           roundedCircle
           alt={row._id}
         />
@@ -210,7 +275,7 @@ const UserTable = () => {
       ),
     },
     {
-      prop: "button",
+      prop: "deleted",
       cellProps: { style: { width: "10px" } },
       cell: (row) => (
         <Dropdown>
@@ -226,13 +291,26 @@ const UserTable = () => {
             <ListGroup className="list-group-flush">
               <Dropdown.Item
                 className="text-start text-dark py-3"
-                onClick={(e) => handleDelAction(row)}
+                onClick={(e) =>
+                  handleAction(row, {
+                    ...(row.deleted ? "restore" : " remove"),
+                  })
+                }
               >
-                <FontAwesomeIcon icon={faTrash} /> Xóa tài khoản
+                {row.deleted ? (
+                  <>
+                    <FontAwesomeIcon icon={faTrashArrowUp} /> Khôi phục tài
+                    khoản
+                  </>
+                ) : (
+                  <>
+                    <FontAwesomeIcon icon={faTrash} /> Xóa tài khoản
+                  </>
+                )}
               </Dropdown.Item>
               <Dropdown.Item
                 className="text-start text-dark py-3"
-                onClick={(e) => handleLockAction(row)}
+                onClick={(e) => handleAction(row)}
               >
                 <FontAwesomeIcon icon={faLock} /> Khóa tài khoản
               </Dropdown.Item>
@@ -243,21 +321,22 @@ const UserTable = () => {
     },
   ];
   return (
-    <>
-      <Modals title="Xác nhận" show={delAction} handleClose={handleClose}>
-        {selected && (
-          <h6>
-            Bạn có chắc chắn muốn xóa tài khoản #{selected._id} {selected.name}?
-          </h6>
-        )}
-      </Modals>
-      <Modals title="Xác nhận" show={lockAction} handleClose={handleClose}>
-        {selected && (
-          <h6>
-            Bạn có chắc chắn muốn khóa tài khoản #{selected._id} {selected.name}
-            ?
-          </h6>
-        )}
+    <Container>
+      <Alerts
+        show={showAlert}
+        handleClose={handleClose}
+        title={title}
+        classes={classes}
+      >
+        {content}
+      </Alerts>
+      <Modals
+        title="Xác nhận"
+        show={showModal}
+        handleClose={handleClose}
+        handleConfirm={handleConfirm}
+      >
+        {selected && <h6>{content}</h6>}
       </Modals>
       <ModalForm
         title="Thêm tài khoản"
@@ -270,10 +349,10 @@ const UserTable = () => {
       <SampleTable
         title="Tài khoản"
         header={HEADER}
-        body={curBody}
+        body={userInfo}
         onRowClick={onRowClick}
         filter={filter}
-        handleFilter={handleSelect}
+        filterKey="role"
       >
         <Button
           variant="primary"
@@ -283,7 +362,7 @@ const UserTable = () => {
           <FontAwesomeIcon icon={faPlus} /> Thêm tài khoản
         </Button>
       </SampleTable>
-    </>
+    </Container>
   );
 };
 export default UserTable;

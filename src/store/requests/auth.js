@@ -14,7 +14,6 @@ export const loginUser = async (user, dispatch) => {
     const res = await apiClient.post("/auth/login", user, {
       withCredentials: true,
     });
-    console.log(res?.data);
     dispatch(loginSuccess(res?.data));
     return res?.data;
   } catch (error) {
@@ -26,14 +25,7 @@ export const loginUser = async (user, dispatch) => {
 export const logoutUser = async (token, dispatch, navigate, axiosJWT) => {
   dispatch(logoutStart());
   try {
-    await axiosJWT.post("/auth/logout", {
-      headers: {
-        accept: "*/*",
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    console.log("logout haha");
-    dispatch(logoutSuccess(null));
+    dispatch(logoutSuccess());
     navigate("/login");
   } catch (error) {
     dispatch(logoutFailed());

@@ -21,9 +21,9 @@ const PackageWidget = forwardRef((props, ref) => {
   return (
     <Card ref={ref} border="light" className="shadow-sm">
       <Card.Body>
-        <div className="d-flex flex-row align-items-center flex-0 bg-none">
+        <h5 className="d-block fw-normal mb-2 ms-3">{title}</h5>
+        <div className="d-flex flex-row align-items-start flex-0 bg-none">
           <div className="d-block ms-3">
-            <h5 className="fw-normal mb-2">{title}</h5>
             <h3>{value}</h3>
             <small className="fw-bold mt-2">
               <span className="me-2">

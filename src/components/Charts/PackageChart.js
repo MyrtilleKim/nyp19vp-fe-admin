@@ -40,13 +40,13 @@ const pieChartOptions = {
 
 const PackageChart = ({ slot }) => {
   const [options, setOptions] = useState(pieChartOptions);
-  const [height, setHeight] = useState("350px");
+  const [height, setHeight] = useState("300px");
 
   const theme = useTheme();
   const matchDownLg = useMediaQuery(theme.breakpoints.down("lg"));
 
   useEffect(() => {
-    setHeight(matchDownLg ? "100%" : "350px");
+    setHeight(matchDownLg ? "100%" : "300px");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matchDownLg]);
 

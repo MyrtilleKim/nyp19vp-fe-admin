@@ -5,12 +5,14 @@ import { useDispatch, useSelector } from "react-redux";
 // material-ui
 import { useTheme } from "@mui/material/styles";
 import { Box, useMediaQuery } from "@mui/material";
+import { Container } from "react-bootstrap";
 
 // project import
 import Drawer from "./Drawer";
 import Header from "./Header";
 import navigation from "menu";
 import Breadcrumbs from "components/Breadcrumb";
+import Footer from "./Footer";
 
 // types
 import { openDrawer } from "store/reducers/menu";
@@ -51,10 +53,13 @@ const MainLayout = () => {
         <Drawer open={open} handleDrawerToggle={handleDrawerToggle} />
         <Box
           component="main"
-          sx={{ width: "100%", flexGrow: 1, p: { xs: 2, sm: 3 } }}
+          sx={{ width: "100%", flexGrow: 1, p: { xs: 2, sm: 3 }, mt: 7 }}
         >
           <Breadcrumbs navigation={navigation} title />
           <Outlet />
+          <Container>
+            <Footer open={open} handleDrawerToggle={handleDrawerToggle} />
+          </Container>
         </Box>
       </Box>
     </>

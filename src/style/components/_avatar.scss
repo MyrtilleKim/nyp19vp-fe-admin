@@ -46,6 +46,8 @@
   &.xs-avatar {
     height: $user-avatar-height-xs;
     width: $user-avatar-width-xs;
+    min-height: $user-avatar-width-xs;
+    min-width: $user-avatar-width-xs;
     img {
       height: $user-avatar-height-xs;
       width: $user-avatar-width-xs;

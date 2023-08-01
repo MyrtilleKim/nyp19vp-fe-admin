@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 
 // bootstrap
-import { Container, Row, Col, Image } from "react-bootstrap";
+import { Row, Col, Image } from "react-bootstrap";
 
 // assets
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faReceipt, faUser, faWallet } from "@fortawesome/free-solid-svg-icons";
+import { faReceipt, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import VnPayLogo from "assets/payment/VnPay.png";
 import ZaloPayLogo from "assets/payment/ZaloPay.png";
 
 import SampleTable from "components/Tables/BSTable/SampleTable";
+import { formatCurrency } from "store/requests/user";
 
 // ==============================|| Receipt Widget ||============================== //
 const ReceiptWidget = ({ trans, userInfo }) => {
@@ -21,7 +22,6 @@ const ReceiptWidget = ({ trans, userInfo }) => {
     "Số lượng",
     "Thành tiền",
   ];
-  console.log(trans.item);
   const [body, setBody] = useState(mapItemBody(trans.item));
   useEffect(() => {
     setBody(mapItemBody(trans.item));
@@ -29,10 +29,10 @@ const ReceiptWidget = ({ trans, userInfo }) => {
   return (
     <>
       <Row>
-        <Col xs={12} lg={6}>
+        <Col xs={12} lg={6} className="ps-3">
           <FontAwesomeIcon icon={faUser} /> <b>Khách hàng: </b> {userInfo.name}
         </Col>
-        <Col xs={12} lg={6}>
+        <Col xs={12} lg={6} className="ps-3">
           <FontAwesomeIcon icon={faReceipt} /> <b>Hóa đơn: </b>
           {trans._id}
         </Col>
@@ -40,9 +40,10 @@ const ReceiptWidget = ({ trans, userInfo }) => {
       <div className="d-flex flex-row justify-content-between"></div>
       <hr className="dash" />
       <SampleTable header={header} body={body} classes="receipt" />
+      <hr className="dash" />
       <Row>
         <Col xs={6}>
-          <h5 className="fw-bold">Tổng tiền: </h5>
+          <h6 className="fw-bold ps-2">Thành tiền: </h6>
         </Col>
         <Col xs={6} className="text-end pe-4">
           {trans.amount_vnd}
@@ -50,7 +51,32 @@ const ReceiptWidget = ({ trans, userInfo }) => {
       </Row>
       <Row>
         <Col xs={6}>
-          <h5 className="fw-bold">Phương thức </h5>
+          <h6 className="fw-bold ps-2">Thuế: </h6>
+        </Col>
+        <Col xs={6} className="text-end pe-4">
+          {formatCurrency(0)}
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={6}>
+          <h6 className="fw-bold ps-2">Giảm giá: </h6>
+        </Col>
+        <Col xs={6} className="text-end pe-4">
+          {formatCurrency(0)}
+        </Col>
+      </Row>
+      <hr className="dash" />
+      <Row>
+        <Col xs={6}>
+          <h5 className="fw-bold ps-2">Tổng tiền: </h5>
+        </Col>
+        <Col xs={6} className="text-end pe-4">
+          {trans.amount_vnd}
+        </Col>
+      </Row>
+      <Row>
+        <Col xs={6}>
+          <h5 className="fw-bold ps-2">Phương thức </h5>
         </Col>
         <Col xs={6} className="pe-4">
           <Image
@@ -62,7 +88,7 @@ const ReceiptWidget = ({ trans, userInfo }) => {
         </Col>
       </Row>
       <hr className="dash" />
-      <div className="text-end">
+      <div className="text-end pe-2">
         <FontAwesomeIcon icon={faClock} /> {trans.createdAt}
       </div>
     </>

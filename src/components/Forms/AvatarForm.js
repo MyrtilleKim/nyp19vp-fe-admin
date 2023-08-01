@@ -30,7 +30,7 @@ const AvatarForm = ({ user, handleAlert, currentUser, dispatch, axiosJWT }) => {
 
     const form = new FormData();
     form.append("file", fileObj);
-    const res = await uploadFile(currentUser?.accessToken, form);
+    const res = await uploadFile(currentUser?.accessToken, form, axiosJWT);
 
     const formAvatar = new FormData();
     formAvatar.append("avatar", res.data);
@@ -58,7 +58,7 @@ const AvatarForm = ({ user, handleAlert, currentUser, dispatch, axiosJWT }) => {
   return (
     <Card
       border="light"
-      className="bg-white shadow-sm mb-4 text-center"
+      className="bg-white shadow-sm text-center"
       style={{ height: "100%" }}
     >
       <div
@@ -87,6 +87,7 @@ const AvatarForm = ({ user, handleAlert, currentUser, dispatch, axiosJWT }) => {
               width: "30px",
               padding: "0 1px 0 1px",
             }}
+            disabled={user.deleted}
           >
             <FontAwesomeIcon icon={faCameraAlt} />
           </Button>

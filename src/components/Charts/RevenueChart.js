@@ -1,10 +1,6 @@
 import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 
-// material-ui
-import { useTheme } from "@mui/material/styles";
-import { useMediaQuery } from "@mui/material";
-
 // third-party
 import ReactApexChart from "react-apexcharts";
 
@@ -34,13 +30,7 @@ const line = "#fcddb3";
 // ==============================|| INCOME AREA CHART ||============================== //
 
 const RevenueChart = ({ slot }) => {
-  const theme = useTheme();
-  const matchUpXl = useMediaQuery(theme.breakpoints.up("xl"));
   const [options, setOptions] = useState(areaChartOptions);
-  const [height, setHeight] = useState("300px");
-  useEffect(() => {
-    setHeight(matchUpXl ? "600px" : "300px");
-  }, [matchUpXl]);
   useEffect(() => {
     setOptions((prevState) => ({
       ...prevState,
@@ -127,7 +117,7 @@ const RevenueChart = ({ slot }) => {
       options={options}
       series={series}
       type="area"
-      height={height}
+      height="300px"
     />
   );
 };

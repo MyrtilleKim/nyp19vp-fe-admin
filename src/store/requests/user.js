@@ -10,6 +10,7 @@ export const getAllUsers = async (dispatch) => {
       item.userInfo["status"] = item.status;
       item.userInfo.updatedAt = formatDate(item.userInfo.updatedAt);
       item.userInfo.createdAt = formatDate(item.userInfo.createdAt);
+      item.userInfo.deletedAt = formatDate(item.userInfo.deletedAt);
       dataUser.push(item.userInfo);
     }
     dispatch(getInitUser(dataUser));
@@ -39,9 +40,9 @@ export const getAllTrans = async (dispatch) => {
   }
 };
 
-export const uploadFile = async (token, file) => {
+export const uploadFile = async (token, file, axiosJWT) => {
   try {
-    const res = await apiClient.post("/file/upload-avatar", file, {
+    const res = await axiosJWT.post("/file/upload-avatar", file, {
       headers: {
         accept: "*/*",
         Authorization: `Bearer ${token}`,
@@ -97,9 +98,56 @@ export const updateInfoUser = async (
     return error.response.data;
   }
 };
+
+export const removeUser = async (userID, token, dispatch, axiosJWT) => {
+  try {
+    const res = await axiosJWT.delete(`/users/${userID}`, {
+      headers: {
+        accept: "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    await getAllUsers(dispatch);
+
+    return res?.data;
+  } catch (error) {
+    return error.response.data;
+  }
+};
+
+export const restoreUser = async (userID, token, dispatch, axiosJWT) => {
+  try {
+    console.log("huhuhu", axiosJWT, token);
+    const res = await axiosJWT.patch(
+      `/users/${userID}`,
+      {},
+      {
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    await getAllUsers(dispatch);
+
+    return res?.data;
+  } catch (error) {
+    return error.response.data;
+  }
+};
+
 export function formatDate(dateISO) {
   return new Date(dateISO).toLocaleDateString("vi-VN", {
     weekday: "long",
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+}
+export function formatShortDate(dateISO) {
+  return new Date(dateISO).toLocaleDateString("vi-VN", {
     year: "numeric",
     month: "short",
     day: "numeric",

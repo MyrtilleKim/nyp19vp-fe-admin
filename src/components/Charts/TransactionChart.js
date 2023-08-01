@@ -125,7 +125,7 @@ const TransactionChart = ({ slot }) => {
         options={options}
         series={series}
         type="bar"
-        height={"350px"}
+        height={"300px"}
       />
     </div>
   );

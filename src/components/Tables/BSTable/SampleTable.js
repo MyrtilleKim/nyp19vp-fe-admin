@@ -10,8 +10,8 @@ const SampleTable = ({ header, body, classes }) => {
 
     return (
       <tr>
-        {keys.map((key) => {
-          return <td>{item[key]}</td>;
+        {keys.map((ele) => {
+          return <td key={`bs-table-td-${ele.id}`}>{item[ele]}</td>;
         })}
       </tr>
     );
@@ -26,7 +26,11 @@ const SampleTable = ({ header, body, classes }) => {
       <thead className="thead-light">
         <tr>
           {header.map((head) => {
-            return <th scope="col">{head}</th>;
+            return (
+              <th scope="col" key={`bs-table-th-${head.id}`}>
+                {head}
+              </th>
+            );
           })}
         </tr>
       </thead>

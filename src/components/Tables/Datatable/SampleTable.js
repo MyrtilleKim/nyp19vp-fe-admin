@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 // bootstrap
@@ -25,15 +25,35 @@ const SampleTable = ({
   onRowClick,
   children,
   filter,
-  handleFilter,
+  filterKey,
+  classes,
 }) => {
+  const [curBody, setCurBody] = useState(body);
+  const tableClass = classes
+    ? `mx-auto mt-3 datatable ${classes}`
+    : "mx-auto mt-3 datatable";
+  function handleSelect(event) {
+    const selected = event.target.value;
+
+    if (selected === "all") {
+      setCurBody(body);
+    } else {
+      const filtered = body.filter(
+        (elem) => elem[filterKey].toLowerCase() === selected.toLowerCase()
+      );
+      setCurBody(filtered);
+    }
+  }
+  useEffect(() => {
+    setCurBody(body);
+  }, [body]);
   return (
     <>
       <h4 className="mb-2">
         <b>{title}</b>
       </h4>
       <DatatableWrapper
-        body={body}
+        body={curBody ? curBody : body}
         headers={header}
         paginationProps={{
           initialState: { page: 1 },
@@ -68,12 +88,16 @@ const SampleTable = ({
             {filter && (
               <Form.Select
                 aria-label="Default select example"
-                onChange={handleFilter}
+                onChange={handleSelect}
                 className="table-filter ms-3"
               >
                 <option value="all">Tất cả</option>
                 {filter.map((i) => {
-                  return <option value={i.value}>{i.title}</option>;
+                  return (
+                    <option key={`form-select-${i.id}`} value={i.value}>
+                      {i.title}
+                    </option>
+                  );
                 })}
               </Form.Select>
             )}
@@ -91,14 +115,12 @@ const SampleTable = ({
           </Col>
         </Row>
         <Card border="light" className="bg-white shadow-sm mb-4">
-          <Table
-            hover
-            responsive
-            borderless
-            className="mx-auto mt-3 overflow-hidden text-start align-middle datatable"
-          >
+          <Table hover responsive borderless className={tableClass}>
             <TableHeader classes={{ thead: "thead-light" }} />
-            <TableBody onRowClick={onRowClick} />
+            <TableBody
+              onRowClick={onRowClick}
+              classes={{ td: "align-middle" }}
+            />
           </Table>
           <Row className="mx-2 mb-4 p-2">
             <Col
@@ -140,7 +162,8 @@ SampleTable.prototype = {
   onRowClick: PropTypes.func,
   children: PropTypes.node,
   filter: PropTypes.array,
-  handleFilter: PropTypes.func,
+  filterKey: PropTypes.string,
+  classes: PropTypes.string,
 };
 
 export default SampleTable;

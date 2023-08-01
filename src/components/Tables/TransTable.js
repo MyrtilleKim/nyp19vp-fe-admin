@@ -1,16 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 // bootstrap
-import { Image, Dropdown, ListGroup, Button } from "react-bootstrap";
+import { Image, Button } from "react-bootstrap";
 
 // assets
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faEllipsisVertical,
-  faLock,
-  faTrash,
-} from "@fortawesome/free-solid-svg-icons";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 import VnPayLogo from "assets/payment/VnPay.png";
 import ZaloPayLogo from "assets/payment/ZaloPay.png";
@@ -23,7 +18,6 @@ import ReceiptWidget from "components/Widgets/ReceiptWidget";
 const TransTable = ({ trans, userInfo }) => {
   const [receipt, setReceipt] = useState(null);
   const [showReceipt, setShowReceipt] = useState(false);
-  const [curBody, setCurBody] = useState(trans);
   const handleClose = () => {
     setShowReceipt(false);
   };
@@ -32,23 +26,11 @@ const TransTable = ({ trans, userInfo }) => {
     setShowReceipt(true);
   }
 
-  useEffect(() => {
-    setCurBody(trans);
-  }, [trans]);
+  useEffect(() => {}, [trans]);
   const filter = [
     { title: "ZaloPay", value: "ZaloPay" },
     { title: "VnPay", value: "VnPay" },
   ];
-  function handleSelect(event) {
-    const selected = event.target.value;
-
-    if (selected === "all") {
-      setCurBody(trans);
-    } else {
-      const filtered = trans.filter((elem) => elem.wallet === selected);
-      setCurBody(filtered);
-    }
-  }
   const HEADER = [
     {
       alignment: {
@@ -69,14 +51,11 @@ const TransTable = ({ trans, userInfo }) => {
       isFilterable: true,
     },
     {
-      isFilterable: false,
       isSortable: true,
       prop: "amount_vnd",
       title: "Tổng tiền",
     },
     {
-      isFilterable: false,
-      isSortable: false,
       prop: "wallet",
       title: "Phương thức",
       cell: (row) => (
@@ -88,7 +67,6 @@ const TransTable = ({ trans, userInfo }) => {
       ),
     },
     {
-      isFilterable: false,
       isSortable: true,
       prop: "createdAt",
       title: "Ngày lập",
@@ -121,10 +99,10 @@ const TransTable = ({ trans, userInfo }) => {
       <MiniTable
         title="Giao dịch"
         header={HEADER}
-        body={curBody}
+        body={trans}
         onRowClick={onRowClick}
         filter={filter}
-        handleFilter={handleSelect}
+        filterKey="wallet"
       ></MiniTable>
     </>
   );

@@ -12,7 +12,6 @@
   display: inline-flex;
   @include align-items(center);
   @include justify-content(center);
-
   span,
   svg {
     font-size: $icon-size;

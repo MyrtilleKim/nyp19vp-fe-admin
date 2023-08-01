@@ -168,7 +168,7 @@ const HeaderContent = (props) => {
 
           <Dropdown.Item className="fw-bold" onClick={handleLogout}>
             <FontAwesomeIcon icon={faSignOutAlt} className="text-danger me-2" />{" "}
-            Logout
+            Đăng xuất
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
