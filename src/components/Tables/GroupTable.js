@@ -42,7 +42,7 @@ import Modals from "components/Modal";
 import SampleTable from "./Datatable/SampleTable";
 import Alerts from "components/Alerts";
 import { removeGroup, restoreGroup, createGroup } from "store/requests/group";
-import { reinitializeState } from "store/reducers/group";
+// import { reinitializeState } from "store/reducers/group";
 
 // third party
 import * as Yup from "yup";

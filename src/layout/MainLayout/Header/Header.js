@@ -37,17 +37,15 @@ const HeaderContent = (props) => {
   const dispatch = useDispatch();
   let { currentUser } = useSelector((state) => state?.auth.login);
   let axiosJWT = createAxios(currentUser, dispatch, loginSuccess);
-  let day = new Date();
 
   if (currentUser !== null) {
     const decodedToken = jwtDecode(currentUser?.accessToken);
-    if (decodedToken.exp < day.getTime() / 1000) {
+    if (decodedToken.exp < new Date().getTime() / 1000) {
       dispatch(loginSuccess(null));
     }
   }
 
   const handleLogout = async () => {
-    console.log("logout", currentUser?.accessToken, axiosJWT);
     await logoutUser(currentUser?.accessToken, dispatch, navigate, axiosJWT);
   };
 

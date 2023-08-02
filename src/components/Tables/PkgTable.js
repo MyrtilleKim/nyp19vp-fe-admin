@@ -138,6 +138,7 @@ const PackageTable = () => {
       coefficient: 1000,
       submit: null,
     });
+    setSelected(null);
     setShowModalForm(true);
   };
   const handleSubmitModalForm = async (values) => {

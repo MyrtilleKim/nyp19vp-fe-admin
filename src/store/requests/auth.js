@@ -8,6 +8,22 @@ import {
   logoutFailed,
 } from "../reducers/auth";
 
+export const refeshToken = async (user, dispatch) => {
+  try {
+    const res = await apiClient.get("/auth/refresh", {
+      withCredentials: true,
+    });
+    const refeshUser = {
+      ...user,
+      accessToken: res?.data.accessToken,
+    };
+    dispatch(loginSuccess(refeshUser));
+    return res?.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const loginUser = async (user, dispatch) => {
   dispatch(loginStart());
   try {
