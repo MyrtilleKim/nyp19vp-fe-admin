@@ -1,4 +1,4 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 
 // bootstrap
 import { Card, Button } from "react-bootstrap";
@@ -12,11 +12,44 @@ import RevenueChart from "components/Charts/RevenueChart";
 
 const RevenueWidget = forwardRef((props, ref) => {
   const { title, value, percentage } = props;
-  const percentageIcon = percentage < 0 ? faAngleDown : faAngleUp;
-  const percentageColor = percentage < 0 ? "text-danger" : "text-success";
-  const curPercentage = percentage < 0 ? percentage * -1 : percentage;
+  // const percentageIcon = percentage < 0 ? faAngleDown : faAngleUp;
+  // const percentageColor = percentage < 0 ? "text-danger" : "text-success";
+  // const curPercentage = percentage < 0 ? percentage * -1 : percentage;
 
   const [slot, setSlot] = useState("week");
+
+  const [portion, setPortion] = useState(
+    slot === "week"
+      ? {
+          icon: percentage.week < 0 ? faAngleDown : faAngleUp,
+          color: percentage.week < 0 ? "text-danger" : "text-success",
+          current: percentage.week < 0 ? percentage.week * -1 : percentage.week,
+        }
+      : {
+          icon: percentage.month < 0 ? faAngleDown : faAngleUp,
+          color: percentage.month < 0 ? "text-danger" : "text-success",
+          current:
+            percentage.month < 0 ? percentage.month * -1 : percentage.month,
+        }
+  );
+
+  useEffect(() => {
+    if (slot === "week") {
+      setPortion({
+        icon: percentage.week < 0 ? faAngleDown : faAngleUp,
+        color: percentage.week < 0 ? "text-danger" : "text-success",
+        current: percentage.week < 0 ? percentage.week * -1 : percentage.week,
+      });
+    } else {
+      setPortion({
+        icon: percentage.month < 0 ? faAngleDown : faAngleUp,
+        color: percentage.month < 0 ? "text-danger" : "text-success",
+        current:
+          percentage.month < 0 ? percentage.month * -1 : percentage.month,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slot]);
 
   return (
     <Card ref={ref} border="light" className="bg-primary-alt shadow-sm">
@@ -24,17 +57,21 @@ const RevenueWidget = forwardRef((props, ref) => {
         <div className="d-flex flex-row align-items-center flex-0 bg-none">
           <div className="d-block ms-3">
             <h5 className="fw-normal mb-2">{title}</h5>
-            <h3>{value}</h3>
-            <small className="fw-bold mt-2">
-              <span className="me-2">
-                {slot === "week" ? "Hôm qua" : "Tháng trước"}
-              </span>
-              <FontAwesomeIcon
-                icon={percentageIcon}
-                className={`${percentageColor} me-1`}
-              />
-              <span className={percentageColor}>{curPercentage}%</span>
-            </small>
+            <h3>{slot === "week" ? value.week : value.month}</h3>
+            {portion.current ? (
+              <small className="fw-bold mt-2">
+                <span className="me-2">
+                  {slot === "week" ? "Hôm qua" : "Tháng trước"}
+                </span>
+                <FontAwesomeIcon
+                  icon={portion.icon}
+                  className={`${portion.color} me-1`}
+                />
+                <span className={portion.color}>{portion.current}%</span>
+              </small>
+            ) : (
+              <br />
+            )}
           </div>
           <div className="d-flex ms-auto me-2">
             <Button

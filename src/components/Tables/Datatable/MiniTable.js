@@ -24,6 +24,7 @@ const MiniTable = ({
   children,
   filter,
   filterKey,
+  rowsPerPage,
 }) => {
   const [curBody, setCurBody] = useState(body);
   function handleSelect(event) {
@@ -43,7 +44,7 @@ const MiniTable = ({
   }, [body]);
   return (
     <>
-      <Card border="light" className="bg-white shadow-sm mb-2">
+      <Card border="light" className="bg-white shadow-sm mb-2 h-100">
         <Card.Body>
           <DatatableWrapper
             body={curBody ? curBody : body}
@@ -53,7 +54,7 @@ const MiniTable = ({
             }}
             paginationOptionsProps={{
               initialState: {
-                rowsPerPage: 5,
+                rowsPerPage: rowsPerPage ? rowsPerPage : 5,
               },
             }}
             checkboxProps={{
@@ -115,7 +116,7 @@ const MiniTable = ({
               hover
               responsive
               borderless
-              className="mx-auto mt-2 overflow-hidden text-start align-middle datatable "
+              className="mx-auto mt-2 overflow-hidden text-start align-middle datatable"
             >
               <TableHeader classes={{ thead: "thead-light" }} />
               <TableBody onRowClick={onRowClick} />
@@ -162,6 +163,7 @@ MiniTable.prototype = {
   children: PropTypes.node,
   filter: PropTypes.array,
   filterKey: PropTypes.string,
+  rowsPerPage: PropTypes.number,
 };
 
 export default MiniTable;

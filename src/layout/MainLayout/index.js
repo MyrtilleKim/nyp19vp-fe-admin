@@ -17,6 +17,7 @@ import Footer from "./Footer";
 // types
 import { openDrawer } from "store/reducers/menu";
 import { refeshToken } from "store/requests/auth.js";
+import { loginSuccess } from "store/reducers/auth";
 
 // third party
 import jwtDecode from "jwt-decode";
@@ -37,16 +38,20 @@ const MainLayout = () => {
     setOpen(!open);
     dispatch(openDrawer({ drawerOpen: !open }));
   };
+  if (currentUser !== null) {
+    const decodedToken = jwtDecode(currentUser?.accessToken);
+    if (decodedToken.exp < new Date().getTime() / 1000) {
+      dispatch(loginSuccess(null));
+    }
+  }
+  useEffect(() => {
+    setIsAuth(currentUser ? true : false);
+    console.log("Authentication:", isAuth);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
 
   useEffect(() => {
-    if (currentUser !== null) {
-      const decodedToken = jwtDecode(currentUser?.accessToken);
-      if (decodedToken.exp < new Date().getTime() / 1000) {
-        refeshToken(currentUser, dispatch);
-      }
-      setIsAuth(false);
-    }
-    setIsAuth(true);
+    refeshToken(currentUser, dispatch, navigate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
@@ -54,7 +59,6 @@ const MainLayout = () => {
   useEffect(() => {
     setOpen(!matchDownLG);
     dispatch(openDrawer({ drawerOpen: !matchDownLG }));
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matchDownLG]);
 

@@ -1,52 +1,112 @@
+import React, { memo } from "react";
 import PropTypes from "prop-types";
-
-// boostrap
 import { Table } from "react-bootstrap";
+import { flexRender } from "@tanstack/react-table";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCaretDown, faCaretUp } from "@fortawesome/free-solid-svg-icons";
 
-// ==============================|| Sample Bootstrap Table ||============================== //
-const SampleTable = ({ header, body, classes }) => {
-  const TableRow = ({ item }) => {
-    const keys = Object.keys(item);
-
-    return (
-      <tr>
-        {keys.map((ele) => {
-          return <td key={`bs-table-td-${ele.id}`}>{item[ele]}</td>;
-        })}
-      </tr>
-    );
-  };
-
+const SampleTable = ({ table, classes, enableFooter = false, onRowClick }) => {
   return (
-    <Table
-      responsive
-      className={classes}
-      style={{ alignItems: "center", width: "100%" }}
-    >
+    <Table hover responsive borderless className={classes.table}>
       <thead className="thead-light">
-        <tr>
-          {header.map((head) => {
-            return (
-              <th scope="col" key={`bs-table-th-${head.id}`}>
-                {head}
-              </th>
-            );
-          })}
-        </tr>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <>
+                <th
+                  key={header.id}
+                  colSpan={header.colSpan}
+                  onClick={header.column.getToggleSortingHandler()}
+                  className={header.column.columnDef.classes}
+                >
+                  {header.isPlaceholder ? null : (
+                    <div>
+                      {flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                      {{
+                        asc: (
+                          <FontAwesomeIcon icon={faCaretUp} className="ms-1" />
+                        ),
+                        desc: (
+                          <FontAwesomeIcon
+                            icon={faCaretDown}
+                            className="ms-1"
+                          />
+                        ),
+                      }[header.column.getIsSorted()] ?? null}
+                    </div>
+                  )}
+                </th>
+              </>
+            ))}
+          </tr>
+        ))}
       </thead>
       <tbody>
-        {body.map((item) => (
-          <TableRow key={`table-row-${item.id}`} item={item} />
+        {table.getRowModel().rows.map((row) => (
+          <tr key={row.id}>
+            {row.getVisibleCells().map((cell) => (
+              <td
+                key={cell.id}
+                className={`${cell.column.columnDef.classes} py-1`}
+                style={cell.column.columnDef.style}
+                onClick={() => {
+                  if (
+                    cell.column.id !== "select" &&
+                    cell.column.id !== "actions" &&
+                    !cell.column.columnDef.disableRowClick
+                  ) {
+                    onRowClick && onRowClick(row.original);
+                  }
+                }}
+              >
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+              </td>
+            ))}
+          </tr>
         ))}
       </tbody>
+      {enableFooter && (
+        <tfoot>
+          {table.getFooterGroups().map((footerGroup) => (
+            <tr key={footerGroup.id}>
+              {footerGroup.headers.map((header) => (
+                <>
+                  {header.column.columnDef.showFooter && (
+                    <th
+                      key={header.id}
+                      colSpan={
+                        header.column.columnDef.colSpan
+                          ? header.column.columnDef.colSpan
+                          : header.colSpan
+                      }
+                      className={header.column.columnDef.classesFooter}
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.footer,
+                            header.getContext()
+                          )}
+                    </th>
+                  )}
+                </>
+              ))}
+            </tr>
+          ))}
+        </tfoot>
+      )}
     </Table>
   );
 };
 
-SampleTable.prototype = {
-  header: PropTypes.array,
-  body: PropTypes.array,
-  classes: PropTypes.string,
+SampleTable.propTypes = {
+  table: PropTypes.any,
+  enableFooter: PropTypes.bool,
+  onRowClick: PropTypes.func,
+  classes: PropTypes.object,
 };
 
-export default SampleTable;
+export default memo(SampleTable);

@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 
 // third-party
 import ReactApexChart from "react-apexcharts";
+import { useDispatch, useSelector } from "react-redux";
+import { statisticTrans } from "store/requests/package";
 
 // constant
 import { ColorPalette } from "utils/common/constant";
@@ -30,29 +32,21 @@ const line = "#fcddb3";
 // ==============================|| INCOME AREA CHART ||============================== //
 
 const RevenueChart = ({ slot }) => {
+  const dispatch = useDispatch();
+  const { revenueByWeek, revenueByMonth } = useSelector(
+    (state) => state.packages
+  );
   const [options, setOptions] = useState(areaChartOptions);
+
+  useEffect(() => {
+    statisticTrans(dispatch);
+  }, [dispatch]);
+
   useEffect(() => {
     setOptions((prevState) => ({
       ...prevState,
       colors: [ColorPalette["primary"]],
       xaxis: {
-        categories:
-          slot === "month"
-            ? [
-                "T1",
-                "T2",
-                "T3",
-                "T4",
-                "T5",
-                "T6",
-                "T7",
-                "T8",
-                "T9",
-                "T10",
-                "T11",
-                "T12",
-              ]
-            : ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
         labels: {
           style: {
             colors: [
@@ -94,20 +88,14 @@ const RevenueChart = ({ slot }) => {
   }, [slot]);
 
   const [series, setSeries] = useState([
-    {
-      name: "VND",
-      data: [0, 86, 28, 115, 48, 210, 136],
-    },
+    { name: "VND", data: revenueByWeek.data },
   ]);
 
   useEffect(() => {
     setSeries([
       {
         name: "VND",
-        data:
-          slot === "month"
-            ? [76, 85, 101, 98, 87, 105, 91, 114, 94, 86, 115, 35]
-            : [31, 40, 28, 51, 42, 109, 100],
+        data: slot === "month" ? revenueByMonth.data : revenueByWeek.data,
       },
     ]);
   }, [slot]);

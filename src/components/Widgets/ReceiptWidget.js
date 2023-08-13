@@ -1,5 +1,3 @@
-import { useState, useEffect } from "react";
-
 // bootstrap
 import { Row, Col, Image } from "react-bootstrap";
 
@@ -10,22 +8,58 @@ import { faClock } from "@fortawesome/free-regular-svg-icons";
 import VnPayLogo from "assets/payment/VnPay.png";
 import ZaloPayLogo from "assets/payment/ZaloPay.png";
 
-import SampleTable from "components/Tables/BSTable/SampleTable";
 import { formatCurrency } from "store/requests/user";
+import { useMemo } from "react";
+import DataTable from "components/Tables/BSTable";
 
 // ==============================|| Receipt Widget ||============================== //
 const ReceiptWidget = ({ trans, userInfo }) => {
-  const header = [
-    "Mặt hàng",
-    "Thành viên",
-    "Thời hạn",
-    "Số lượng",
-    "Thành tiền",
-  ];
-  const [body, setBody] = useState(mapItemBody(trans.item));
-  useEffect(() => {
-    setBody(mapItemBody(trans.item));
-  }, [trans]);
+  const columns = useMemo(
+    () => [
+      {
+        header: "Mã",
+        accessorKey: "id",
+        hide: true,
+        enableColumnFilter: false,
+      },
+      {
+        header: "Mặt hàng",
+        accessorKey: "name",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Thành viên",
+        accessorKey: "noOfMember",
+        classes: "text-center",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Thời hạn",
+        accessorFn: (row) => `${row.duration} tháng`,
+        classes: "text-center",
+        enableColumnFilter: false,
+      },
+      {
+        accessorFn: (row) => `${formatCurrency(row.price)}`,
+        header: "Đơn giá",
+        classes: "text-end",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Số lượng",
+        accessorKey: "quantity",
+        classes: "text-center",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Tổng",
+        accessorFn: (row) => `${formatCurrency(row.price * row.quantity)}`,
+        classes: "text-end",
+        enableColumnFilter: false,
+      },
+    ],
+    []
+  );
   return (
     <>
       <Row>
@@ -39,8 +73,13 @@ const ReceiptWidget = ({ trans, userInfo }) => {
       </Row>
       <div className="d-flex flex-row justify-content-between"></div>
       <hr className="dash" />
-      <SampleTable header={header} body={body} classes="receipt" />
-      <hr className="dash" />
+      <DataTable
+        data={trans.item}
+        columns={columns}
+        classes={{ table: "w-100 align-middle" }}
+        layout="none"
+      />
+      {/* <hr className="dash" /> */}
       <Row>
         <Col xs={6}>
           <h6 className="fw-bold ps-2">Thành tiền: </h6>
@@ -96,16 +135,3 @@ const ReceiptWidget = ({ trans, userInfo }) => {
 };
 
 export default ReceiptWidget;
-
-function mapItemBody(items) {
-  const itemBody = items.map((item) => {
-    return {
-      name: item.name,
-      noOfMember: item.noOfMember,
-      duration: `${item.duration} tháng`,
-      quantity: item.quantity,
-      price: item.price_vnd,
-    };
-  });
-  return itemBody;
-}

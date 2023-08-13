@@ -11,8 +11,7 @@ const NavGroup = ({ item }) => {
   const { drawerOpen } = menu;
 
   const navItems = item.children?.map((menuItem) => {
-    if (menuItem.type === "item")
-      return <NavItem key={menuItem.id} item={menuItem} />;
+    return <NavItem key={menuItem.id} item={menuItem} />;
   });
 
   return (

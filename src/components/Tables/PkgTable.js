@@ -1,22 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // bootstrap
-import { Button, Container } from "react-bootstrap";
+import {
+  Col,
+  Container,
+  Dropdown,
+  Form,
+  ListGroup,
+  Row,
+} from "react-bootstrap";
 
 // assets
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTrash,
-  faPlus,
   faSuitcase,
   faStopwatch,
   faUsers,
   faCoins,
   faWaveSquare,
   faTrashArrowUp,
+  faEllipsisVertical,
+  faShapes,
+  faPiggyBank,
+  faListUl,
+  faHandScissors,
 } from "@fortawesome/free-solid-svg-icons";
-import { faClock } from "@fortawesome/free-regular-svg-icons";
+import { faCalendarDays, faClock } from "@fortawesome/free-regular-svg-icons";
 
 // data
 import {
@@ -27,7 +38,6 @@ import {
 
 // project import
 import Modals from "components/Modal";
-import SampleTable from "./Datatable/SampleTable";
 import ModalForm from "components/Forms/ModalForm";
 import Alerts from "components/Alerts";
 import { removePackage, restorePackage } from "store/requests/package";
@@ -35,12 +45,15 @@ import { removePackage, restorePackage } from "store/requests/package";
 // third party
 import * as Yup from "yup";
 import { HttpStatusCode } from "axios";
+import IndeterminateCheckbox from "./BSTable/IndeterminateCheckbox";
+import DataTable from "components/Tables/BSTable";
 
 const PackageTable = () => {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state?.auth.login);
   const { packages } = useSelector((state) => state.packages);
   const [showModal, setShowModal] = useState(false);
+  const [showExModal, setShowExModal] = useState(false);
   const [addAction, setAddAction] = useState(false);
   const [showModalForm, setShowModalForm] = useState(false);
   const [action, setAction] = useState();
@@ -66,7 +79,7 @@ const PackageTable = () => {
   useEffect(() => {
     getAllPackages(dispatch);
   }, [dispatch]);
-  const handleAction = (row, action) => {
+  const handleAction = useCallback((row, action) => {
     if (typeof action === "object") {
       const valuesArray = Object.values(action);
       action = valuesArray.join("").trim();
@@ -79,7 +92,7 @@ const PackageTable = () => {
       setContent(`Bạn có chắc chắn muốn khôi phục gói ${row.name}?`);
     }
     setShowModal(true);
-  };
+  }, []);
   const handleConfirm = async () => {
     setShowModal(false);
     let res;
@@ -107,6 +120,7 @@ const PackageTable = () => {
   };
   const handleClose = () => {
     setShowModal(false);
+    setShowExModal(false);
     setShowModalForm(false);
     setShowAlert(false);
   };
@@ -291,70 +305,145 @@ const PackageTable = () => {
     },
   ];
 
-  const HEADER = [
-    {
-      alignment: {
-        horizontal: "center",
-      },
-      checkbox: {
-        className: "table-checkbox",
-        idProp: "_id",
-      },
-      prop: "checkbox",
-    },
-    {
-      isFilterable: true,
-      prop: "_id",
-    },
-    {
-      isFilterable: true,
-      isSortable: true,
-      prop: "name",
-      title: "Gói dịch vụ",
-    },
-    {
-      isSortable: true,
-      prop: "duration",
-      title: "Thời hạn",
-      cell: (row) => <span>{row.duration} tháng</span>,
-    },
-    {
-      isSortable: true,
-      prop: "noOfMember",
-      title: "Thành viên",
-    },
-    {
-      isSortable: true,
-      prop: "price_vnd",
-      title: "Đơn giá",
-    },
-    {
-      isSortable: true,
-      prop: "updatedAt",
-      title: "Cập nhật",
-      cell: (row) => (
-        <span>
-          <FontAwesomeIcon icon={faClock} /> {row.updatedAt}
-        </span>
-      ),
-    },
-    {
-      prop: "deleted",
-      cellProps: { style: { width: "10px" } },
-      cell: (row) => (
-        <Button
-          className="btn-table-options"
-          onClick={(e) =>
-            handleAction(row, {
-              ...(row.deleted ? "restore" : " remove"),
-            })
-          }
-        >
-          <FontAwesomeIcon icon={row.deleted ? faTrashArrowUp : faTrash} />
-        </Button>
-      ),
-    },
+  // ==============================|| EXTENSION ||============================== //
+  const extension = [
+    { icon: faHandScissors, label: "Phân chi hóa đơn", checked: true },
+    { icon: faCalendarDays, label: "Lịch biểu", checked: true },
+    { icon: faListUl, label: "Việc cần làm", checked: true },
+    { icon: faPiggyBank, label: "Tính lãi xuất", checked: true },
   ];
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: "select",
+        classes: "text-center",
+        enableSorting: false,
+        enableGlobalFilter: false,
+        enableColumnFilter: false,
+        showFooter: true,
+        header: ({ table }) => (
+          <IndeterminateCheckbox
+            {...{
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected(),
+              onChange: table.getToggleAllRowsSelectedHandler(),
+            }}
+          />
+        ),
+        cell: ({ row }) => (
+          <IndeterminateCheckbox
+            {...{
+              checked: row.getIsSelected(),
+              disabled: !row.getCanSelect(),
+              indeterminate: row.getIsSomeSelected(),
+              onChange: row.getToggleSelectedHandler(),
+            }}
+          />
+        ),
+      },
+      {
+        header: "Mã",
+        accessorKey: "_id",
+        enableColumnFilter: false,
+        hide: true,
+      },
+      {
+        header: "Gói dịch vụ",
+        accessorKey: "name",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Thời hạn",
+        accessorFn: (row) => `${row.duration} tháng`,
+        enableColumnFilter: false,
+        classes: "text-end",
+      },
+      {
+        header: "Thành viên",
+        accessorKey: "noOfMember",
+        classes: "text-center",
+        enableColumnFilter: false,
+      },
+      {
+        accessorFn: (row) => `${row.price_vnd}`,
+        header: "Đơn giá",
+        classes: "text-end",
+        enableColumnFilter: false,
+      },
+      {
+        header: "Ngày lập",
+        accessorKey: "createdAt",
+        enableColumnFilter: false,
+        hide: true,
+        cell: ({ row }) => (
+          <span>
+            <FontAwesomeIcon icon={faClock} /> {row.original.createdAt}
+          </span>
+        ),
+      },
+      {
+        header: "Cập nhật",
+        accessorKey: "updatedAt",
+        enableColumnFilter: false,
+        cell: ({ row }) => (
+          <span>
+            <FontAwesomeIcon icon={faClock} /> {row.original.updatedAt}
+          </span>
+        ),
+      },
+      {
+        header: null,
+        accessorKey: "actions",
+        enableColumnFilter: false,
+        classes: "text-center",
+        enableSorting: false,
+        enableGlobalFilter: false,
+        cell: ({ row }) => {
+          return (
+            <Dropdown>
+              <Dropdown.Toggle
+                className="text-dark me-lg-1 dropdown-table-option"
+                id="dropdown-autoclose-true"
+              >
+                <span className="icon icon-sm m-0">
+                  <FontAwesomeIcon icon={faEllipsisVertical} />
+                </span>
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="notifications-dropdown shadow rounded-3 mt-2 py-0 ">
+                <ListGroup className="list-group-flush">
+                  <Dropdown.Item
+                    className="text-start text-dark py-3"
+                    onClick={(e) =>
+                      handleAction(row, {
+                        ...(row.original.deleted ? "restore" : " remove"),
+                      })
+                    }
+                  >
+                    {row.original.deleted ? (
+                      <>
+                        <FontAwesomeIcon icon={faTrashArrowUp} /> Khôi phục gói
+                      </>
+                    ) : (
+                      <>
+                        <FontAwesomeIcon icon={faTrash} /> Xóa gói
+                      </>
+                    )}
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    className="text-start text-dark py-3"
+                    onClick={(e) => setShowExModal(true)}
+                  >
+                    <FontAwesomeIcon icon={faShapes} /> Tiện ich
+                  </Dropdown.Item>
+                </ListGroup>
+              </Dropdown.Menu>
+            </Dropdown>
+          );
+        },
+      },
+    ],
+    [handleAction]
+  );
   return (
     <Container>
       <Modals
@@ -364,6 +453,31 @@ const PackageTable = () => {
         handleConfirm={handleConfirm}
       >
         {selected && <h6>{content}</h6>}
+      </Modals>
+      <Modals
+        title="Tiện ích"
+        show={showExModal}
+        handleClose={handleClose}
+        handleConfirm={handleClose}
+      >
+        <ListGroup className="m-0 p-0">
+          {extension.map((item) => (
+            <ListGroup.Item
+              key={item.id}
+              className="d-flex justify-content-between align-items-center border-start-0 border-end-0"
+            >
+              <span className="icon icon-sm">
+                <FontAwesomeIcon icon={item.icon} className="me-2" />
+                {item.label}
+              </span>
+              <Form.Check
+                type="switch"
+                id={`switch-${item.id}`}
+                defaultChecked
+              />
+            </ListGroup.Item>
+          ))}
+        </ListGroup>
       </Modals>
       <Alerts
         show={showAlert}
@@ -383,21 +497,21 @@ const PackageTable = () => {
         handleSubmit={handleSubmitModalForm}
         handleAlert={handleShowAlert}
       ></ModalForm>
-      <SampleTable
-        title="Gói dịch vụ"
-        header={HEADER}
-        body={packages}
-        classes="package-management"
-        onRowClick={onRowClick}
-      >
-        <Button
-          variant="primary"
-          className="fw-bolder ms-3"
-          onClick={handleAddAction}
-        >
-          <FontAwesomeIcon icon={faPlus} /> Thêm nhóm
-        </Button>
-      </SampleTable>
+      <Row className="justify-content-md-center">
+        <Col xs={12} className="mb-4 d-table-cell">
+          <DataTable
+            data={packages}
+            columns={columns}
+            classes={{ table: "mx-auto align-middle" }}
+            title="Gói dịch vụ"
+            // emptyItem={{ label: "Giỏ hàng trống", icon: faShoppingBasket }}
+            // handleBulkRemove={onBulkRemove}
+            handleAdd={handleAddAction}
+            onRowClick={onRowClick}
+            titleAdd="Thêm gói"
+          />
+        </Col>
+      </Row>
     </Container>
   );
 };

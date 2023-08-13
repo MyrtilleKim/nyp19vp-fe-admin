@@ -12,6 +12,7 @@ import {
   Form,
   CloseButton,
   Button,
+  Badge,
 } from "react-bootstrap";
 
 // material-ui
@@ -27,15 +28,12 @@ import { addMemb, rmMemb } from "store/requests/group";
 import Alerts from "components/Alerts";
 import Modals from "components/Modal";
 import { HttpStatusCode } from "axios";
-import { createAxios } from "http/createInstance";
-import { loginSuccess } from "store/reducers/auth";
 import { findMainPackage } from "store/requests/group";
 
 const MemberForm = ({ group }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state?.auth.login);
-  let axiosJWT = createAxios(currentUser, dispatch, loginSuccess);
   const { userInfo } = useSelector((state) => state.user);
   const [showAlert, setShowAlert] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -48,7 +46,8 @@ const MemberForm = ({ group }) => {
   const [packages, setPackages] = useState(findMainPackage(group.packages));
   const [selected, setSelected] = useState(null);
   useEffect(() => {
-    getAllUsers(dispatch);
+    getAllUsers(dispatch, currentUser?.accessToken);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
   useEffect(() => {
     setPackages(findMainPackage(group.packages));
@@ -105,15 +104,6 @@ const MemberForm = ({ group }) => {
     setShowModal(true);
   };
   const MemberCard = ({ member }) => {
-    const [membList, setMembList] = useState(member);
-    useEffect(() => {
-      setMembList(member);
-    }, [member]);
-    const [selectedOption, setSelectedOption] = useState(membList.role);
-
-    const handleSelectChange = (event) => {
-      setSelectedOption(event.target.value);
-    };
     return (
       <Col xs={12}>
         <Card className="shadow-sm mb-2">
@@ -121,45 +111,38 @@ const MemberForm = ({ group }) => {
             <Row className="align-items-center">
               <Col
                 onClick={() => {
-                  navigate(`/users/${membList.user._id}`);
+                  navigate(`/users/${member.user._id}`);
                 }}
               >
                 <Stack direction="horizontal">
                   <Image
-                    src={membList.user.avatar}
+                    src={member.user.avatar}
                     className="user-avatar xs-avatar"
                     roundedCircle
                   />
-                  <p className="ms-2 my-auto fw-bold">{membList.user.name}</p>
+                  <p className="ms-2 my-auto fw-bold">{member.user.name}</p>
                 </Stack>
               </Col>
               <Col
                 onClick={() => {
-                  navigate(`/users/${membList.user._id}`);
+                  navigate(`/users/${member.user._id}`);
                 }}
               >
-                <p className="my-auto">{membList.user.email}</p>
+                <p className="my-auto">{member.user.email}</p>
               </Col>
               <Col>
                 <div class="d-flex justify-content-end">
-                  <Form.Select
-                    className={`py-0 border-0 fw-bold group-select ${
-                      selectedOption === "Super User" ? "super-user" : "user"
-                    }`}
-                    style={{
-                      fontSize: "small",
-                      width: `calc(${selectedOption.length * 7}px + 3rem)`,
-                      outline: "none",
-                    }}
-                    value={selectedOption}
-                    onChange={handleSelectChange}
+                  <Badge
+                    tab
+                    bg={member.role === "User" ? "quaternary" : "primary"}
+                    style={{ width: "4.3rem" }}
+                    className="tag my-auto p-auto"
                   >
-                    <option value={"Super User"}>Super User</option>
-                    <option value={"User"}>User</option>
-                  </Form.Select>
+                    {member.role === "User" ? "User" : "Super User"}
+                  </Badge>
                   <CloseButton
                     className="ms-2"
-                    onClick={() => handleClick(membList)}
+                    onClick={() => handleClick(member)}
                   />
                 </div>
               </Col>
@@ -219,8 +202,7 @@ const MemberForm = ({ group }) => {
                       group._id,
                       currentUser?.accessToken,
                       formData,
-                      dispatch,
-                      axiosJWT
+                      dispatch
                     );
                     if (res.statusCode === HttpStatusCode.Ok) {
                       handleClose();

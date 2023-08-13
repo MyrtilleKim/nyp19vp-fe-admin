@@ -151,9 +151,9 @@ export const createGroup = async (gr, dispatch) => {
     return error.response.data;
   }
 };
-export const updateGroup = async (id, token, data, dispatch, axiosJWT) => {
+export const updateGroup = async (id, token, data, dispatch) => {
   try {
-    const res = await axiosJWT.put(`pkg-mgmt/gr/${id}`, data, {
+    const res = await apiClient.put(`pkg-mgmt/gr/${id}`, data, {
       headers: {
         accept: "*/*",
         Authorization: `Bearer ${token}`,
@@ -175,9 +175,9 @@ export const updateGroup = async (id, token, data, dispatch, axiosJWT) => {
     return error.response.data;
   }
 };
-export const uploadFile = async (id, token, file, axiosJWT) => {
+export const uploadFile = async (id, token, file) => {
   try {
-    const res = await axiosJWT.post(`/file/upload-gr-avatar/${id}`, file, {
+    const res = await apiClient.post(`/file/upload-gr-avatar/${id}`, file, {
       headers: {
         accept: "*/*",
         Authorization: `Bearer ${token}`,
@@ -189,9 +189,9 @@ export const uploadFile = async (id, token, file, axiosJWT) => {
     console.error(error);
   }
 };
-export const updateAvatar = async (id, token, data, dispatch, axiosJWT) => {
+export const updateAvatar = async (id, token, data, dispatch) => {
   try {
-    const res = await axiosJWT.post(`pkg-mgmt/gr/${id}/avatar`, data, {
+    const res = await apiClient.post(`pkg-mgmt/gr/${id}/avatar`, data, {
       headers: {
         accept: "*/*",
         Authorization: `Bearer ${token}`,
@@ -199,7 +199,7 @@ export const updateAvatar = async (id, token, data, dispatch, axiosJWT) => {
     });
     if (res?.data.statusCode === 200) {
       const payload = {
-        _id: res?.data.data?._id,
+        _id: id,
         name: null,
         avatar: res?.data.data?.avatar,
         packages: null,
@@ -213,20 +213,21 @@ export const updateAvatar = async (id, token, data, dispatch, axiosJWT) => {
     return error.response.data;
   }
 };
-export const activateGroup = async (id, token, data, dispatch, axiosJWT) => {
+export const activateGroup = async (id, token, data, dispatch) => {
   try {
-    const res = await axiosJWT.post(`pkg-mgmt/gr/${id}/activate`, data, {
+    const res = await apiClient.post(`pkg-mgmt/gr/${id}/activate`, data, {
       headers: {
         accept: "*/*",
         Authorization: `Bearer ${token}`,
       },
     });
     if (res?.data.statusCode === 200) {
+      const data = await getGroupById(id);
       const payload = {
-        _id: res?.data.data?._id,
+        _id: id,
         name: null,
         avatar: null,
-        packages: res?.data.data?.packages,
+        packages: data?.packages,
         members: null,
       };
       dispatch(updateGroups(payload));
@@ -237,21 +238,22 @@ export const activateGroup = async (id, token, data, dispatch, axiosJWT) => {
     return error.response.data;
   }
 };
-export const addMemb = async (id, token, data, dispatch, axiosJWT) => {
+export const addMemb = async (id, token, data, dispatch) => {
   try {
-    const res = await axiosJWT.put(`pkg-mgmt/gr/${id}/memb`, data, {
+    const res = await apiClient.put(`pkg-mgmt/gr/${id}/memb`, data, {
       headers: {
         accept: "*/*",
         Authorization: `Bearer ${token}`,
       },
     });
     if (res?.data.statusCode === 200) {
+      const data = await getGroupById(id);
       const payload = {
         _id: res?.data.data?._id,
         name: null,
         avatar: null,
         packages: null,
-        members: res?.data.data?.members,
+        members: data?.members,
       };
       dispatch(updateGroups(payload));
     }
@@ -267,12 +269,13 @@ export const rmMemb = async (id, data, dispatch) => {
       data: data,
     });
     if (res?.data.statusCode === 200) {
+      const data = await getGroupById(id);
       const payload = {
         _id: res?.data.data?._id,
         name: null,
         avatar: null,
         packages: null,
-        members: res?.data.data?.members,
+        members: data?.members,
       };
       dispatch(updateGroups(payload));
     }

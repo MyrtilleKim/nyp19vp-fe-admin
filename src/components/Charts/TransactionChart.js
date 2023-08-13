@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 
 // third-party
 import ReactApexChart from "react-apexcharts";
+import { useDispatch, useSelector } from "react-redux";
+import { MonthlyLabels, statisticTrans } from "store/requests/package";
 
 // constant
 import { ColorPalette } from "utils/common/constant";
@@ -39,7 +41,13 @@ const barChartOptions = {
 // ==============================|| MONTHLY BAR CHART ||============================== //
 
 const TransactionChart = ({ slot }) => {
+  const dispatch = useDispatch();
+  const { txnByMonth, txnByWeek } = useSelector((state) => state.packages);
   const [options, setOptions] = useState(barChartOptions);
+
+  useEffect(() => {
+    statisticTrans(dispatch);
+  }, [dispatch]);
 
   useEffect(() => {
     setOptions((prevState) => ({
@@ -52,23 +60,6 @@ const TransactionChart = ({ slot }) => {
       },
       colors: [ColorPalette["quaternary"]],
       xaxis: {
-        categories:
-          slot === "month"
-            ? [
-                "T1",
-                "T2",
-                "T3",
-                "T4",
-                "T5",
-                "T6",
-                "T7",
-                "T8",
-                "T9",
-                "T10",
-                "T11",
-                "T12",
-              ]
-            : ["T2", "T3", "T4", "T5", "T6", "T7", "CN"],
         labels: {
           style: {
             colors: [
@@ -104,17 +95,16 @@ const TransactionChart = ({ slot }) => {
 
   const [series, setSeries] = useState([
     {
-      data: [80, 95, 70, 42, 65, 55, 78],
+      name: "Giao dịch",
+      data: txnByWeek.data,
     },
   ]);
 
   useEffect(() => {
     setSeries([
       {
-        data:
-          slot === "month"
-            ? [76, 85, 101, 98, 87, 50, 91, 60, 45, 86, 45, 35]
-            : [31, 40, 28, 51, 42, 45, 70],
+        name: "Giao dịch",
+        data: slot === "month" ? txnByMonth.data : txnByWeek.data,
       },
     ]);
   }, [slot]);

@@ -14,7 +14,7 @@ const InputGroupTxtStyle = {
   borderRight: 0,
 };
 
-const Search = () => (
+const Search = ({ values, handleChange }) => (
   <div className="d-flex align-items-center">
     <Form>
       <Form.Group id="topbarSearch">
@@ -24,8 +24,10 @@ const Search = () => (
           </InputGroup.Text>
           <Form.Control
             type="search"
-            placeholder="Search"
+            placeholder="Tìm kiếm"
             aria-label="Search"
+            value={values}
+            onChange={handleChange}
           />
         </InputGroup>
       </Form.Group>

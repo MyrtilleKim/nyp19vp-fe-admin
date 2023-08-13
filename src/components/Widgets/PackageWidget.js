@@ -19,23 +19,11 @@ const PackageWidget = forwardRef((props, ref) => {
   const [slot, setSlot] = useState("week");
 
   return (
-    <Card ref={ref} border="light" className="shadow-sm">
+    <Card ref={ref} border="light" className="shadow-sm h-100">
       <Card.Body>
         <h5 className="d-block fw-normal mb-2 ms-3">{title}</h5>
         <div className="d-flex flex-row align-items-start flex-0 bg-none">
-          <div className="d-block ms-3">
-            <h3>{value}</h3>
-            <small className="fw-bold mt-2">
-              <span className="me-2">
-                {slot === "week" ? "Hôm qua" : "Tháng trước"}
-              </span>
-              <FontAwesomeIcon
-                icon={percentageIcon}
-                className={`${percentageColor} me-1`}
-              />
-              <span className={percentageColor}>{curPercentage}%</span>
-            </small>
-          </div>
+          <h3>{value}</h3>
           <div className="d-flex ms-auto me-3">
             <Button
               variant={slot === "week" ? "primary" : "outline-primary"}

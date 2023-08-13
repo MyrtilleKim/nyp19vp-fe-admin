@@ -10,6 +10,8 @@ import { useMediaQuery } from "@mui/material";
 
 // constant
 import { ColorPalette } from "utils/common/constant";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllPackages, statisticTrans } from "store/requests/package";
 
 // chart options
 const pieChartOptions = {
@@ -36,11 +38,60 @@ const pieChartOptions = {
   },
 };
 
+const mapSeries = (allArr, someArr) => {
+  const result = allArr.map((elem) => {
+    const cur = someArr.find((item) => {
+      if (elem._id === item._id._id) return true;
+      return false;
+    });
+    return cur ? cur.totalQuantity : 0;
+  });
+
+  return result;
+};
+
+const mapLabels = (allArr) => {
+  const result = allArr.map((elem) => {
+    return elem.name;
+  });
+
+  return result;
+};
+
 // ==============================|| MONTHLY BAR CHART ||============================== //
 
 const PackageChart = ({ slot }) => {
+  const dispatch = useDispatch();
+  const { pkgByWeek, pkgByMonth, packages } = useSelector(
+    (state) => state.packages
+  );
   const [options, setOptions] = useState(pieChartOptions);
   const [height, setHeight] = useState("300px");
+  const [listWeek, setListWeek] = useState(mapSeries(packages, pkgByWeek));
+  const [listMonth, setListMonth] = useState(mapSeries(packages, pkgByMonth));
+  const [labels, setLabels] = useState(mapLabels(packages));
+  const [series, setSeries] = useState(listWeek);
+
+  useEffect(() => {
+    getAllPackages(dispatch);
+    statisticTrans(dispatch);
+  }, [dispatch]);
+
+  useEffect(() => {
+    setListWeek(mapSeries(packages, pkgByWeek));
+  }, [packages, pkgByWeek]);
+
+  useEffect(() => {
+    setListMonth(mapSeries(packages, pkgByMonth));
+  }, [packages, pkgByMonth]);
+
+  useEffect(() => {
+    setLabels(mapLabels(packages));
+  }, [packages]);
+
+  useEffect(() => {
+    setSeries(slot === "month" ? listMonth : listWeek);
+  }, [slot]);
 
   const theme = useTheme();
   const matchDownLg = useMediaQuery(theme.breakpoints.down("lg"));
@@ -56,7 +107,7 @@ const PackageChart = ({ slot }) => {
       tooltip: {
         theme: "light",
       },
-      labels: ["Experience", "Annual", "Family", "Custom"],
+      labels: labels,
       colors: [
         ColorPalette["primary"],
         ColorPalette["secondary"],
@@ -67,12 +118,6 @@ const PackageChart = ({ slot }) => {
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ColorPalette, slot]);
-
-  const [series, setSeries] = useState([44, 55, 41, 17]);
-
-  useEffect(() => {
-    setSeries(slot === "month" ? [44, 55, 41, 17] : [45, 85, 151, 17]);
-  }, [slot]);
 
   return (
     <div id="chart">
