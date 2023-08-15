@@ -38,13 +38,14 @@ const MainLayout = () => {
     setOpen(!open);
     dispatch(openDrawer({ drawerOpen: !open }));
   };
-  if (currentUser !== null) {
-    const decodedToken = jwtDecode(currentUser?.accessToken);
-    if (decodedToken.exp < new Date().getTime() / 1000) {
-      dispatch(loginSuccess(null));
-    }
-  }
+
   useEffect(() => {
+    if (currentUser !== null) {
+      const decodedToken = jwtDecode(currentUser?.accessToken);
+      if (decodedToken.exp < new Date().getTime() / 1000) {
+        dispatch(loginSuccess(null));
+      }
+    }
     setIsAuth(currentUser ? true : false);
     console.log("Authentication:", isAuth);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,7 +78,9 @@ const MainLayout = () => {
           component="main"
           sx={{ width: "100%", flexGrow: 1, p: { xs: 2, sm: 3 }, mt: 7 }}
         >
-          <Breadcrumbs navigation={navigation} title />
+          <Container>
+            <Breadcrumbs navigation={navigation} title />
+          </Container>
           <Outlet />
           <Container>
             <Footer open={open} handleDrawerToggle={handleDrawerToggle} />

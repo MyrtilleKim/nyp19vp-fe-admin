@@ -23,11 +23,11 @@ export const refeshToken = async (user, dispatch, navigate) => {
       dispatch(loginSuccess(refeshUser));
       return res?.data;
     } else if (res?.data.statusCode === HttpStatusCode.Unauthorized) {
-      navigate("/login");
+      navigate("/sessionExpired");
     }
   } catch (error) {
     console.log(error);
-    navigate("/login");
+    navigate("/sessionExpired");
   }
 };
 

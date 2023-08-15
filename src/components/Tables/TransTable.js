@@ -116,6 +116,7 @@ const TransTable = ({ trans, userInfo }) => {
         title="Hóa đơn"
         show={showReceipt}
         handleClose={handleClose}
+        handleConfirm={handleClose}
         size="lg"
       >
         <ReceiptWidget trans={receipt} userInfo={userInfo} />
@@ -128,10 +129,10 @@ const TransTable = ({ trans, userInfo }) => {
             classes={{ table: "mx-auto align-middle" }}
             title={
               <>
-                <FontAwesomeIcon icon={faReceipt} /> Giỏ hàng
+                <FontAwesomeIcon icon={faReceipt} /> Lịch sử giao dịch
               </>
             }
-            emptyItem={{ label: "Giỏ hàng trống", icon: faReceipt }}
+            emptyItem={{ label: "Lịch sử giao dịch trống", icon: faReceipt }}
             onRowClick={onRowClick}
             layout="mini"
           />

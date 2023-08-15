@@ -338,7 +338,7 @@ const UserTable = () => {
             style={{ width: "3.5rem" }}
             className="tag"
           >
-            {row.role === "admin" ? "Admin" : "User"}
+            {row.original.role === "admin" ? "Admin" : "User"}
           </Badge>
         ),
       },

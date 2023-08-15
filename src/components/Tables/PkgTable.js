@@ -221,12 +221,11 @@ const PackageTable = () => {
       .required("Bắt buộc"),
     price: Yup.number()
       .typeError("Đơn giá phải là một con số")
-      .min(1000, "Đơn giá ít nhất là 1000 đ")
+      .min(1000, "Đơn giá ít nhất là 1000đ")
       .required("Bặt buộc"),
     coefficient: Yup.number()
       .typeError("Đơn giá phải là một con số")
-      .min(1000, "Đơn giá ít nhất là 1000 đ")
-      .required("Bặt buộc"),
+      .min(1000, "Đơn giá ít nhất là 1000đ"),
   });
 
   // icons
@@ -371,6 +370,13 @@ const PackageTable = () => {
         enableColumnFilter: false,
       },
       {
+        // accessorKey: "deleted",
+        accessorFn: (row) => `${row.deleted}`,
+        header: "deleted",
+        classes: "text-end",
+        hide: true,
+      },
+      {
         header: "Ngày lập",
         accessorKey: "createdAt",
         enableColumnFilter: false,
@@ -414,7 +420,7 @@ const PackageTable = () => {
                   <Dropdown.Item
                     className="text-start text-dark py-3"
                     onClick={(e) =>
-                      handleAction(row, {
+                      handleAction(row.original, {
                         ...(row.original.deleted ? "restore" : " remove"),
                       })
                     }

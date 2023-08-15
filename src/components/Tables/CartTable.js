@@ -474,7 +474,7 @@ const CartTable = ({ userInfo }) => {
             title={
               <>
                 <FontAwesomeIcon icon={faShoppingBasket} /> Giỏ hàng (
-                {cart.length})
+                {cart?.length})
               </>
             }
             emptyItem={{ label: "Giỏ hàng trống", icon: faShoppingBasket }}

@@ -22,6 +22,7 @@ import {
   faCircleCheck,
   faCircleExclamation,
   faGripLines,
+  faCircleXmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 
@@ -226,31 +227,31 @@ const GroupTable = () => {
         accessorKey: "status",
         cell: ({ row }) => (
           <>
-            {row.original.status === "Active" && (
+            {row.original.status === "Đang kích hoạt" && (
               <span className="text-quaternary">
                 <FontAwesomeIcon
                   icon={faCircleCheck}
                   className="icon icon-xs"
                 />{" "}
-                Đang kích hoạt
+                {row.original.status}
               </span>
             )}
-            {row.original.status === "Not Activated" && (
+            {row.original.status === "Chưa kích hoạt" && (
               <span className="text-primary">
                 <FontAwesomeIcon
                   icon={faCircleExclamation}
                   className="icon icon-xs"
                 />{" "}
-                Chưa kích hoạt
+                {row.original.status}
               </span>
             )}
-            {row.original.status === "Expired" && (
+            {row.original.status === "Đã hết hạn" && (
               <span className="text-danger">
                 <FontAwesomeIcon
-                  icon={faCircleExclamation}
+                  icon={faCircleXmark}
                   className="icon icon-xs"
                 />{" "}
-                Đã hết hạn
+                {row.original.status}
               </span>
             )}
           </>
@@ -325,7 +326,7 @@ const GroupTable = () => {
             <Button
               className="btn-table-options"
               onClick={(e) =>
-                handleAction(row, {
+                handleAction(row.original, {
                   ...(row.original.deleted ? "restore" : " remove"),
                 })
               }

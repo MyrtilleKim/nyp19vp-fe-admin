@@ -74,34 +74,38 @@ export const statisticTrans = async (dispatch) => {
     const revenueByWeek = res?.data.data?.revenueByWeek;
     const txnByMonth = res?.data.data?.txnByMonth;
     const txnByWeek = res?.data.data?.txnByWeek;
-    const monthlyRevenue = revenueByMonth.data[10]
-      ? (
-          ((revenueByMonth.data[11].y - revenueByMonth.data[10].y) /
-            revenueByMonth.data[10].y) *
-          100
-        ).toFixed(2)
-      : null;
-    const weeklyRevenue = revenueByWeek.data[10]
-      ? (
-          ((revenueByWeek.data[11].y - revenueByWeek.data[10].y) /
-            revenueByWeek.data[10].y) *
-          100
-        ).toFixed(2)
-      : null;
-    const monthlyTxn = txnByMonth.data[10]
-      ? (
-          ((txnByMonth.data[11].y - txnByMonth.data[10].y) /
-            txnByMonth.data[10].y) *
-          100
-        ).toFixed(2)
-      : null;
-    const weeklyTxn = txnByWeek.data[10]
-      ? (
-          ((txnByWeek.data[11].y - txnByWeek.data[10].y) /
-            txnByWeek.data[10].y) *
-          100
-        ).toFixed(2)
-      : null;
+    const monthlyRevenue =
+      revenueByMonth.data[10].y === 0
+        ? (
+            ((revenueByMonth.data[11].y - revenueByMonth.data[10].y) /
+              revenueByMonth.data[10].y) *
+            100
+          ).toFixed(2)
+        : null;
+    const weeklyRevenue =
+      revenueByWeek.data[10].y === 0
+        ? (
+            ((revenueByWeek.data[11].y - revenueByWeek.data[10].y) /
+              revenueByWeek.data[10].y) *
+            100
+          ).toFixed(2)
+        : null;
+    const monthlyTxn =
+      txnByMonth.data[10].y === 0
+        ? (
+            ((txnByMonth.data[11].y - txnByMonth.data[10].y) /
+              txnByMonth.data[10].y) *
+            100
+          ).toFixed(2)
+        : null;
+    const weeklyTxn =
+      txnByWeek.data[10].y === 0
+        ? (
+            ((txnByWeek.data[11].y - txnByWeek.data[10].y) /
+              txnByWeek.data[10].y) *
+            100
+          ).toFixed(2)
+        : null;
     const payload = {
       countTxn: res?.data.data?.countTxn,
       countDeletedTxn: res?.data.data?.countDeletedTxn,

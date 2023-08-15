@@ -47,7 +47,7 @@ export const getAllGroups = async (dispatch) => {
         }
         return elem;
       });
-      item["status"] = setGroupStatus(item.packages);
+      item["status"] = GroupStatusEn_Vn(setGroupStatus(item.packages));
       item.updatedAt = formatDate(item.updatedAt);
       item.createdAt = formatDate(item.createdAt);
       item.deletedAt = formatDate(item.deletedAt);
@@ -127,7 +127,7 @@ export const getGroupById = async (grId) => {
         }
         return elem;
       });
-      item["status"] = setGroupStatus(item.packages);
+      item["status"] = GroupStatusEn_Vn(setGroupStatus(item.packages));
       item.updatedAt = formatDate(item.updatedAt);
       item.createdAt = formatDate(item.createdAt);
       item.deletedAt = formatDate(item.deletedAt);
@@ -298,6 +298,11 @@ const setGroupStatus = (packages) => {
   }
   if (flag) return "Not Activated";
   else return "Expired";
+};
+const GroupStatusEn_Vn = (status) => {
+  if (status === "Active") return "Đang kích hoạt";
+  if (status === "Expired") return "Đã hết hạn";
+  return "Chưa kích hoạt";
 };
 function convertToDate(dateString) {
   // Tách thành phần của ngày và thời gian từ chuỗi
