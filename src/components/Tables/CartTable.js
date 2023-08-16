@@ -478,6 +478,7 @@ const CartTable = ({ userInfo }) => {
               </>
             }
             emptyItem={{ label: "Giỏ hàng trống", icon: faShoppingBasket }}
+            titleAdd="Thêm vào giỏ hàng"
             handleBulkRemove={onBulkRemove}
             handleAdd={handleAddModal}
             enableFooter={true}

@@ -34,7 +34,7 @@ function DebouncedSelect({
       {list.map((i) => {
         return (
           <option key={`form-select-${i.id}`} value={i}>
-            {capitalizeFirstLetter(i)}
+            {capitalizeFirstLetter(i.toString())}
           </option>
         );
       })}

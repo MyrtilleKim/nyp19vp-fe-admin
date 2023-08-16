@@ -370,11 +370,9 @@ const PackageTable = () => {
         enableColumnFilter: false,
       },
       {
-        // accessorKey: "deleted",
-        accessorFn: (row) => `${row.deleted}`,
-        header: "deleted",
-        classes: "text-end",
-        hide: true,
+        accessorKey: "deleted",
+        header: null,
+        cell: ({ row }) => <span>{row.original.deleted}</span>,
       },
       {
         header: "Ngày lập",

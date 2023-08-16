@@ -302,7 +302,7 @@ const GroupInfoForm = ({ group }) => {
                       </>
                     )}
                   </div>
-                  <div className="flex-fill pe-0">
+                  <div className="flex-fill pe-0 ms-2">
                     <Formik
                       validationSchema={Yup.object().shape({
                         name: Yup.string().max(255).required("Bắt buộc"),

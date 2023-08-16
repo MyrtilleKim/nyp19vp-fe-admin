@@ -211,3 +211,12 @@
   @include font-size($font-size-sm);
   font-weight: $font-weight-light;
 }
+.nav-dropdown {
+  .nav-link {
+    color: $gray-900;
+    &.active {
+      color: $primary;
+      border-bottom: 0.15rem solid $primary;
+    }
+  }
+}

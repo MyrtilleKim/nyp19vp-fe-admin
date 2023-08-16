@@ -32,7 +32,9 @@ const DataTable = (props) => {
   };
   const [sorting, setSorting] = useState([]);
   const [globalFiltering, setGlobalFiltering] = useState("");
-  const [columnFiltering, setColumnFiltering] = useState([]);
+  const [columnFiltering, setColumnFiltering] = useState([
+    { id: "deleted", value: false },
+  ]);
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState(
     initVisibility(columns)
@@ -82,9 +84,11 @@ const DataTable = (props) => {
   const filterColumns = table
     .getHeaderGroups()
     .flatMap((headerGroup) =>
-      headerGroup.headers.filter((header) => header.column.getCanFilter())
+      headerGroup.headers.filter(
+        (header) =>
+          header.column.getCanFilter() && header.column.id !== "deleted"
+      )
     );
-  console.log("idex", table);
   return (
     <>
       {layout === "main" && (

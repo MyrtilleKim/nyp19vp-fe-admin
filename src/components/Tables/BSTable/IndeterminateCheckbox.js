@@ -11,7 +11,16 @@ function IndeterminateCheckbox({ indeterminate, ...rest }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ref, indeterminate]);
   const label = { inputProps: { "aria-label": "rowSelection" } };
-  return <Checkbox {...label} ref={ref} {...rest} size="small" sx={{ p: 0 }} />;
+  return (
+    <Checkbox
+      {...label}
+      ref={ref}
+      indeterminate={indeterminate}
+      {...rest}
+      size="small"
+      sx={{ p: 0 }}
+    />
+  );
 }
 
 export default IndeterminateCheckbox;

@@ -1,4 +1,8 @@
-import { faGear } from "@fortawesome/free-solid-svg-icons";
+import {
+  faFilterCircleXmark,
+  faGear,
+  faTableColumns,
+} from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
@@ -8,20 +12,12 @@ import {
   Dropdown,
   Form,
   ListGroup,
+  Nav,
+  Tab,
 } from "react-bootstrap";
 
 const CheckboxMenu = React.forwardRef(
-  (
-    {
-      children,
-      style,
-      className,
-      "aria-labelledby": labeledBy,
-      onSelectAll,
-      onSelectNone,
-    },
-    ref
-  ) => {
+  ({ children, style, className, "aria-labelledby": labeledBy }, ref) => {
     return (
       <div
         ref={ref}
@@ -31,19 +27,6 @@ const CheckboxMenu = React.forwardRef(
       >
         <ListGroup style={{ maxHeight: "calc(100vh)", overflow: "none" }}>
           {children}
-          <ListGroup.Item
-            className="dropdown-item border-top pt-2 pb-0"
-            style={{ backgroundColor: "inherit" }}
-          >
-            <ButtonGroup size="sm">
-              <Button variant="link" onClick={onSelectAll}>
-                Chọn tất cả
-              </Button>
-              <Button variant="link" onClick={onSelectNone}>
-                Bỏ Chọn
-              </Button>
-            </ButtonGroup>
-          </ListGroup.Item>
         </ListGroup>
       </div>
     );
@@ -69,42 +52,127 @@ const CheckDropdownItem = React.forwardRef(
   }
 );
 
-export const CheckboxDropdown = ({ items, handleAllSelect }) => {
+export const CheckboxDropdown = ({
+  items,
+  handleAllSelect,
+  handleNoneSelect,
+  column,
+}) => {
   const handleSelectAll = () => {
     items.forEach((i) => (i.checked = true));
     handleAllSelect(true);
   };
   const handleSelectNone = () => {
     items.forEach((i) => (i.checked = false));
-    handleAllSelect(false);
+    handleNoneSelect();
   };
   const handleSelect = (key, event) => {
     items.find((i) => i.id === key).checked = event.target.checked;
     items.find((i) => i.id === key).handleChecked(event.target.checked);
   };
+
   return (
-    <Dropdown>
+    <Dropdown autoClose="outside">
       <Dropdown.Toggle variant="light">
         <FontAwesomeIcon icon={faGear} />
       </Dropdown.Toggle>
 
-      <Dropdown.Menu
-        variant="light"
-        as={CheckboxMenu}
-        onSelectAll={handleSelectAll}
-        onSelectNone={handleSelectNone}
-      >
-        {items.map((i) => (
-          <Dropdown.Item
-            key={i.id}
-            as={CheckDropdownItem}
-            id={i.id}
-            checked={i.checked}
-            onChange={handleSelect}
-          >
-            {i.label}
-          </Dropdown.Item>
-        ))}
+      <Dropdown.Menu variant="light" as={CheckboxMenu}>
+        {column ? (
+          <Tab.Container id="list-group-tabs-example" defaultActiveKey={1}>
+            <Nav fill className="nav-dropdown">
+              <Nav.Item>
+                <Nav.Link eventKey={1}>
+                  <FontAwesomeIcon icon={faTableColumns} />
+                </Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+                <Nav.Link eventKey={2}>
+                  <FontAwesomeIcon icon={faFilterCircleXmark} />
+                </Nav.Link>
+              </Nav.Item>
+            </Nav>
+
+            <Tab.Content>
+              <Tab.Pane eventKey={1}>
+                {items.map((i) => (
+                  <Dropdown.Item
+                    key={i.id}
+                    as={CheckDropdownItem}
+                    id={i.id}
+                    checked={i.checked}
+                    onChange={handleSelect}
+                  >
+                    {i.label}
+                  </Dropdown.Item>
+                ))}
+                <ListGroup.Item
+                  className="dropdown-item border-top pt-2 pb-0"
+                  style={{ backgroundColor: "inherit" }}
+                >
+                  <ButtonGroup size="sm">
+                    <Button variant="link" onClick={handleSelectAll}>
+                      Chọn tất cả
+                    </Button>
+                    <Button variant="link" onClick={handleSelectNone}>
+                      Bỏ Chọn
+                    </Button>
+                  </ButtonGroup>
+                </ListGroup.Item>
+              </Tab.Pane>
+              <Tab.Pane eventKey={2}>
+                <ListGroup.Item
+                  action
+                  active={typeof column.getFilterValue() === "undefined"}
+                  onClick={() => column.setFilterValue()}
+                >
+                  Tất cả
+                </ListGroup.Item>
+                <ListGroup.Item
+                  action
+                  active={column.getFilterValue() === true}
+                  onClick={() => column.setFilterValue(true)}
+                >
+                  Đã xóa
+                </ListGroup.Item>
+                <ListGroup.Item
+                  action
+                  active={column.getFilterValue() === false}
+                  onClick={() => column.setFilterValue(false)}
+                >
+                  Chưa xóa
+                </ListGroup.Item>
+              </Tab.Pane>
+            </Tab.Content>
+          </Tab.Container>
+        ) : (
+          <>
+            {items.map((i) => (
+              <Dropdown.Item
+                key={i.id}
+                as={CheckDropdownItem}
+                id={i.id}
+                checked={i.checked}
+                onChange={handleSelect}
+              >
+                {i.label}
+              </Dropdown.Item>
+            ))}
+            <ListGroup.Item
+              className="dropdown-item border-top pt-2 pb-0"
+              style={{ backgroundColor: "inherit" }}
+            >
+              <ButtonGroup size="sm">
+                <Button variant="link" onClick={handleSelectAll}>
+                  Chọn tất cả
+                </Button>
+                <Button variant="link" onClick={handleSelectNone}>
+                  Bỏ Chọn
+                </Button>
+              </ButtonGroup>
+            </ListGroup.Item>
+          </>
+        )}
       </Dropdown.Menu>
     </Dropdown>
   );

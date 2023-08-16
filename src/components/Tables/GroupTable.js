@@ -294,6 +294,11 @@ const GroupTable = () => {
         },
       },
       {
+        accessorKey: "deleted",
+        header: null,
+        cell: ({ row }) => <span>{row.original.deleted}</span>,
+      },
+      {
         header: "Ngày lập",
         accessorKey: "createdAt",
         enableColumnFilter: false,

@@ -272,6 +272,11 @@ const UserTable = () => {
         hide: true,
       },
       {
+        accessorKey: "deleted",
+        header: null,
+        cell: ({ row }) => <span>{row.original.deleted}</span>,
+      },
+      {
         header: null,
         accessorKey: "avatar",
         enableGlobalFilter: false,
