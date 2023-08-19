@@ -60,13 +60,13 @@ const SampleTable = ({
         }}
         paginationOptionsProps={{
           initialState: {
-            rowsPerPage: 10,
+            rowsPerPage: 5,
             options: [5, 10, 15, 20],
           },
         }}
         checkboxProps={{
           onCheckboxChange: function noRefCheck(data, row) {
-            alert(data.nextCheckboxState.selected[1]);
+            console.log("selected", data.nextCheckboxState.selected);
           },
         }}
         sortProps={{

@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, forwardRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import _ from "lodash";
 
 // bootstrap
 import {
@@ -13,6 +12,7 @@ import {
   Form,
   CloseButton,
   Button,
+  Badge,
 } from "react-bootstrap";
 
 // material-ui
@@ -28,15 +28,12 @@ import { addMemb, rmMemb } from "store/requests/group";
 import Alerts from "components/Alerts";
 import Modals from "components/Modal";
 import { HttpStatusCode } from "axios";
-import { createAxios } from "http/createInstance";
-import { loginSuccess } from "store/reducers/auth";
 import { findMainPackage } from "store/requests/group";
 
-const MemberForm = ({ group }) => {
+const MemberForm = forwardRef(({ group }, ref) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { currentUser } = useSelector((state) => state?.auth.login);
-  let axiosJWT = createAxios(currentUser, dispatch, loginSuccess);
   const { userInfo } = useSelector((state) => state.user);
   const [showAlert, setShowAlert] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -49,7 +46,8 @@ const MemberForm = ({ group }) => {
   const [packages, setPackages] = useState(findMainPackage(group.packages));
   const [selected, setSelected] = useState(null);
   useEffect(() => {
-    getAllUsers(dispatch);
+    getAllUsers(dispatch, currentUser?.accessToken);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
   useEffect(() => {
     setPackages(findMainPackage(group.packages));
@@ -95,26 +93,12 @@ const MemberForm = ({ group }) => {
     }, 1000);
   };
   const handleClick = async (member) => {
-    // setAction(action);
-    // if (action === "remove") setContent("Bạn muốn xóa nhóm này?");
-    // else if (action === "restore") setContent("Bạn muốn khôi phục nhóm này?");
-    // else if (action === "update") setContent("Bạn muốn đổi tên nhóm?");
-    // else if (action === "activate") setContent("Bạn muốn kích hoạt nhóm?");
     setContent("Bạn muốn xóa thành viên này ra khỏi nhóm?");
     setSelected(member);
     console.log("seclect", member);
     setShowModal(true);
   };
   const MemberCard = ({ member }) => {
-    const [membList, setMembList] = useState(member);
-    useEffect(() => {
-      setMembList(member);
-    }, [member]);
-    const [selectedOption, setSelectedOption] = useState(membList.role);
-
-    const handleSelectChange = (event) => {
-      setSelectedOption(event.target.value);
-    };
     return (
       <Col xs={12}>
         <Card className="shadow-sm mb-2">
@@ -122,45 +106,38 @@ const MemberForm = ({ group }) => {
             <Row className="align-items-center">
               <Col
                 onClick={() => {
-                  navigate(`/users/${membList.user._id}`);
+                  navigate(`/users/${member.user._id}`);
                 }}
               >
                 <Stack direction="horizontal">
                   <Image
-                    src={membList.user.avatar}
+                    src={member.user.avatar}
                     className="user-avatar xs-avatar"
                     roundedCircle
                   />
-                  <p className="ms-2 my-auto fw-bold">{membList.user.name}</p>
+                  <p className="ms-2 my-auto fw-bold">{member.user.name}</p>
                 </Stack>
               </Col>
               <Col
                 onClick={() => {
-                  navigate(`/users/${membList.user._id}`);
+                  navigate(`/users/${member.user._id}`);
                 }}
               >
-                <p className="my-auto">{membList.user.email}</p>
+                <p className="my-auto">{member.user.email}</p>
               </Col>
               <Col>
-                <div class="d-flex justify-content-end">
-                  <Form.Select
-                    className={`py-0 border-0 fw-bold group-select ${
-                      selectedOption === "Super User" ? "super-user" : "user"
-                    }`}
-                    style={{
-                      fontSize: "small",
-                      width: `calc(${selectedOption.length * 7}px + 3rem)`,
-                      outline: "none",
-                    }}
-                    value={selectedOption}
-                    onChange={handleSelectChange}
+                <div className="d-flex justify-content-end">
+                  <Badge
+                    tab
+                    bg={member.role === "User" ? "quaternary" : "primary"}
+                    style={{ width: "4.3rem" }}
+                    className="tag my-auto p-auto"
                   >
-                    <option value={"Super User"}>Super User</option>
-                    <option value={"User"}>User</option>
-                  </Form.Select>
+                    {member.role === "User" ? "User" : "Super User"}
+                  </Badge>
                   <CloseButton
                     className="ms-2"
-                    onClick={() => handleClick(membList)}
+                    onClick={() => handleClick(member)}
                   />
                 </div>
               </Col>
@@ -188,7 +165,7 @@ const MemberForm = ({ group }) => {
       >
         {content}
       </Alerts>
-      <Card border="light" className="bg-white shadow-sm h-100">
+      <Card border="light" className="bg-white shadow-sm h-100" ref={ref}>
         <Card.Body>
           <h5 className="mb-4">
             <b>Thành viên</b>
@@ -200,128 +177,130 @@ const MemberForm = ({ group }) => {
               );
             })}
           </Row>
-          <Row>
-            <Formik
-              validationSchema={Yup.object().shape({
-                member: Yup.string().required("Bắt buộc"),
-              })}
-              initialValues={{ member: null }}
-              onSubmit={async (
-                values,
-                { setErrors, setStatus, setSubmitting }
-              ) => {
-                try {
-                  setStatus({ success: false });
-                  setSubmitting(false);
-                  if (values.member !== null) {
-                    let formData = { user: values.member };
-                    console.log(formData);
-                    const res = await addMemb(
-                      group._id,
-                      currentUser?.accessToken,
-                      formData,
-                      dispatch,
-                      axiosJWT
-                    );
-                    if (res.statusCode === HttpStatusCode.Ok) {
-                      handleClose();
-                      handleAlert(
-                        "Thành công",
-                        "Thêm thành viên thành công",
-                        "success"
+          {group.members.length < packages.package.noOfMember && (
+            <Row>
+              <Formik
+                validationSchema={Yup.object().shape({
+                  member: Yup.string().required("Bắt buộc"),
+                })}
+                initialValues={{ member: null }}
+                onSubmit={async (
+                  values,
+                  { setErrors, setStatus, setSubmitting }
+                ) => {
+                  try {
+                    setStatus({ success: false });
+                    setSubmitting(false);
+                    if (values.member !== null) {
+                      let formData = { user: values.member };
+                      console.log(formData);
+                      const res = await addMemb(
+                        group._id,
+                        currentUser?.accessToken,
+                        formData,
+                        dispatch
                       );
+                      if (res.statusCode === HttpStatusCode.Ok) {
+                        handleClose();
+                        handleAlert(
+                          "Thành công",
+                          "Thêm thành viên thành công",
+                          "success"
+                        );
+                      } else {
+                        handleAlert("Thất bại", res.message, "danger");
+                      }
+                      setShowAlert(true);
+                      setTimeout(() => {
+                        setShowAlert(false);
+                      }, 1000);
                     } else {
-                      handleAlert("Thất bại", res.message, "danger");
+                      handleAlert(
+                        "Thông báo",
+                        "Không có gì thay đổi",
+                        "primary"
+                      );
                     }
-                    setShowAlert(true);
-                    setTimeout(() => {
-                      setShowAlert(false);
-                    }, 1000);
-                  } else {
-                    handleAlert("Thông báo", "Không có gì thay đổi", "primary");
+                  } catch (err) {
+                    setStatus({ success: false });
+                    setErrors({ submit: err.message });
+                    setSubmitting(false);
                   }
-                } catch (err) {
-                  setStatus({ success: false });
-                  setErrors({ submit: err.message });
-                  setSubmitting(false);
-                }
-              }}
-            >
-              {({
-                errors,
-                handleBlur,
-                handleChange,
-                handleSubmit,
-                isSubmitting,
-                touched,
-                values,
-                setFieldValue,
-              }) => (
-                <Form noValidate className="mb-3" onSubmit={handleSubmit}>
-                  <Autocomplete
-                    {...userProps}
-                    id="member"
-                    name="member"
-                    disabled={
-                      group.status !== "Active" ||
-                      group.members.length >= packages.package.noOfMember
-                    }
-                    onChange={(e, value) => {
-                      if (value) setFieldValue("member", value._id);
-                      else setFieldValue("member", null);
-                    }}
-                    blurOnSelect={handleBlur}
-                    renderOption={(props, option) => (
-                      <Box
-                        component="li"
-                        sx={{
-                          "& > img": { mr: 2, flexShrink: 0 },
-                        }}
-                        {...props}
-                      >
-                        <Image
-                          src={option.avatar}
-                          className="user-avatar xs-avatar shadow "
-                          roundedCircle
-                          alt={option._id}
+                }}
+              >
+                {({
+                  errors,
+                  handleBlur,
+                  handleChange,
+                  handleSubmit,
+                  isSubmitting,
+                  touched,
+                  values,
+                  setFieldValue,
+                }) => (
+                  <Form noValidate className="mb-3" onSubmit={handleSubmit}>
+                    <Autocomplete
+                      {...userProps}
+                      id="member"
+                      name="member"
+                      disabled={group.status !== "Đang kích hoạt"}
+                      onChange={(e, value) => {
+                        if (value) setFieldValue("member", value._id);
+                        else setFieldValue("member", null);
+                      }}
+                      blurOnSelect={handleBlur}
+                      renderOption={(props, option) => (
+                        <Box
+                          component="li"
+                          sx={{
+                            "& > img": { mr: 2, flexShrink: 0 },
+                          }}
+                          {...props}
+                        >
+                          <Image
+                            src={option.avatar}
+                            className="user-avatar xs-avatar shadow "
+                            roundedCircle
+                            alt={option._id}
+                          />
+                          <span>
+                            <b>{option.name}</b> ({option.email})
+                          </span>
+                        </Box>
+                      )}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          label="Thành viên"
+                          value={values.member}
+                          size="small"
+                          style={{ borderRadius: "0.5rem" }}
+                          error={touched.member && Boolean(errors.member)}
+                          helperText={touched.member && errors.member}
                         />
-                        <span>
-                          <b>{option.name}</b> ({option.email})
-                        </span>
-                      </Box>
+                      )}
+                    />
+                    {values.member && (
+                      <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-2">
+                        <Button
+                          variant="primary"
+                          disabled={isSubmitting}
+                          type="submit"
+                        >
+                          Xác nhận
+                        </Button>
+                        <Button variant="light">Đóng</Button>
+                      </div>
                     )}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Thành viên"
-                        value={values.member}
-                        size="small"
-                        style={{ borderRadius: "0.5rem" }}
-                        error={touched.member && Boolean(errors.member)}
-                        helperText={touched.member && errors.member}
-                      />
-                    )}
-                  />
-                  {values.member && (
-                    <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-2">
-                      <Button
-                        variant="primary"
-                        disabled={isSubmitting}
-                        type="submit"
-                      >
-                        Xác nhận
-                      </Button>
-                      <Button variant="light">Đóng</Button>
-                    </div>
-                  )}
-                </Form>
-              )}
-            </Formik>
-          </Row>
+                  </Form>
+                )}
+              </Formik>
+            </Row>
+          )}
         </Card.Body>
       </Card>
     </>
   );
-};
+});
 
 export default MemberForm;

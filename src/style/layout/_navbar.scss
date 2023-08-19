@@ -18,13 +18,12 @@
   border-radius: $border-radius-lg;
   right: auto;
   left: 50%;
-  -webkit-transform: translate(-50%, 0);
-  -o-transform: translate(-50%, 0);
-  transform: translate(-50%, 0);
+  -webkit-transform: translate(-75%, 0);
+  -o-transform: translate(-75%, 0);
+  transform: translate(-75%, 0);
 
-  @include media-breakpoint-down(lg) {
+  @include media-breakpoint-down(sm) {
     min-width: 285px;
-    transform: translateX(-80%);
   }
 }
 
@@ -211,4 +210,13 @@
 .font-small {
   @include font-size($font-size-sm);
   font-weight: $font-weight-light;
+}
+.nav-dropdown {
+  .nav-link {
+    color: $gray-900;
+    &.active {
+      color: $primary;
+      border-bottom: 0.15rem solid $primary;
+    }
+  }
 }

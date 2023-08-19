@@ -1,5 +1,14 @@
 import { useState, useEffect, useRef } from "react";
 
+// material-ui
+import {
+  Autocomplete,
+  Box,
+  InputAdornment,
+  Slider,
+  TextField,
+} from "@mui/material";
+
 // bootstrap
 import {
   Form,
@@ -8,6 +17,8 @@ import {
   Col,
   ProgressBar,
   Stack,
+  Row,
+  Image,
 } from "react-bootstrap";
 
 // assets
@@ -27,6 +38,11 @@ import { Field } from "formik";
 
 // project import
 import { strengthColor, strengthIndicator } from "utils/password-strength";
+import {
+  faSquareMinus,
+  faSquarePlus,
+} from "@fortawesome/free-regular-svg-icons";
+import { formatCurrency } from "store/requests/user";
 
 export const SampleGroupForm = ({
   title,
@@ -143,7 +159,11 @@ export const DateGroupForm = ({
       <Form.Label className={classes?.formLabel}>{title}</Form.Label>
       <Datetime
         timeFormat={false}
-        onChange={setBirthday}
+        onChange={(e) => {
+          let value = e;
+          setBirthday(value);
+          handleChange(name, new Date(value));
+        }}
         renderInput={(props, openCalendar) => (
           <InputGroup>
             <InputGroup.Text>
@@ -159,7 +179,7 @@ export const DateGroupForm = ({
               name={name}
               placeholder="dd/mm/yyyy"
               onFocus={openCalendar}
-              onChange={handleChange}
+              onChange={() => {}}
               onBlur={handleBlur}
               isInvalid={touched[name] && !!errors[name]}
             />
@@ -378,5 +398,320 @@ export const PasswordGroupForm = ({
         </Stack>
       )}
     </Form.Group>
+  );
+};
+export const calcPrice = (duration, price, noOfMember, coefficient) => {
+  return Math.round(
+    duration >= 12
+      ? (price + (coefficient ?? 0) * (noOfMember - 2) * duration) * 0.7
+      : price + (coefficient ?? 0) * (noOfMember - 2) * duration
+  );
+};
+export const PackageSelectionForm = (props) => {
+  const {
+    title,
+    data,
+    showQty = false,
+    handleBlur,
+    setFieldValue,
+    touched,
+    values,
+    errors,
+  } = props;
+  const packageProps = {
+    options: data.packages.filter((pkg) => !pkg.deleted),
+    getOptionLabel: (option) => option.name,
+  };
+
+  const findIdxCart = (pkg, cart, duration, noOfMember) => {
+    if (cart) {
+      const idx = cart.find((elem) => {
+        if (
+          elem._id === pkg._id &&
+          elem.duration === Number(duration) &&
+          elem.noOfMember === Number(noOfMember)
+        )
+          return true;
+        else return false;
+      });
+      if (idx) {
+        return idx.quantity;
+      }
+      return 1;
+    }
+    return 1;
+  };
+  return (
+    <>
+      <h6 className="fw-bold mb-3">{title}</h6>
+      <Autocomplete
+        {...packageProps}
+        id="packages"
+        onChange={(e, value) => {
+          const idx = findIdxCart(
+            value,
+            data.cart,
+            value.duration,
+            value.noOfMember
+          );
+          setFieldValue("packages", value);
+          setFieldValue("duration", value.duration);
+          setFieldValue("noOfMember", value.noOfMember);
+          setFieldValue("quantity", idx);
+        }}
+        onBlur={handleBlur}
+        disableClearable
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label={title}
+            size="small"
+            error={touched.packages && Boolean(errors.packages)}
+            helperText={touched.packages && errors.packages}
+            style={{ borderRadius: "0.5rem" }}
+            value={values.packages}
+          />
+        )}
+      />
+      <Row className="mt-4">
+        <Col className="mt-2">
+          <TextField
+            id="noOfMember"
+            name="noOfMember"
+            label="Thành viên"
+            size="small"
+            type="number"
+            value={values.noOfMember}
+            disabled={!values.packages || !values.packages.editableNoOfMember}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value) {
+                const idx = findIdxCart(
+                  values.packages,
+                  data.cart,
+                  values.duration,
+                  value
+                );
+                setFieldValue("quantity", idx);
+              }
+              setFieldValue("noOfMember", value);
+            }}
+            onBlur={handleBlur}
+            error={touched.noOfMember && Boolean(errors.noOfMember)}
+            helperText={touched.noOfMember && errors.noOfMember}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">người</InputAdornment>
+              ),
+            }}
+          />
+        </Col>
+        <Col className="mt-2">
+          <TextField
+            id="duration"
+            name="duration"
+            label="Thời hạn"
+            size="small"
+            type="number"
+            value={values.duration}
+            disabled={!values.packages || !values.packages.editableDuration}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value) {
+                const idx = findIdxCart(
+                  values.packages,
+                  data.cart,
+                  value,
+                  values.noOfMember
+                );
+                setFieldValue("quantity", idx);
+              }
+              setFieldValue("duration", value);
+            }}
+            onBlur={handleBlur}
+            error={touched.duration && Boolean(errors.duration)}
+            helperText={touched.duration && errors.duration}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">tháng</InputAdornment>
+              ),
+            }}
+          />
+        </Col>
+      </Row>
+      {showQty && (
+        <Stack gap={3}>
+          <RangeSlider {...props} title="Số lượng" name="quantity" />
+          {values.packages &&
+            values.duration >= 1 &&
+            values.noOfMember >= 2 && (
+              <h4 className="text-center fw-bolder">
+                {formatCurrency(
+                  calcPrice(
+                    values.duration,
+                    values.packages?.price,
+                    values.noOfMember,
+                    values.packages?.coefficient
+                  ) * values.quantity
+                )}
+              </h4>
+            )}
+        </Stack>
+      )}
+    </>
+  );
+};
+
+export const RangeSlider = ({
+  title,
+  name,
+  min,
+  max,
+  step,
+  handleBlur,
+  handleChange,
+  setFieldValue,
+  touched,
+  values,
+  errors,
+}) => {
+  const handleSliderChange = (event, value) => {
+    setFieldValue(name, value);
+  };
+  const handleInputChange = (event) => {
+    setFieldValue(
+      name,
+      event.target.value === "" ? "" : Number(event.target.value)
+    );
+  };
+  function valuetext(value) {
+    return `${value}`;
+  }
+  // -----Increment Event------
+  const increaseQuantity = () => {
+    const value = values[name] + 1;
+    if (value <= 30) setFieldValue(name, value);
+  };
+
+  // -----Decrement Event------
+  const decreaseQuantity = () => {
+    const value = values[name] - 1;
+    if (value >= 1) setFieldValue(name, value);
+  };
+  return (
+    <>
+      <Stack direction="horizontal" gap={2}>
+        <h6 className="mt-4 mb-3 fw-bold">{title}</h6>
+        <div className="mb-n2">
+          <TextField
+            variant="standard"
+            id={name}
+            value={values[name]}
+            onChange={handleInputChange}
+            onBlur={handleBlur}
+            error={touched[name] && Boolean(errors[name])}
+            helperText={touched[name] && errors[name]}
+            inputProps={{
+              step: step,
+              min: min,
+              max: max,
+              type: "number",
+              "aria-labelledby": "range-slider",
+              style: {
+                textAlign: "center",
+                fontSize: "15px",
+                fontWeight: "bolder",
+              },
+            }}
+          />
+        </div>
+      </Stack>
+      <Stack direction="horizontal" gap={3} className="mx-3">
+        <Button
+          className="btn-table-options btn-slider icon icon-sm"
+          onClick={decreaseQuantity}
+        >
+          <FontAwesomeIcon icon={faSquareMinus} />
+        </Button>
+        <Slider
+          value={typeof values[name] === "number" ? values[name] : min}
+          onChange={handleSliderChange}
+          getAriaValueText={valuetext}
+          valueLabelDisplay="auto"
+          step={step}
+          min={min}
+          max={max}
+          aria-labelledby="range-slider"
+        />
+        <Button
+          className="btn-table-options btn-slider icon icon-sm"
+          onClick={increaseQuantity}
+        >
+          <FontAwesomeIcon icon={faSquarePlus} />
+        </Button>
+      </Stack>
+    </>
+  );
+};
+
+export const UserSelectionForm = ({
+  title,
+  handleBlur,
+  setFieldValue,
+  touched,
+  values,
+  errors,
+  data,
+  name,
+}) => {
+  const userProps = {
+    options: data.filter((user) => !user.deleted && user.role !== "admin"),
+    getOptionLabel: (option) => option.name,
+  };
+  return (
+    <>
+      <h6 className="mt-4 mb-3 fw-bold">{title}</h6>
+      <Autocomplete
+        {...userProps}
+        id={name}
+        name={name}
+        disableClearable
+        onChange={(e, value) => {
+          console.log(value);
+          setFieldValue(name, value._id);
+        }}
+        onBlur={handleBlur}
+        renderOption={(props, option) => (
+          <Box
+            component="li"
+            sx={{
+              "& > img": { mr: 2, flexShrink: 0 },
+            }}
+            {...props}
+          >
+            <Image
+              src={option.avatar}
+              className="user-avatar xs-avatar shadow "
+              roundedCircle
+              alt={option._id}
+            />
+            <span>
+              <b>{option.name}</b> ({option.email})
+            </span>
+          </Box>
+        )}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label={title}
+            value={values[name]}
+            size="small"
+            style={{ borderRadius: "0.5rem" }}
+            error={touched[name] && Boolean(errors[name])}
+            helperText={touched[name] && errors[name]}
+          />
+        )}
+      />
+    </>
   );
 };

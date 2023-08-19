@@ -12,7 +12,7 @@ import logo from "assets/logo.png";
 
 const Navigation = () => {
   const navGroups = menuItems.items.map((item) => {
-    if (item.type === "group") return <NavGroup key={item.id} item={item} />;
+    return <NavGroup key={item.id} item={item} />;
   });
 
   return (

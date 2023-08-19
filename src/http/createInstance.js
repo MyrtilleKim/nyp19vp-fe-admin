@@ -1,30 +1,16 @@
 import apiClient from "./http-common.js";
 import jwtDecode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+import { refeshToken } from "store/requests/auth.js";
 
-const refeshToken = async () => {
-  try {
-    const res = await apiClient.get("/auth/refresh", {
-      withCredentials: true,
-    });
-    return res.data;
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-export const createAxios = (user, dispatch, stateSuccess) => {
+export const createAxios = (user, dispatch) => {
   const newInstance = apiClient.create();
   newInstance.interceptors.request.use(
     async (config) => {
-      let day = new Date();
+      const navigate = useNavigate();
       const decodedToken = jwtDecode(user?.accessToken);
-      if (decodedToken.exp < day.setTime() / 1000) {
-        const data = await refeshToken();
-        const refeshUser = {
-          ...user,
-          accessToken: data.accessToken,
-        };
-        dispatch(stateSuccess(refeshUser));
+      if (decodedToken.exp < new Date().setTime() / 1000) {
+        const data = await refeshToken(user, dispatch, navigate);
         config.headers["token"] = "Bearer " + data.accessToken;
       }
       return config;

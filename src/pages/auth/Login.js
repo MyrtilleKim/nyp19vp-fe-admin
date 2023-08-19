@@ -97,7 +97,6 @@ const Login = () => {
                         password: values.password,
                       };
                       const res = await loginUser(formData, dispatch);
-                      console.log("res", res);
                       if (!res.data) {
                         setContent(res?.response.data.message);
                         setTitle(res?.response.statusText);

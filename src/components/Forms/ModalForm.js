@@ -15,8 +15,12 @@ import {
   BulletedTextArea,
   CurrencyGroupForm,
   CheckboxGroupForm,
+  UserSelectionForm,
+  PackageSelectionForm,
+  RangeSlider,
 } from "./GroupForm";
 
+// ==============================|| BOOTSTRAP FORM MODAL ||============================== //
 const ModalForm = ({
   title,
   children,
@@ -43,7 +47,6 @@ const ModalForm = ({
             setSubmitting(false);
             if (!_.isEqual(values, initValues)) {
               handleSubmit(values);
-              console.log("haha submit");
             } else {
               handleAlert("Thông báo", "Không có gì thay đổi", "primary");
             }
@@ -66,74 +69,111 @@ const ModalForm = ({
         }) => (
           <Form noValidate className="mb-3" onSubmit={handleSubmit}>
             <Modal.Body>
-              {forms.map((form) => ({
-                ...(form._Type === "simple" && (
-                  <SampleGroupForm
-                    key={`form-control-${form.id}`}
-                    {...form}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    touched={touched}
-                    errors={errors}
-                    values={values}
-                  />
-                )),
-                ...(form._Type === "password" && (
-                  <PasswordGroupForm
-                    key={`form-control-${form.id}`}
-                    {...form}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    touched={touched}
-                    errors={errors}
-                    values={values}
-                  />
-                )),
-                ...(form._Type === "date" && (
-                  <DateGroupForm
-                    key={`form-control-${form.id}`}
-                    {...form}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    touched={touched}
-                    errors={errors}
-                    values={values}
-                  />
-                )),
-                ...(form._Type === "text-area" && (
-                  <BulletedTextArea
-                    key={`form-control-${form.id}`}
-                    {...form}
-                    handleBlur={handleBlur}
-                    handleChange={setFieldValue}
-                    touched={touched}
-                    errors={errors}
-                    values={values}
-                  />
-                )),
-                ...(form._Type === "currency" && (
-                  <CurrencyGroupForm
-                    key={`form-control-${form.id}`}
-                    {...form}
-                    handleBlur={handleBlur}
-                    handleChange={setFieldValue}
-                    touched={touched}
-                    errors={errors}
-                    values={values}
-                  />
-                )),
-                ...(form._Type === "checkbox" && (
-                  <CheckboxGroupForm
-                    key={`form-control-${form.id}`}
-                    {...form}
-                    handleBlur={handleBlur}
-                    handleChange={handleChange}
-                    touched={touched}
-                    errors={errors}
-                    values={values}
-                  />
-                )),
-              }))}
+              {children}
+              {forms &&
+                forms.map((form) => ({
+                  ...(form._Type === "simple" && (
+                    <SampleGroupForm
+                      key={`form-control-${form.id}`}
+                      {...form}
+                      handleBlur={handleBlur}
+                      handleChange={handleChange}
+                      touched={touched}
+                      errors={errors}
+                      values={values}
+                    />
+                  )),
+                  ...(form._Type === "password" && (
+                    <PasswordGroupForm
+                      key={`form-control-${form.id}`}
+                      {...form}
+                      handleBlur={handleBlur}
+                      handleChange={handleChange}
+                      touched={touched}
+                      errors={errors}
+                      values={values}
+                    />
+                  )),
+                  ...(form._Type === "date" && (
+                    <DateGroupForm
+                      key={`form-control-${form.id}`}
+                      {...form}
+                      handleBlur={handleBlur}
+                      handleChange={setFieldValue}
+                      touched={touched}
+                      errors={errors}
+                      values={values}
+                    />
+                  )),
+                  ...(form._Type === "text-area" && (
+                    <BulletedTextArea
+                      key={`form-control-${form.id}`}
+                      {...form}
+                      handleBlur={handleBlur}
+                      handleChange={setFieldValue}
+                      touched={touched}
+                      errors={errors}
+                      values={values}
+                    />
+                  )),
+                  ...(form._Type === "currency" && (
+                    <CurrencyGroupForm
+                      key={`form-control-${form.id}`}
+                      {...form}
+                      handleBlur={handleBlur}
+                      handleChange={setFieldValue}
+                      touched={touched}
+                      errors={errors}
+                      values={values}
+                    />
+                  )),
+                  ...(form._Type === "checkbox" && (
+                    <CheckboxGroupForm
+                      key={`form-control-${form.id}`}
+                      {...form}
+                      handleBlur={handleBlur}
+                      handleChange={handleChange}
+                      touched={touched}
+                      errors={errors}
+                      values={values}
+                    />
+                  )),
+                  ...(form._Type === "packages-autocomplete" && (
+                    <PackageSelectionForm
+                      key={`form-control-${form.id}`}
+                      {...form}
+                      handleBlur={handleBlur}
+                      handleChange={handleChange}
+                      setFieldValue={setFieldValue}
+                      touched={touched}
+                      values={values}
+                      errors={errors}
+                    />
+                  )),
+                  ...(form._Type === "users-autocomplete" && (
+                    <UserSelectionForm
+                      key={`form-control-${form.id}`}
+                      {...form}
+                      handleBlur={handleBlur}
+                      handleChange={handleChange}
+                      setFieldValue={setFieldValue}
+                      touched={touched}
+                      values={values}
+                      errors={errors}
+                    />
+                  )),
+                  ...(form._Type === "range-slider" && (
+                    <RangeSlider
+                      key={`form-control-${form.id}`}
+                      {...form}
+                      handleBlur={handleBlur}
+                      setFieldValue={setFieldValue}
+                      touched={touched}
+                      values={values}
+                      errors={errors}
+                    />
+                  )),
+                }))}
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={handleClose}>

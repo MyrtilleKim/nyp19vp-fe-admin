@@ -10,6 +10,7 @@ import {
   faAngleUp,
   faEarthAsia,
 } from "@fortawesome/free-solid-svg-icons";
+import { faClock } from "@fortawesome/free-regular-svg-icons";
 
 const CounterWidget = forwardRef((props, ref) => {
   const { icon, iconColor, category, title, period, percentage } = props;
@@ -17,7 +18,7 @@ const CounterWidget = forwardRef((props, ref) => {
   const percentageColor = percentage < 0 ? "text-danger" : "text-success";
   const curPercentage = percentage < 0 ? percentage * -1 : percentage;
   return (
-    <Card ref={ref} border="light" className="shadow-sm">
+    <Card ref={ref} border="light" className="shadow-sm h-100">
       <Card.Body>
         <Row className="d-block d-xl-flex align-items-center">
           <Col
@@ -25,7 +26,8 @@ const CounterWidget = forwardRef((props, ref) => {
             className="text-xl-center d-flex align-items-center justify-content-xl-center mb-3 mb-xl-0"
           >
             <div
-              className={`icon icon-shape icon-lg icon-shape-${iconColor} rounded-circle me-4 me-sm-0`}
+              className={`icon icon-shape icon-lg icon-shape-${iconColor} rounded-circle me-sm-0`}
+              style={{ width: "4.5rem", height: "4.5rem" }}
             >
               <FontAwesomeIcon icon={icon} />
             </div>
@@ -40,19 +42,20 @@ const CounterWidget = forwardRef((props, ref) => {
               <h3 className="mb-1">{title}</h3>
             </div>
             <small>
-              {period}, <FontAwesomeIcon icon={faEarthAsia} size="xs" />{" "}
-              WorldWide
+              <FontAwesomeIcon icon={faClock} /> {period.min} - {period.max}
             </small>
-            <div className="small mt-2">
-              <FontAwesomeIcon
-                icon={percentageIcon}
-                className={`${percentageColor} me-1`}
-              />
-              <span className={`${percentageColor} fw-bold`}>
-                {curPercentage}%
-              </span>{" "}
-              Since last month
-            </div>
+            {curPercentage && (
+              <div className="small mt-2">
+                <FontAwesomeIcon
+                  icon={percentageIcon}
+                  className={`${percentageColor} me-1`}
+                />
+                <span className={`${percentageColor} fw-bold`}>
+                  {curPercentage}%
+                </span>{" "}
+                Tháng trước
+              </div>
+            )}
           </Col>
         </Row>
       </Card.Body>

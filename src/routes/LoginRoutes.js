@@ -5,12 +5,15 @@ import MinimalLayout from "layout/MinimalLayout";
 import Loadable from "components/Loadable";
 
 // render - login
-const AuthLogin = Loadable(lazy(() => import("../pages/auth/Login")));
+const AuthLogin = Loadable(lazy(() => import("pages/auth/Login")));
 const AuthForgorPassword = Loadable(
-  lazy(() => import("../pages/auth/ForgotPassword"))
+  lazy(() => import("pages/auth/ForgotPassword"))
 );
 const AuthResetPassword = Loadable(
-  lazy(() => import("../pages/auth/ResetPassword"))
+  lazy(() => import("pages/auth/ResetPassword"))
+);
+const AuthSessionExpired = Loadable(
+  lazy(() => import("pages/auth/SessionExpired"))
 );
 
 // ==============================|| AUTH ROUTING ||============================== //
@@ -30,6 +33,10 @@ const LoginRoutes = {
     {
       path: "resetPassword",
       element: <AuthResetPassword />,
+    },
+    {
+      path: "sessionExpired",
+      element: <AuthSessionExpired />,
     },
   ],
 };

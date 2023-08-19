@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -25,30 +25,25 @@ import {
 
 // project import
 import NOTIFICATIONS_DATA from "data/notifications";
-import { loginSuccess } from "store/reducers/auth";
 import { logoutUser } from "store/requests/auth";
-import { createAxios } from "http/createInstance";
-
-// third party
-import jwtDecode from "jwt-decode";
+import { getUserById } from "store/requests/user";
 
 const HeaderContent = (props) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   let { currentUser } = useSelector((state) => state?.auth.login);
-  let axiosJWT = createAxios(currentUser, dispatch, loginSuccess);
-  let day = new Date();
 
-  if (currentUser !== null) {
-    const decodedToken = jwtDecode(currentUser?.accessToken);
-    if (decodedToken.exp < day.getTime() / 1000) {
-      dispatch(loginSuccess(null));
-    }
-  }
+  useEffect(() => {
+    getUserById(
+      currentUser?.data.userInfo?._id,
+      currentUser?.accessToken,
+      dispatch
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch]);
 
   const handleLogout = async () => {
-    console.log("logout", currentUser?.accessToken, axiosJWT);
-    await logoutUser(currentUser?.accessToken, dispatch, navigate, axiosJWT);
+    await logoutUser(dispatch, navigate);
   };
 
   const [notifications, setNotifications] = useState(NOTIFICATIONS_DATA);

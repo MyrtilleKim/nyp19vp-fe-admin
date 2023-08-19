@@ -20,6 +20,7 @@ import {
   Tooltip,
   Image,
   Stack,
+  Spinner,
 } from "react-bootstrap";
 
 // material-ui
@@ -48,15 +49,13 @@ import {
   activateGroup,
   findMainPackage,
 } from "store/requests/group";
-import { createAxios } from "http/createInstance";
-import { loginSuccess } from "store/reducers/auth";
 import { formatShortDate } from "store/requests/user";
 
 const GroupInfoForm = ({ group }) => {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state?.auth.login);
-  let axiosJWT = createAxios(currentUser, dispatch, loginSuccess);
   const [avatar, setAvatar] = useState(group.avatar);
+  const [loading, setLoading] = useState(false);
   const inputRef = useRef(null);
   const [action, setAction] = useState(null);
   const [values, setValues] = useState(null);
@@ -123,8 +122,7 @@ const GroupInfoForm = ({ group }) => {
         group._id,
         currentUser?.accessToken,
         formData,
-        dispatch,
-        axiosJWT
+        dispatch
       );
       if (res.statusCode === HttpStatusCode.Ok) {
         handleAlert("Thành công", "Đổi tên nhóm thành công", "success");
@@ -145,8 +143,7 @@ const GroupInfoForm = ({ group }) => {
         group._id,
         currentUser?.accessToken,
         formData,
-        dispatch,
-        axiosJWT
+        dispatch
       );
       if (res.statusCode === HttpStatusCode.Ok) {
         handleAlert("Thành công", "Kích hoạt nhóm thành công", "success");
@@ -178,30 +175,37 @@ const GroupInfoForm = ({ group }) => {
     if (!fileObj) return;
 
     console.log("fileObj is", fileObj);
-
+    setLoading(true);
     const form = new FormData();
     form.append("file", fileObj);
-    const res = await uploadFile(
-      group._id,
-      currentUser?.accessToken,
-      form,
-      axiosJWT
-    );
-    const formAvatar = new FormData();
-    formAvatar.append("avatar", res.data);
-    const resImg = await updateAvatar(
-      group._id,
-      currentUser?.accessToken,
-      formAvatar,
-      dispatch,
-      axiosJWT
-    );
+    try {
+      const res = await uploadFile(group._id, currentUser?.accessToken, form);
+      const data = { avatar: res.data };
+      const resImg = await updateAvatar(
+        group._id,
+        currentUser?.accessToken,
+        data,
+        dispatch
+      );
 
-    if (resImg.statusCode === 200) {
-      setAvatar(URL.createObjectURL(fileObj));
-      handleAlert("Thành công", "Cập nhập thành công ảnh đại diện", "success");
-    } else {
-      handleAlert("Thất bại", "Cập nhập ảnh đại diện thất bại", "danger");
+      if (resImg.statusCode === 200) {
+        setAvatar(URL.createObjectURL(fileObj));
+        handleAlert(
+          "Thành công",
+          "Cập nhập thành công ảnh đại diện",
+          "success"
+        );
+      } else {
+        handleAlert("Thất bại", "Cập nhập ảnh đại diện thất bại", "danger");
+      }
+    } catch (error) {
+      handleAlert(
+        "Thất bại",
+        "Đã xảy ra lỗi khi cập nhập ảnh đại diện",
+        "danger"
+      );
+    } finally {
+      setLoading(false);
     }
 
     // 👇️ reset file input
@@ -259,33 +263,46 @@ const GroupInfoForm = ({ group }) => {
                   )}
                 </div>
                 <Stack direction="horizontal" className="ms-3 me-2">
-                  <div className="position-relative" style={{ width: "12rem" }}>
-                    <Image
-                      src={avatar}
-                      alt={group.name}
-                      className="mx-auto user-avatar profile-avatar rounded-circle"
-                    />
-                    <input
-                      type="file"
-                      style={{ display: "none" }}
-                      ref={inputRef}
-                      onChange={handleFileChange}
-                    />
-                    <Button
-                      className="position-absolute bottom-10 end-10 rounded-circle text-center"
-                      onClick={handleChangeAva}
-                      variant="light"
-                      style={{
-                        height: "30px",
-                        width: "30px",
-                        padding: "0 1px 0 1px",
-                      }}
-                      disabled={group.deleted}
-                    >
-                      <FontAwesomeIcon icon={faCameraAlt} />
-                    </Button>
+                  <div className="position-relative" style={{ width: "10rem" }}>
+                    {loading ? (
+                      // Show loading state while avatar is being updated
+                      <Spinner animation="border" role="status">
+                        <span className="visually-hidden">Loading...</span>
+                      </Spinner>
+                    ) : (
+                      <>
+                        <Image
+                          src={avatar}
+                          alt={group.name}
+                          className="mx-auto user-avatar profile-avatar rounded-circle"
+                          loading="lazy"
+                        />
+                        <input
+                          type="file"
+                          style={{ display: "none" }}
+                          ref={inputRef}
+                          onChange={handleFileChange}
+                        />
+                        <Button
+                          className="rounded-circle text-center"
+                          onClick={handleChangeAva}
+                          variant="light"
+                          style={{
+                            height: "30px",
+                            width: "30px",
+                            padding: "0 1px 0 1px",
+                            position: "absolute",
+                            bottom: ".5rem",
+                            right: ".5rem",
+                          }}
+                          disabled={group.deleted || loading}
+                        >
+                          <FontAwesomeIcon icon={faCameraAlt} />
+                        </Button>
+                      </>
+                    )}
                   </div>
-                  <div className="flex-fill pe-0">
+                  <div className="flex-fill pe-0 ms-2">
                     <Formik
                       validationSchema={Yup.object().shape({
                         name: Yup.string().max(255).required("Bắt buộc"),

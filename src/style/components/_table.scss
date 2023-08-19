@@ -1,14 +1,14 @@
 .table {
   width: 96%;
+  td {
+    border-bottom: solid 1px $gray-500;
+  }
   &.datatable {
     th:nth-child(2) {
       display: none;
     }
-    td {
-      border-bottom: solid 1px $gray-500;
-      &:nth-child(2) {
-        display: none;
-      }
+    td:nth-child(2) {
+      display: none;
     }
     &.package-management {
       th {
@@ -77,6 +77,11 @@
         border-top-right-radius: $border-radius-lg;
         border-bottom-right-radius: $border-radius-lg;
       }
+    }
+  }
+  tfoot {
+    th {
+      border-top: solid 1.4px $gray-500 !important;
     }
   }
 }

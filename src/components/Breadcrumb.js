@@ -1,7 +1,7 @@
 import { Breadcrumb } from "react-bootstrap";
 import PropTypes from "prop-types";
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 // assets
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,17 +9,19 @@ import { faHouse } from "@fortawesome/free-solid-svg-icons";
 
 const Breadcrumbs = ({ navigation, title, ...others }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { id } = useParams();
   const [item, setItem] = useState();
 
   const getCollapse = (menu) => {
     if (menu.children) {
       menu.children.filter((collapse) => {
-        if (collapse.type && collapse.type === "item") {
-          if (location.pathname === collapse.url) {
-            setItem(collapse);
-          }
+        // if (collapse.type && collapse.type === "item") {
+        if (location.pathname === collapse.url) {
+          setItem(collapse);
         }
-        return false;
+        // }
+        // return false;
       });
     }
   };
@@ -39,13 +41,28 @@ const Breadcrumbs = ({ navigation, title, ...others }) => {
 
   if (item && item.type === "item") {
     itemTitle = item.title;
-    itemContent = <Breadcrumb.Item active>{itemTitle}</Breadcrumb.Item>;
+    if (id) {
+      itemContent = [
+        <Breadcrumb.Item
+          onClick={() => {
+            navigate(`${item.url}`);
+          }}
+        >
+          {itemTitle}
+        </Breadcrumb.Item>,
+        <Breadcrumb.Item active>Chi tiết</Breadcrumb.Item>,
+      ];
+    } else itemContent = <Breadcrumb.Item active>{itemTitle}</Breadcrumb.Item>;
 
     // main
     if (item.breadcrumbs !== false) {
       breadcrumbContent = (
         <Breadcrumb>
-          <Breadcrumb.Item as={Link} to="/">
+          <Breadcrumb.Item
+            onClick={() => {
+              navigate("/");
+            }}
+          >
             <FontAwesomeIcon icon={faHouse} />
           </Breadcrumb.Item>
           {itemContent}

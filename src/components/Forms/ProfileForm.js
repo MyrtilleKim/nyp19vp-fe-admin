@@ -32,16 +32,13 @@ import { SampleGroupForm, DateGroupForm } from "./GroupForm";
 import AvatarForm from "./AvatarForm";
 import Alerts from "components/Alerts";
 import Modals from "components/Modal";
-import { updateInfoUser } from "store/requests/user";
-import { createAxios } from "http/createInstance";
-import { loginSuccess } from "store/reducers/auth";
+import { getUserById, updateInfoUser } from "store/requests/user";
 import { restoreUser, removeUser } from "store/requests/user";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const ProfileForm = ({ userInfo }) => {
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state?.auth.login);
-  let axiosJWT = createAxios(currentUser, dispatch, loginSuccess);
   const [action, setAction] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -81,22 +78,12 @@ const ProfileForm = ({ userInfo }) => {
     let res;
     let error = false;
     if (action === "remove") {
-      res = await removeUser(
-        userInfo._id,
-        currentUser?.accessToken,
-        dispatch,
-        axiosJWT
-      );
+      res = await removeUser(userInfo._id, currentUser?.accessToken, dispatch);
       if (res.statusCode === HttpStatusCode.Ok) {
         handleAlert("Thành công", "Xóa tài khoản thành công", "success");
       } else error = true;
     } else if (action === "restore") {
-      res = await restoreUser(
-        userInfo._id,
-        currentUser?.accessToken,
-        dispatch,
-        axiosJWT
-      );
+      res = await restoreUser(userInfo._id, currentUser?.accessToken, dispatch);
       if (res.statusCode === HttpStatusCode.Ok) {
         handleAlert("Thành công", "Khôi phục tài khoản thành công", "success");
       } else error = true;
@@ -104,15 +91,17 @@ const ProfileForm = ({ userInfo }) => {
       let formData = { name: values.name };
       if (values.phone) formData.phone = values.phone;
       if (values.dob) formData.dob = values.dob;
-      console.log(formData, values.dob);
+      console.log("formData", values.dob);
       const res = await updateInfoUser(
         userInfo._id,
         currentUser?.accessToken,
         formData,
-        dispatch,
-        axiosJWT
+        dispatch
       );
       if (res.statusCode === HttpStatusCode.Ok) {
+        if (userInfo._id === currentUser?.data.auth?.userInfoId) {
+          await getUserById(userInfo._id, currentUser?.accessToken, dispatch);
+        }
         handleAlert(
           "Thành công",
           "Cập nhật thông tin cá nhân thành công",
@@ -171,7 +160,6 @@ const ProfileForm = ({ userInfo }) => {
               handleAlert={handleAlert}
               currentUser={currentUser}
               dispatch={dispatch}
-              axiosJWT={axiosJWT}
             />
           </Col>
           <Col xs={12} xl={8} className="mb-4 d-table-cell">
@@ -205,10 +193,10 @@ const ProfileForm = ({ userInfo }) => {
                 <Formik
                   validationSchema={Yup.object().shape({
                     name: Yup.string().max(255).required("Bắt buộc"),
-                    phone: Yup.string().matches(
-                      phoneRegExp,
-                      "Số điện thoại không hợp lệ"
-                    ),
+                    phone: Yup.string()
+                      .min(0)
+                      .matches(phoneRegExp, "Số điện thoại không hợp lệ")
+                      .nullable(true),
                   })}
                   initialValues={initValues}
                   enableReinitialize
@@ -250,6 +238,7 @@ const ProfileForm = ({ userInfo }) => {
                     isSubmitting,
                     touched,
                     values,
+                    setFieldValue,
                   }) => (
                     <Form noValidate onSubmit={handleSubmit}>
                       <Row>
@@ -273,10 +262,10 @@ const ProfileForm = ({ userInfo }) => {
                         <Col md={6} className="mb-3">
                           <DateGroupForm
                             title="Ngày sinh"
-                            name="birthday"
+                            name="dob"
                             disabled={userInfo.deleted}
                             handleBlur={handleBlur}
-                            handleChange={handleChange}
+                            handleChange={setFieldValue}
                             classes={{ formControl: "input-out-button-group" }}
                             touched={touched}
                             errors={errors}
