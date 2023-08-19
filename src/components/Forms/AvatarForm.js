@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCameraAlt } from "@fortawesome/free-solid-svg-icons";
 
 // project import
-import { uploadFile, updateAvatarUser } from "store/requests/user";
+import { uploadFile, updateAvatarUser, getUserById } from "store/requests/user";
 
 const AvatarForm = ({ user, handleAlert, currentUser, dispatch }) => {
   const { _id, name, role } = user;
@@ -44,6 +44,9 @@ const AvatarForm = ({ user, handleAlert, currentUser, dispatch }) => {
       );
 
       if (resImg.statusCode === 200) {
+        if (_id === currentUser?.data.auth?.userInfoId) {
+          await getUserById(_id, currentUser?.accessToken, dispatch);
+        }
         setAvatar(URL.createObjectURL(fileObj));
         handleAlert(
           "Thành công",

@@ -22,9 +22,13 @@ const Profile = () => {
   useEffect(() => {
     getAllUsers(dispatch, currentUser?.accessToken);
     getAllTrans(dispatch);
-    setUser(userInfo.filter((user) => user._id === id).at(0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
+
+  useEffect(() => {
+    setUser(userInfo.filter((user) => user._id === id).at(0));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userInfo]);
 
   return (
     <>

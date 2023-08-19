@@ -249,6 +249,12 @@ export function formatShortDate(dateISO) {
     day: "numeric",
   });
 }
+export function formatMonthYear(dateISO) {
+  return new Date(dateISO).toLocaleDateString("vi-VN", {
+    year: "numeric",
+    month: "short",
+  });
+}
 export function formatDatetime(dateISO) {
   return new Date(dateISO).toLocaleDateString("vi-VN", {
     weekday: "long",

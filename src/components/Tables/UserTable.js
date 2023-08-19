@@ -46,6 +46,7 @@ import { HttpStatusCode } from "axios";
 import IndeterminateCheckbox from "./BSTable/IndeterminateCheckbox";
 // import { reinitializeState } from "store/reducers/user";
 import DataTable from "components/Tables/BSTable";
+import Filter from "./BSTable/FilterFunction";
 
 const UserTable = () => {
   const dispatch = useDispatch();
@@ -453,7 +454,9 @@ const UserTable = () => {
       <Row className="justify-content-md-center">
         <Col xs={12} className="mb-4 d-table-cell">
           <DataTable
-            data={userInfo}
+            data={userInfo.filter(
+              (user) => user._id !== currentUser?.data.auth?.userInfoId
+            )}
             columns={columns}
             classes={{ table: "mx-auto align-middle" }}
             title="Tài khoản"

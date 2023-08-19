@@ -9,9 +9,9 @@ import { useTheme } from "@mui/material/styles";
 import { useMediaQuery } from "@mui/material";
 
 // constant
-import { ColorPalette } from "utils/common/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllPackages, statisticTrans } from "store/requests/package";
+import ColorScheme from "color-scheme";
 
 // chart options
 const pieChartOptions = {
@@ -31,6 +31,7 @@ const pieChartOptions = {
           show: true,
           total: {
             show: true,
+            label: "Tất cả",
           },
         },
       },
@@ -62,15 +63,22 @@ const mapLabels = (allArr) => {
 
 const PackageChart = ({ slot }) => {
   const dispatch = useDispatch();
-  const { pkgByWeek, pkgByMonth, packages } = useSelector(
+  const { pkgByYear, pkgByMonth, packages } = useSelector(
     (state) => state.packages
   );
   const [options, setOptions] = useState(pieChartOptions);
   const [height, setHeight] = useState("300px");
-  const [listWeek, setListWeek] = useState(mapSeries(packages, pkgByWeek));
+  const [listWeek, setListWeek] = useState(mapSeries(packages, pkgByYear));
   const [listMonth, setListMonth] = useState(mapSeries(packages, pkgByMonth));
   const [labels, setLabels] = useState(mapLabels(packages));
   const [series, setSeries] = useState(listWeek);
+  var scheme = new ColorScheme();
+  scheme.from_hex("ff8886").from_hue(1).scheme("tetrade").variation("pastel"); // Use the 'soft' color variation
+
+  var colors = scheme.colors();
+  colors = colors.map((color) => {
+    return `#${color}`;
+  });
 
   useEffect(() => {
     getAllPackages(dispatch);
@@ -78,8 +86,8 @@ const PackageChart = ({ slot }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    setListWeek(mapSeries(packages, pkgByWeek));
-  }, [packages, pkgByWeek]);
+    setListWeek(mapSeries(packages, pkgByYear));
+  }, [packages, pkgByYear]);
 
   useEffect(() => {
     setListMonth(mapSeries(packages, pkgByMonth));
@@ -104,20 +112,13 @@ const PackageChart = ({ slot }) => {
   useEffect(() => {
     setOptions((prevState) => ({
       ...prevState,
-      tooltip: {
-        theme: "light",
-      },
       labels: labels,
-      colors: [
-        ColorPalette["primary"],
-        ColorPalette["secondary"],
-        ColorPalette["tertiary"],
-        ColorPalette["quaternary"],
-        ColorPalette["quinary"],
-      ],
+      colors: colors,
+      markers: {
+        colors: ["#007bff", "#28a745", "#dc3545"],
+      },
     }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ColorPalette, slot]);
+  }, [slot]);
 
   return (
     <div id="chart">

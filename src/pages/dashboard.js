@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 // bootstrap
-import { Row, Col, Container } from "react-bootstrap";
+import { Row, Col, Container, Button } from "react-bootstrap";
 
 // project
 import CounterWidget from "components/Widgets/CounterWidget";
@@ -15,6 +15,7 @@ import {
   faUserCheck,
   faChartSimple,
   faMoneyBillTransfer,
+  faRotate,
 } from "@fortawesome/free-solid-svg-icons";
 
 // data
@@ -25,15 +26,40 @@ import {
 } from "store/requests/user";
 import { statisticTrans } from "store/requests/package";
 import { reinitializeState } from "store/reducers/package";
+import OpenIconSpeedDial from "components/SpeedDial";
+
+import PrintIcon from "@mui/icons-material/Print";
+import ShareIcon from "@mui/icons-material/Share";
+import AutorenewIcon from "@mui/icons-material/Autorenew";
 
 const Dashboard = () => {
   const dispatch = useDispatch();
+  const [lastFetchTimestamp, setLastFetchTimestamp] = useState(Date.now());
   const { count, period, ratio } = useSelector((state) => state.user);
   const statisticTxn = useSelector((state) => state.packages);
   // dispatch(reinitializeState());
+
+  const handleRefresh = () => {
+    setLastFetchTimestamp(Date.now());
+  };
+
+  const actions = [
+    { icon: <AutorenewIcon />, name: "Làm mới", onClick: handleRefresh },
+    { icon: <PrintIcon />, name: "In" },
+    { icon: <ShareIcon />, name: "Chia sẻ" },
+  ];
+
   useEffect(() => {
+    console.log("haha");
     statistic(dispatch);
     statisticTrans(dispatch);
+    // const refreshInterval = setInterval(() => {
+    //   setLastFetchTimestamp(Date.now());
+    // }, 5 * 60 * 1000);
+
+    // return () => {
+    //   clearInterval(refreshInterval);
+    // };
   }, [dispatch]);
   return (
     <>
@@ -43,13 +69,10 @@ const Dashboard = () => {
             <RevenueWidget
               title="Doanh thu"
               value={{
-                week: formatCurrency(statisticTxn.revenueByWeek.value),
-                month: formatCurrency(statisticTxn.revenueByMonth.value),
+                year: formatCurrency(statisticTxn.revenueByYear),
+                month: formatCurrency(statisticTxn.revenueByMonth),
               }}
-              percentage={{
-                week: statisticTxn.ratio.weeklyRevenue,
-                month: statisticTxn.ratio.monthlyRevenue,
-              }}
+              percentage={statisticTxn.ratio.revenue}
             />
           </Col>
         </Row>
@@ -72,7 +95,7 @@ const Dashboard = () => {
                 min: formatShortDate(statisticTxn.period.min),
                 max: formatShortDate(statisticTxn.period.max),
               }}
-              percentage={statisticTxn.ratio.monthlyRevenue}
+              percentage={statisticTxn.ratio.revenue}
               icon={faChartSimple}
               iconColor="tertiary"
             />
@@ -96,13 +119,10 @@ const Dashboard = () => {
             <TransactionWidget
               title="Giao dịch"
               value={{
-                week: statisticTxn.txnByWeek.value,
-                month: statisticTxn.txnByMonth.value,
+                year: statisticTxn.txnByYear,
+                month: statisticTxn.txnByMonth,
               }}
-              percentage={{
-                week: statisticTxn.ratio.weeklyTxn,
-                month: statisticTxn.ratio.monthlyTxn,
-              }}
+              percentage={statisticTxn.ratio.trans}
             />
           </Col>
           <Col xs={12} lg={5} className="mb-4 d-sm-block">
@@ -113,6 +133,7 @@ const Dashboard = () => {
             />
           </Col>
         </Row>
+        <OpenIconSpeedDial actions={actions} />
       </Container>
     </>
   );

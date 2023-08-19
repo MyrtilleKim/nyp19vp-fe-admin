@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -14,6 +14,15 @@ import GroupPackageTable from "components/Tables/GrPkgTable";
 const GroupDetail = () => {
   const dispatch = useDispatch();
   const { groups } = useSelector((state) => state?.group);
+  const [memberFormHeight, setMemberFormHeight] = useState(0);
+  const memberFormRef = useRef(null);
+
+  useEffect(() => {
+    console.log(memberFormRef.current.offsetHeight);
+    if (memberFormRef.current) {
+      setMemberFormHeight(memberFormRef.current.offsetHeight);
+    }
+  }, []);
   useEffect(() => {
     getAllGroups(dispatch);
   }, [dispatch]);
@@ -32,10 +41,14 @@ const GroupDetail = () => {
           <Col xs={12} xl={7} className="mb-4 d-table-cell">
             <MemberForm
               group={groups.filter((group) => group._id === id).at(0)}
+              ref={memberFormRef}
             />
           </Col>
           <Col xs={12} xl={5} className="mb-4  d-table-cell">
-            <GroupPackageTable group={groups.filter((group) => group._id === id).at(0)}/>
+            <GroupPackageTable
+              group={groups.filter((group) => group._id === id).at(0)}
+              heightCard={memberFormHeight}
+            />
           </Col>
         </Row>
       </Container>

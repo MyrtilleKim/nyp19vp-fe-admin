@@ -26,7 +26,8 @@ const CounterWidget = forwardRef((props, ref) => {
             className="text-xl-center d-flex align-items-center justify-content-xl-center mb-3 mb-xl-0"
           >
             <div
-              className={`icon icon-shape icon-lg icon-shape-${iconColor} rounded-circle me-4 me-sm-0`}
+              className={`icon icon-shape icon-lg icon-shape-${iconColor} rounded-circle me-sm-0`}
+              style={{ width: "4.5rem", height: "4.5rem" }}
             >
               <FontAwesomeIcon icon={icon} />
             </div>

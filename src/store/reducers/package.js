@@ -8,19 +8,15 @@ const packages = createSlice({
     countDeletedTxn: 0,
     countWithDeletedTxn: 0,
     txnByMonth: {},
-    txnByWeek: {},
+    txnByYear: {},
     totalRevenue: 0,
     revenueByMonth: {},
-    revenueByWeek: {},
+    revenueByYear: {},
+    statisticTxn: [],
     pkgByMonth: [],
-    pkgByWeek: [],
+    pkgByYear: [],
     period: { min: null, max: null },
-    ratio: {
-      monthlyTxn: null,
-      weeklyTxn: null,
-      monthlyRevenue: null,
-      weeklyRevenue: null,
-    },
+    ratio: { trans: null, revenue: null },
   },
   reducers: {
     reinitializeState: (state) => {
@@ -30,19 +26,15 @@ const packages = createSlice({
         countDeletedTxn: 0,
         countWithDeletedTxn: 0,
         txnByMonth: {},
-        txnByWeek: {},
+        txnByYear: {},
         totalRevenue: 0,
         revenueByMonth: {},
-        revenueByWeek: {},
+        revenueByYear: {},
+        statisticTxn: [],
         pkgByMonth: [],
-        pkgByWeek: [],
+        pkgByYear: [],
         period: { min: null, max: null },
-        ratio: {
-          monthlyTxn: null,
-          weeklyTxn: null,
-          monthlyRevenue: null,
-          weeklyRevenue: null,
-        },
+        ratio: { trans: null, revenue: null },
       }; // Return the initial state to reinitialize
     },
     setInitPackage: (state, action) => {
@@ -54,12 +46,13 @@ const packages = createSlice({
         countDeletedTxn,
         countWithDeletedTxn,
         txnByMonth,
-        txnByWeek,
+        txnByYear,
         totalRevenue,
         revenueByMonth,
-        revenueByWeek,
+        revenueByYear,
+        statisticTxn,
         pkgByMonth,
-        pkgByWeek,
+        pkgByYear,
         period,
         ratio,
       } = action.payload;
@@ -67,12 +60,13 @@ const packages = createSlice({
       state.countDeletedTxn = countDeletedTxn;
       state.countWithDeletedTxn = countWithDeletedTxn;
       state.txnByMonth = txnByMonth;
-      state.txnByWeek = txnByWeek;
+      state.txnByYear = txnByYear;
       state.totalRevenue = totalRevenue;
       state.revenueByMonth = revenueByMonth;
-      state.revenueByWeek = revenueByWeek;
+      state.revenueByYear = revenueByYear;
+      state.statisticTxn = statisticTxn;
       state.pkgByMonth = pkgByMonth;
-      state.pkgByWeek = pkgByWeek;
+      state.pkgByYear = pkgByYear;
       state.period = period;
       state.ratio = ratio;
     },

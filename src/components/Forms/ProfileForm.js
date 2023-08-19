@@ -32,7 +32,7 @@ import { SampleGroupForm, DateGroupForm } from "./GroupForm";
 import AvatarForm from "./AvatarForm";
 import Alerts from "components/Alerts";
 import Modals from "components/Modal";
-import { updateInfoUser } from "store/requests/user";
+import { getUserById, updateInfoUser } from "store/requests/user";
 import { restoreUser, removeUser } from "store/requests/user";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -99,6 +99,9 @@ const ProfileForm = ({ userInfo }) => {
         dispatch
       );
       if (res.statusCode === HttpStatusCode.Ok) {
+        if (userInfo._id === currentUser?.data.auth?.userInfoId) {
+          await getUserById(userInfo._id, currentUser?.accessToken, dispatch);
+        }
         handleAlert(
           "Thành công",
           "Cập nhật thông tin cá nhân thành công",

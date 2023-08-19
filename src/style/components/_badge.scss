@@ -14,5 +14,10 @@
       color: $quaternary;
       border: solid $quaternary 0.5px;
     }
+    &.bg-danger {
+      background-color: rgba(211, 0, 63, 0.2) !important;
+      color: $danger;
+      border: solid $danger 0.5px;
+    }
   }
 }

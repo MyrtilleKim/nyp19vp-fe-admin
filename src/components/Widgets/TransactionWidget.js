@@ -12,43 +12,10 @@ import TransactionChart from "components/Charts/TransactionChart";
 
 const TransactionWidget = forwardRef((props, ref) => {
   const { title, value, percentage } = props;
-  const [slot, setSlot] = useState("week");
-  // const percentageIcon = percentage < 0 ? faAngleDown : faAngleUp;
-  // const percentageColor = percentage < 0 ? "text-danger" : "text-success";
-  // const curPercentage = percentage < 0 ? percentage * -1 : percentage;
-
-  const [portion, setPortion] = useState(
-    slot === "week"
-      ? {
-          icon: percentage.week < 0 ? faAngleDown : faAngleUp,
-          color: percentage.week < 0 ? "text-danger" : "text-success",
-          current: percentage.week < 0 ? percentage.week * -1 : percentage.week,
-        }
-      : {
-          icon: percentage.month < 0 ? faAngleDown : faAngleUp,
-          color: percentage.month < 0 ? "text-danger" : "text-success",
-          current:
-            percentage.month < 0 ? percentage.month * -1 : percentage.month,
-        }
-  );
-
-  useEffect(() => {
-    if (slot === "week") {
-      setPortion({
-        icon: percentage.week < 0 ? faAngleDown : faAngleUp,
-        color: percentage.week < 0 ? "text-danger" : "text-success",
-        current: percentage.week < 0 ? percentage.week * -1 : percentage.week,
-      });
-    } else {
-      setPortion({
-        icon: percentage.month < 0 ? faAngleDown : faAngleUp,
-        color: percentage.month < 0 ? "text-danger" : "text-success",
-        current:
-          percentage.month < 0 ? percentage.month * -1 : percentage.month,
-      });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [slot]);
+  const [slot, setSlot] = useState("month");
+  const percentageIcon = percentage < 0 ? faAngleDown : faAngleUp;
+  const percentageColor = percentage < 0 ? "text-danger" : "text-success";
+  const curPercentage = percentage < 0 ? percentage * -1 : percentage;
 
   return (
     <Card ref={ref} border="light" className="shadow-sm h-100">
@@ -56,17 +23,15 @@ const TransactionWidget = forwardRef((props, ref) => {
         <div className="d-flex flex-row align-items-center flex-0 bg-none">
           <div className="d-block ms-3">
             <h5 className="fw-normal mb-2">{title}</h5>
-            <h3>{slot === "week" ? value.week : value.month}</h3>
-            {portion.current ? (
+            <h3>{slot === "month" ? value.month : value.year}</h3>
+            {curPercentage ? (
               <small className="fw-bold mt-2">
-                <span className="me-2">
-                  {slot === "week" ? "Hôm qua" : "Tháng trước"}
-                </span>
+                <span className="me-2">Tháng trước</span>
                 <FontAwesomeIcon
-                  icon={portion.icon}
-                  className={`${portion.color} me-1`}
+                  icon={percentageIcon}
+                  className={`${percentageColor} me-1`}
                 />
-                <span className={portion.color}>{portion.current}%</span>
+                <span className={percentageColor}>{curPercentage}%</span>
               </small>
             ) : (
               <br />
@@ -74,26 +39,26 @@ const TransactionWidget = forwardRef((props, ref) => {
           </div>
           <div className="d-flex ms-auto me-3">
             <Button
-              variant={slot === "week" ? "primary" : "outline-primary"}
-              size="sm"
-              className={
-                slot === "week" ? "me-3 rounded" : "me-3 rounded btn-pressed"
-              }
-              style={{ width: "4rem" }}
-              onClick={() => setSlot("week")}
-            >
-              Tuần
-            </Button>
-            <Button
               variant={slot === "month" ? "primary" : "outline-primary"}
               size="sm"
               className={
-                slot === "month" ? "me-2 rounded" : "me-2 rounded btn-pressed"
+                slot === "month" ? "me-3 rounded" : "me-3 rounded btn-pressed"
               }
               style={{ width: "4rem" }}
               onClick={() => setSlot("month")}
             >
               Tháng
+            </Button>
+            <Button
+              variant={slot === "year" ? "primary" : "outline-primary"}
+              size="sm"
+              className={
+                slot === "year" ? "me-2 rounded" : "me-2 rounded btn-pressed"
+              }
+              style={{ width: "4rem" }}
+              onClick={() => setSlot("year")}
+            >
+              Năm
             </Button>
           </div>
         </div>
