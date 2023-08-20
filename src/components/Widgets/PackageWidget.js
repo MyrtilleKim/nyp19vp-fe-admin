@@ -16,7 +16,7 @@ const PackageWidget = forwardRef((props, ref) => {
   const percentageColor = percentage < 0 ? "text-danger" : "text-success";
   const curPercentage = percentage < 0 ? percentage * -1 : percentage;
 
-  const [slot, setSlot] = useState("week");
+  const [slot, setSlot] = useState("month");
 
   return (
     <Card ref={ref} border="light" className="shadow-sm h-100">
@@ -26,26 +26,26 @@ const PackageWidget = forwardRef((props, ref) => {
           <h3>{value}</h3>
           <div className="d-flex ms-auto me-3">
             <Button
-              variant={slot === "week" ? "primary" : "outline-primary"}
-              size="sm"
-              className={
-                slot === "week" ? "me-3 rounded" : "me-3 rounded btn-pressed"
-              }
-              style={{ width: "4rem" }}
-              onClick={() => setSlot("week")}
-            >
-              Tuần
-            </Button>
-            <Button
               variant={slot === "month" ? "primary" : "outline-primary"}
               size="sm"
               className={
-                slot === "month" ? "me-2 rounded" : "me-2 rounded btn-pressed"
+                slot === "month" ? "me-3 rounded" : "me-3 rounded btn-pressed"
               }
               style={{ width: "4rem" }}
               onClick={() => setSlot("month")}
             >
               Tháng
+            </Button>
+            <Button
+              variant={slot === "year" ? "primary" : "outline-primary"}
+              size="sm"
+              className={
+                slot === "year" ? "me-2 rounded" : "me-2 rounded btn-pressed"
+              }
+              style={{ width: "4rem" }}
+              onClick={() => setSlot("year")}
+            >
+              Năm
             </Button>
           </div>
         </div>

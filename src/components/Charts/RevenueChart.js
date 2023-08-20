@@ -66,6 +66,21 @@ const RevenueChart = ({ slot }) => {
       },
       tickAmount: 6,
     },
+    plotOptions: {
+      bar: { borderRadius: 4 },
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "light",
+        type: "vertical",
+        shadeIntensity: 0.5,
+        inverseColors: false,
+        opacityFrom: 0.85,
+        opacityTo: 0.8,
+        stops: [0, 100],
+      },
+    },
     tooltip: {
       x: {
         format: "dd MMM yyyy",
@@ -164,12 +179,7 @@ const RevenueChart = ({ slot }) => {
   }, [slot, xAxisMin]);
 
   return (
-    <ReactApexChart
-      options={options}
-      series={series}
-      type="area"
-      height={300}
-    />
+    <ReactApexChart options={options} series={series} type="bar" height={300} />
   );
 };
 

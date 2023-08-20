@@ -68,10 +68,10 @@ const PackageChart = ({ slot }) => {
   );
   const [options, setOptions] = useState(pieChartOptions);
   const [height, setHeight] = useState("300px");
-  const [listWeek, setListWeek] = useState(mapSeries(packages, pkgByYear));
+  const [listYear, setListYear] = useState(mapSeries(packages, pkgByYear));
   const [listMonth, setListMonth] = useState(mapSeries(packages, pkgByMonth));
   const [labels, setLabels] = useState(mapLabels(packages));
-  const [series, setSeries] = useState(listWeek);
+  const [series, setSeries] = useState(listYear);
   var scheme = new ColorScheme();
   scheme.from_hex("ff8886").from_hue(1).scheme("tetrade").variation("pastel"); // Use the 'soft' color variation
 
@@ -86,7 +86,7 @@ const PackageChart = ({ slot }) => {
   }, [dispatch]);
 
   useEffect(() => {
-    setListWeek(mapSeries(packages, pkgByYear));
+    setListYear(mapSeries(packages, pkgByYear));
   }, [packages, pkgByYear]);
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const PackageChart = ({ slot }) => {
   }, [packages]);
 
   useEffect(() => {
-    setSeries(slot === "month" ? listMonth : listWeek);
+    setSeries(slot === "year" ? listYear : listMonth);
   }, [slot]);
 
   const theme = useTheme();
