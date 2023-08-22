@@ -150,7 +150,7 @@ const RevenueChart = ({ slot }) => {
         },
       ]);
     }
-  }, [slot]);
+  }, [slot, statisticTxn]);
 
   useEffect(() => {
     setOptions((prevState) => ({
@@ -198,19 +198,17 @@ export const sortDataSeries = (data) => {
 };
 
 const mapToMonthTotal = (data) => {
-  console.log(data);
   data = sortDataSeries(data);
   const currentDate = new Date();
   const lastYear = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() - 2,
+    currentDate.getFullYear() - 1,
+    currentDate.getMonth(),
     currentDate.getDate()
   );
 
   const res = [];
   let dataIndex = 0;
   let currentDatePointer = new Date(lastYear);
-
   while (currentDatePointer <= currentDate) {
     if (dataIndex < data.length) {
       const curDate = new Date(
@@ -229,7 +227,6 @@ const mapToMonthTotal = (data) => {
     }
     currentDatePointer.setDate(currentDatePointer.getDate() + 1);
   }
-
   return res;
 };
 

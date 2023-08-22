@@ -43,7 +43,7 @@ const HeaderContent = (props) => {
   }, [dispatch]);
 
   const handleLogout = async () => {
-    await logoutUser(dispatch, navigate);
+    await logoutUser(currentUser, dispatch, navigate);
   };
 
   const [notifications, setNotifications] = useState(NOTIFICATIONS_DATA);

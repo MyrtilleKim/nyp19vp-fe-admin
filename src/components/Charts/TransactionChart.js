@@ -240,8 +240,8 @@ const mapToMonthCount = (data) => {
   data = sortDataSeries(data);
   const currentDate = new Date();
   const lastYear = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() - 2,
+    currentDate.getFullYear() - 1,
+    currentDate.getMonth(),
     currentDate.getDate()
   );
 

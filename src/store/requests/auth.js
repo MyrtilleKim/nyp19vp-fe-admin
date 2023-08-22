@@ -12,7 +12,10 @@ import { HttpStatusCode } from "axios";
 export const refeshToken = async (user, dispatch, navigate) => {
   try {
     const res = await apiClient.get("/auth/refresh", {
-      withCredentials: true,
+      headers: {
+        accept: "*/*",
+        Authorization: `Bearer ${user?.refreshToken}`,
+      },
     });
     if (res?.data.statusCode === HttpStatusCode.Ok) {
       const refeshUser = {
@@ -34,11 +37,10 @@ export const refeshToken = async (user, dispatch, navigate) => {
 export const loginUser = async (user, dispatch) => {
   dispatch(loginStart());
   try {
-    const res = await apiClient.post("/auth/login", user, {
-      withCredentials: true,
-    });
+    const res = await apiClient.post("/auth/login/mobile", user);
     const payload = {
       accessToken: res?.data.accessToken,
+      refreshToken: res?.data.refreshToken,
       data: {
         auth: res?.data.data?.auth,
         userInfo: res?.data.data?.userInfo,
@@ -52,13 +54,18 @@ export const loginUser = async (user, dispatch) => {
   }
 };
 
-export const logoutUser = async (dispatch, navigate) => {
+export const logoutUser = async (user, dispatch, navigate) => {
   dispatch(logoutStart());
   try {
     const res = await apiClient.post(
       "auth/logout",
       {},
-      { withCredentials: true }
+      {
+        headers: {
+          accept: "*/*",
+          Authorization: `Bearer ${user?.refreshToken}`,
+        },
+      }
     );
     if (res?.data.statusCode === 200) {
       console.log("logout", res?.data);

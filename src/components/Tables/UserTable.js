@@ -24,6 +24,7 @@ import {
   faEnvelope,
   faPhoneAlt,
   faCakeCandles,
+  faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 
@@ -391,6 +392,12 @@ const UserTable = () => {
                 <ListGroup className="list-group-flush">
                   <Dropdown.Item
                     className="text-start text-dark py-3"
+                    onClick={(e) => onRowClick(row.original)}
+                  >
+                    <FontAwesomeIcon icon={faPen} /> Chỉnh sửa
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    className="text-start text-dark py-3"
                     onClick={(e) =>
                       handleAction(row.original, {
                         ...(row.original.deleted ? "restore" : " remove"),
@@ -460,8 +467,6 @@ const UserTable = () => {
             columns={columns}
             classes={{ table: "mx-auto align-middle" }}
             title="Tài khoản"
-            // emptyItem={{ label: "Giỏ hàng trống", icon: faShoppingBasket }}
-            // handleBulkRemove={onBulkRemove}
             handleAdd={handleAddAction}
             onRowClick={onRowClick}
             titleAdd="Thêm tài khoản"
