@@ -72,7 +72,7 @@ const Dashboard = () => {
                 year: formatCurrency(statisticTxn.revenueByYear),
                 month: formatCurrency(statisticTxn.revenueByMonth),
               }}
-              percentage={statisticTxn.ratio.revenue}
+              percentage={statisticTxn?.ratio?.revenue ?? 0}
             />
           </Col>
         </Row>
@@ -95,7 +95,7 @@ const Dashboard = () => {
                 min: formatShortDate(statisticTxn.period.min),
                 max: formatShortDate(statisticTxn.period.max),
               }}
-              percentage={statisticTxn.ratio.revenue}
+              percentage={statisticTxn?.ratio?.revenue ?? 0}
               icon={faChartSimple}
               iconColor="tertiary"
             />
