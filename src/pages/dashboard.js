@@ -53,14 +53,13 @@ const Dashboard = () => {
     console.log("haha");
     statistic(dispatch);
     statisticTrans(dispatch);
-    // const refreshInterval = setInterval(() => {
-    //   setLastFetchTimestamp(Date.now());
-    // }, 5 * 60 * 1000);
+  }, [dispatch]);
 
-    // return () => {
-    //   clearInterval(refreshInterval);
-    // };
-  }, [dispatch, lastFetchTimestamp]);
+  // useEffect(() => {
+  //   console.log(lastFetchTimestamp);
+  //   statistic(dispatch);
+  //   statisticTrans(dispatch);
+  // }, [lastFetchTimestamp]);
   return (
     <>
       <Container>

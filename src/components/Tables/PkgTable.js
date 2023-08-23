@@ -226,7 +226,8 @@ const PackageTable = () => {
       .required("Bặt buộc"),
     coefficient: Yup.number()
       .typeError("Đơn giá phải là một con số")
-      .min(1000, "Đơn giá ít nhất là 1000đ"),
+      .min(1000, "Đơn giá ít nhất là 1000đ")
+      .nullable(true),
   });
 
   // icons
