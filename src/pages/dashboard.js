@@ -39,6 +39,7 @@ const Dashboard = () => {
   const statisticTxn = useSelector((state) => state.packages);
   // dispatch(reinitializeState());
 
+  console.log("dashboard");
   const handleRefresh = () => {
     setLastFetchTimestamp(Date.now());
   };
