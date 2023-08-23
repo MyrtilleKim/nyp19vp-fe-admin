@@ -26,6 +26,7 @@ import {
   faPiggyBank,
   faListUl,
   faHandScissors,
+  faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCalendarDays, faClock } from "@fortawesome/free-regular-svg-icons";
 
@@ -415,6 +416,12 @@ const PackageTable = () => {
               </Dropdown.Toggle>
               <Dropdown.Menu className="notifications-dropdown shadow rounded-3 mt-2 py-0 ">
                 <ListGroup className="list-group-flush">
+                  <Dropdown.Item
+                    className="text-start text-dark py-3"
+                    onClick={(e) => onRowClick(row.original)}
+                  >
+                    <FontAwesomeIcon icon={faPen} /> Chỉnh sửa
+                  </Dropdown.Item>
                   <Dropdown.Item
                     className="text-start text-dark py-3"
                     onClick={(e) =>

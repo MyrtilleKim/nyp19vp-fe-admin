@@ -6,6 +6,7 @@ const authSlice = createSlice({
     login: {
       currentUser: {
         accessToken: null,
+        refreshToken: null,
         data: {
           auth: {},
           userInfo: {},

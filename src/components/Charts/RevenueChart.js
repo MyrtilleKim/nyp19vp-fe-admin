@@ -66,6 +66,21 @@ const RevenueChart = ({ slot }) => {
       },
       tickAmount: 6,
     },
+    plotOptions: {
+      bar: { borderRadius: 4 },
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "light",
+        type: "vertical",
+        shadeIntensity: 0.5,
+        inverseColors: false,
+        opacityFrom: 0.85,
+        opacityTo: 0.8,
+        stops: [0, 100],
+      },
+    },
     tooltip: {
       x: {
         format: "dd MMM yyyy",
@@ -135,7 +150,7 @@ const RevenueChart = ({ slot }) => {
         },
       ]);
     }
-  }, [slot]);
+  }, [slot, statisticTxn]);
 
   useEffect(() => {
     setOptions((prevState) => ({
@@ -164,12 +179,7 @@ const RevenueChart = ({ slot }) => {
   }, [slot, xAxisMin]);
 
   return (
-    <ReactApexChart
-      options={options}
-      series={series}
-      type="area"
-      height={300}
-    />
+    <ReactApexChart options={options} series={series} type="bar" height={300} />
   );
 };
 
@@ -188,19 +198,17 @@ export const sortDataSeries = (data) => {
 };
 
 const mapToMonthTotal = (data) => {
-  console.log(data);
   data = sortDataSeries(data);
   const currentDate = new Date();
   const lastYear = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() - 2,
+    currentDate.getFullYear() - 1,
+    currentDate.getMonth(),
     currentDate.getDate()
   );
 
   const res = [];
   let dataIndex = 0;
   let currentDatePointer = new Date(lastYear);
-
   while (currentDatePointer <= currentDate) {
     if (dataIndex < data.length) {
       const curDate = new Date(
@@ -219,7 +227,6 @@ const mapToMonthTotal = (data) => {
     }
     currentDatePointer.setDate(currentDatePointer.getDate() + 1);
   }
-
   return res;
 };
 

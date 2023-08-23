@@ -12,6 +12,8 @@ import {
   OverlayTrigger,
   Row,
   Col,
+  Dropdown,
+  ListGroup,
 } from "react-bootstrap";
 
 // assets
@@ -23,6 +25,8 @@ import {
   faCircleExclamation,
   faGripLines,
   faCircleXmark,
+  faEllipsisVertical,
+  faPen,
 } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-regular-svg-icons";
 
@@ -328,23 +332,49 @@ const GroupTable = () => {
         enableGlobalFilter: false,
         cell: ({ row }) => {
           return (
-            <Button
-              className="btn-table-options"
-              onClick={(e) =>
-                handleAction(row.original, {
-                  ...(row.original.deleted ? "restore" : " remove"),
-                })
-              }
-            >
-              <FontAwesomeIcon
-                icon={row.original.deleted ? faTrashArrowUp : faTrash}
-              />
-            </Button>
+            <Dropdown>
+              <Dropdown.Toggle
+                className="text-dark me-lg-1 dropdown-table-option"
+                id="dropdown-autoclose-true"
+              >
+                <span className="icon icon-sm m-0">
+                  <FontAwesomeIcon icon={faEllipsisVertical} />
+                </span>
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="notifications-dropdown shadow rounded-3 mt-2 py-0 ">
+                <ListGroup className="list-group-flush">
+                  <Dropdown.Item
+                    className="text-start text-dark py-3"
+                    onClick={(e) => onRowClick(row.original)}
+                  >
+                    <FontAwesomeIcon icon={faPen} /> Chỉnh sửa
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    className="text-start text-dark py-3"
+                    onClick={(e) =>
+                      handleAction(row.original, {
+                        ...(row.original.deleted ? "restore" : " remove"),
+                      })
+                    }
+                  >
+                    {row.original.deleted ? (
+                      <>
+                        <FontAwesomeIcon icon={faTrashArrowUp} /> Khôi phục
+                      </>
+                    ) : (
+                      <>
+                        <FontAwesomeIcon icon={faTrash} /> Xóa
+                      </>
+                    )}
+                  </Dropdown.Item>
+                </ListGroup>
+              </Dropdown.Menu>
+            </Dropdown>
           );
         },
       },
     ],
-    [handleAction]
+    [handleAction, onRowClick]
   );
   const schema = Yup.object().shape({
     packages: Yup.object().required("Bắt buộc"),

@@ -83,6 +83,18 @@ const TransactionChart = ({ slot }) => {
         show: false,
       },
     },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "light",
+        type: "vertical",
+        shadeIntensity: 0.3,
+        inverseColors: false,
+        opacityFrom: 0.9,
+        opacityTo: 0.85,
+        stops: [0, 100],
+      },
+    },
     grid: {
       show: true,
     },
@@ -228,8 +240,8 @@ const mapToMonthCount = (data) => {
   data = sortDataSeries(data);
   const currentDate = new Date();
   const lastYear = new Date(
-    currentDate.getFullYear(),
-    currentDate.getMonth() - 2,
+    currentDate.getFullYear() - 1,
+    currentDate.getMonth(),
     currentDate.getDate()
   );
 

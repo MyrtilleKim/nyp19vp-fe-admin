@@ -60,7 +60,7 @@ const Dashboard = () => {
     // return () => {
     //   clearInterval(refreshInterval);
     // };
-  }, [dispatch]);
+  }, [dispatch, lastFetchTimestamp]);
   return (
     <>
       <Container>
