@@ -50,16 +50,16 @@ const Dashboard = () => {
   ];
 
   useEffect(() => {
-    console.log("haha");
+    console.log("statistic");
     statistic(dispatch);
     statisticTrans(dispatch);
   }, [dispatch]);
 
-  // useEffect(() => {
-  //   console.log(lastFetchTimestamp);
-  //   statistic(dispatch);
-  //   statisticTrans(dispatch);
-  // }, [lastFetchTimestamp]);
+  useEffect(() => {
+    console.log(lastFetchTimestamp);
+    statistic(dispatch);
+    statisticTrans(dispatch);
+  }, [lastFetchTimestamp]);
   return (
     <>
       <Container>
