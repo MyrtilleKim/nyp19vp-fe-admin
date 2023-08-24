@@ -72,13 +72,13 @@ const PackageChart = ({ slot }) => {
   const [listMonth, setListMonth] = useState(mapSeries(packages, pkgByMonth));
   const [labels, setLabels] = useState(mapLabels(packages));
   const [series, setSeries] = useState(listYear);
-  var scheme = new ColorScheme();
-  scheme.from_hex("ff8886").from_hue(1).scheme("tetrade").variation("pastel"); // Use the 'soft' color variation
+  // var scheme = new ColorScheme();
+  // scheme.from_hex("ff8886").from_hue(1).scheme("tetrade").variation("pastel"); // Use the 'soft' color variation
 
-  var colors = scheme.colors();
-  colors = colors.map((color) => {
-    return `#${color}`;
-  });
+  // var colors = scheme.colors();
+  // colors = colors.map((color) => {
+  //   return `#${color}`;
+  // });
 
   useEffect(() => {
     getAllPackages(dispatch);
@@ -113,7 +113,7 @@ const PackageChart = ({ slot }) => {
     setOptions((prevState) => ({
       ...prevState,
       labels: labels,
-      colors: colors,
+      // colors: colors,
       markers: {
         colors: ["#007bff", "#28a745", "#dc3545"],
       },
